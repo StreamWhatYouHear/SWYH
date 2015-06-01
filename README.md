@@ -27,11 +27,9 @@ http://www.streamwhatyouhear.com/faq/
 - FR :  http://www.streamwhatyouhear.com/forums/forum/fr/
 
 ### About
-SWYH was developed by Sebastien Warin who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
+SWYH was developed by Sebastien Warin (ttp://sebastien.warin.fr) who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
 
 Since June 2015, I decided to open the SWYH source code to allow everyone to enrich the software.
-
-My website : http://sebastien.warin.fr
 
 Find the original article’s of this project posted on October 12, 2012 (in French) : http://sebastien.warin.fr/2012/10/12/1186-swyh-stream-what-you-hear-envoyer-le-son-de-votre-pc-windows-sur-un-lecteur-upnp-dlna/
 
