@@ -1,0 +1,31 @@
+﻿<Window x:Class="SWYH.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About Stream What You Hear" Height="226" Width="472" Icon="/SWYH;component/Resources/Icons/swyh48.ico" 
+        Loaded="Window_Loaded" WindowState="Normal" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True" KeyDown="Window_KeyDown">
+    <Grid>
+        <TextBlock Margin="134,26,12,0" TextWrapping="Wrap" FontFamily="Showcard Gothic" TextAlignment="Center" Height="39" VerticalAlignment="Top"><Run FontSize="21.333" FontFamily="Segoe WP Black" Text="Stream What You Hear"/></TextBlock>
+        <Image HorizontalAlignment="Left" Margin="8,8,0,0" Source="../Resources/Icons/swyh128.png" Stretch="Fill" Width="128" Height="128" VerticalAlignment="Top"/>
+        <StackPanel Orientation="Horizontal" Margin="160,105,0 , 0">
+            <TextBlock TextWrapping="Wrap" FontFamily="Segoe WP Semibold"><Run Text="Website : "/></TextBlock>
+            <TextBlock MouseLeftButtonDown="tbSWYHWebSite_Click" Cursor="Hand" TextWrapping="Wrap" FontFamily="Segoe WP Semibold" TextDecorations="Underline" Foreground="#FF003EFF"><Run Text="http://www.streamwhatyouhear.com"/></TextBlock>
+            </StackPanel>
+        <TextBlock Height="24" Margin="160,75,85,0" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe WP Semibold"><Run x:Name="version" Text="Version : 0.0 (Build: 00000)"/></TextBlock>
+        <TextBlock Height="36" Margin="74,0,-8,17" TextWrapping="Wrap" VerticalAlignment="Bottom" FontFamily="Segoe WP Semibold" RenderTransformOrigin="0.5,0.5" FontStyle="Italic">
+    		<TextBlock.RenderTransform>
+    			<TransformGroup>
+    				<ScaleTransform/>
+    				<SkewTransform AngleX="4.514"/>
+    				<RotateTransform/>
+    				<TranslateTransform X="1.421"/>
+    			</TransformGroup>
+    		</TextBlock.RenderTransform>
+            <Run Text="Simply stream the sound from your PC to an UPnP / DLNA device"/>
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">
+            <TextBlock TextWrapping="Wrap" FontFamily="Segoe WP Semibold" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="145"><Run Text="Copyright (c) 2012 - 2015 - "/></TextBlock>
+            <TextBlock HorizontalAlignment="Right" Cursor="Hand" MouseLeftButtonDown="tbSwarinWebSite_Click"  TextWrapping="Wrap" VerticalAlignment="Bottom" Width="113" FontFamily="Segoe WP Semibold" TextDecorations="Underline" Foreground="#FF003EFF"><Run Text="Sebastien.warin.fr"/></TextBlock>
+        </StackPanel>
+        <TextBlock Cursor="Hand" FontFamily="Segoe WP Semibold" MouseLeftButtonUp="btUpdate_MouseLeftButtonUp" Foreground="#FF003EFF" HorizontalAlignment="Right" Margin="0,75,-10,0" Name="btUpdate" TextAlignment="Center" TextDecorations="Underline" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"><Run Text="Update now !" /></TextBlock>
+    </Grid>
+</Window>

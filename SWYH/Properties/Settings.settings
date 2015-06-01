@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SWYH.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="CaptureFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Pcm48kHz16bitStereo</Value>
+    </Setting>
+    <Setting Name="Mp3Bitrate" Type="System.UInt32" Scope="User">
+      <Value Profile="(Default)">192</Value>
+    </Setting>
+    <Setting Name="StreamPreferenceFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Mp3</Value>
+    </Setting>
+    <Setting Name="HTTPPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="Debug" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
