@@ -27,7 +27,7 @@ http://www.streamwhatyouhear.com/faq/
 - FR :  http://www.streamwhatyouhear.com/forums/forum/fr/
 
 ### About
-SWYH was developed by Sebastien Warin (ttp://sebastien.warin.fr) who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
+SWYH was developed by Sebastien Warin (http://sebastien.warin.fr) who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
 
 Since June 2015, I decided to open the SWYH source code to allow everyone to enrich the software.
 
@@ -55,7 +55,7 @@ This software uses :
 - Intel AV Renderer
 - XBMC (v12 for Windows)
 - XBMC on OpenELEC (tested on Raspberry Pi)
-… and many more
+- … and many more
 
 ### Supported Media Players
 - Freebox V6 Player (with MP3 stream only)
@@ -78,7 +78,7 @@ This software uses :
 - Home Theater Sony (tested on NS510, NS310 and BDV NF720)
 - Onkyo Amps 2009 (tested  on Onkyo TX-NR3007)
 
-Let me know in the forums if your device is supported or not : http://www.streamwhatyouhear.com/forums/
+This list isn't exhaustive, check the forums to know if your device is supported or not.
 
 License
 ----
