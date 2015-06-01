@@ -82,4 +82,4 @@ This list isn't exhaustive, check the forums to know if your device is supported
 
 License
 ----
-GNU GENERAL PUBLIC LICENSE VERSION 3
+GNU GENERAL PUBLIC LICENSE
