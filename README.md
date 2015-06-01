@@ -1,4 +1,4 @@
-# Stream WHat You Hear
+# Stream What You Hear
 Stream What You Hear (SWYH) is a Windows application to broadcast the sound of your computer (ie: “what you hear”) on an UPnP/DLNA device such as TVs, amps, network receivers, game consoles, etc...
 
 Web site : http://www.streamwhatyouhear.com/
