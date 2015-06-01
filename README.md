@@ -82,7 +82,7 @@ This list isn't exhaustive, check the forums to know if your device is supported
 
 Contributing
 ----
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for more info on contributing to Vorlon.JS.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for more info on contributing to Stream What You Hear (SWYH).
 
 License
 ----
