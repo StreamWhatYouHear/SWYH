@@ -80,6 +80,10 @@ This software uses :
 
 This list isn't exhaustive, check the forums to know if your device is supported or not.
 
+Contributing
+----
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for more info on contributing to Vorlon.JS.
+
 License
 ----
-GNU GENERAL PUBLIC LICENSE
+Stream What You Hear (SWYH) is released under the GNU GPL license. Please see [LICENSE](LICENSE) for full details.
