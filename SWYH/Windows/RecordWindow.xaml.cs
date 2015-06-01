@@ -23,12 +23,12 @@
 
 namespace SWYH
 {
+    using Microsoft.Win32;
+    using SWYH.Audio;
     using System;
     using System.IO;
     using System.Windows;
     using System.Windows.Threading;
-    using Microsoft.Win32;
-    using SWYH.Audio;
 
     /// <summary>
     /// Interaction logic for RecordWindow.xaml

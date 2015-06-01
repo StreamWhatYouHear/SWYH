@@ -23,14 +23,14 @@
 
 namespace SWYH
 {
+    using Microsoft.Win32;
     using System;
     using System.Diagnostics;
     using System.Text.RegularExpressions;
     using System.Windows;
-    using Microsoft.Win32;
 
     /// <summary>
-    /// Interaction logic for SettingsWindow.xaml
+    /// TODO : refactor this code with WPF style ;)
     /// </summary>
     public partial class SettingsWindow : Window
     {
@@ -44,11 +44,11 @@ namespace SWYH
             this.btUpdate.Visibility = (App.NeedUpdate) ? Visibility.Visible : System.Windows.Visibility.Collapsed;
             this.cbRunAtWindowsStartup.IsChecked = this.GetRegisterInStartup();
             // Load values
-            //this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm32kHz16bitMono));
+            this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm32kHz16bitMono));
             this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm32kHz16bitStereo));
-            //this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm44kHz16bitMono));
+            this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm44kHz16bitMono));
             this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm44kHz16bitStereo));
-            //this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm48kHz16bitMono));
+            this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm48kHz16bitMono));
             this.comboBox1.Items.Add(Audio.AudioFormats.AsString(Audio.AudioFormats.Pcm48kHz16bitStereo));
             foreach (var bitrate in Audio.AudioFormats.Mp3BitRates)
             {
@@ -115,7 +115,7 @@ namespace SWYH
                     {
                         Audio.AudioSettings.SetAudioFormat(Audio.AudioFormats.Pcm48kHz16bitStereo);
                     }
-                    Audio.AudioSettings.SetMP3Bitrate(uint.Parse(this.comboBox2.SelectedItem.ToString()));
+                    Audio.AudioSettings.SetMP3Bitrate(int.Parse(this.comboBox2.SelectedItem.ToString()));
                     Audio.AudioSettings.SetStreamFormat(this.radioButton1.IsChecked.Value ? Audio.AudioFormats.Format.Mp3 : Audio.AudioFormats.Format.Pcm);
                     SWYH.Properties.Settings.Default.HTTPPort = (this.cbUseSpecificPort.IsChecked.HasValue && this.cbUseSpecificPort.IsChecked.Value) ? Int32.Parse(this.textBox1.Text) : 0;
                     SWYH.Properties.Settings.Default.Debug = this.cbDebug.IsChecked.HasValue && this.cbDebug.IsChecked.Value;
@@ -123,7 +123,7 @@ namespace SWYH
                     SWYH.Properties.Settings.Default.Save();
                     // Restart !
                     this.Close();
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location, "restart");
+                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location, Constants.RESTART_ARGUMENT_NAME);
                     Application.Current.Shutdown();
                 }
                 else if (msg == MessageBoxResult.No)
@@ -174,13 +174,13 @@ namespace SWYH
         {
             if (cbUseSpecificPort.IsChecked.Value && (this.textBox1.Text == "0" || string.IsNullOrEmpty(this.textBox1.Text)))
             {
-                this.textBox1.Text = "5901";
+                this.textBox1.Text = Constants.DEFAULT_HTTP_PORT.ToString();
             }
         }
 
         private void TextBlock_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start("http://www.streamwhatyouhear.com/download?source=swyh_update");
+            Process.Start(Constants.DOWNLOAD_SWYH_URL);
             this.Close();
         }
 
@@ -188,14 +188,14 @@ namespace SWYH
         {
             try
             {
-                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(Constants.REGISTRY_START_SUBKEY, true);
                 if (isChecked)
                 {
-                    registryKey.SetValue("StreamWhatYouHear", System.Windows.Forms.Application.ExecutablePath);
+                    registryKey.SetValue(Constants.REGISTRY_SWYH_KEY, System.Windows.Forms.Application.ExecutablePath);
                 }
                 else if(!isChecked && GetRegisterInStartup())
                 {
-                    registryKey.DeleteValue("StreamWhatYouHear");
+                    registryKey.DeleteValue(Constants.REGISTRY_SWYH_KEY);
                 }
             }
             catch { }
@@ -205,8 +205,8 @@ namespace SWYH
         {
             try
             {
-                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                return registryKey.GetValue("StreamWhatYouHear", null) != null;
+                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(Constants.REGISTRY_START_SUBKEY, true);
+                return registryKey.GetValue(Constants.REGISTRY_SWYH_KEY, null) != null;
             }
             catch { }
             return false;

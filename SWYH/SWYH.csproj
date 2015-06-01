@@ -76,9 +76,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NAudio, Version=1.5.8.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\NAudio.dll</HintPath>
+      <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Lame">
+      <HintPath>..\packages\NAudio.Lame.1.0.2\lib\net20\NAudio.Lame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -121,6 +124,7 @@
     <Compile Include="Audio\AudioSettings.cs" />
     <Compile Include="Audio\PipeStream.cs" />
     <Compile Include="Audio\WasapiProvider.cs" />
+    <Compile Include="Audio\WaveProviderToWaveStream.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Windows\HTTPLiveStreamWindow.xaml.cs">
       <DependentUpon>HTTPLiveStreamWindow.xaml</DependentUpon>
@@ -183,6 +187,7 @@
       <Link>SWYH.licenseheader</Link>
     </None>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -200,9 +205,12 @@
     <Resource Include="Resources\Icons\swyh48.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libs\lame_enc.dll" />
-    <Content Include="Libs\NAudio.dll" />
-    <None Include="Libs\UPnP.dll.o" />
+    <Content Include="libmp3lame.32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libmp3lame.64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Libs\UPnP.dll" />
     <Content Include="Libs\UPNPAVCDSML.dll" />
     <Content Include="Libs\UPNPAV_RendererStack.dll" />
@@ -232,15 +240,10 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SWYH.Audio.Mp3\SWYH.Audio.Mp3.csproj">
-      <Project>{191C15CE-CAE8-44EC-BE50-E84B560D4AC3}</Project>
-      <Name>SWYH.Audio.Mp3</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>C:\Windows\System32\xcopy "$(ProjectDir)\Libs\lame_enc.dll" "$(ProjectDir)\$(OutDir)" /y</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -5,7 +5,7 @@
     <Setting Name="CaptureFormat" Type="System.String" Scope="User">
       <Value Profile="(Default)">Pcm48kHz16bitStereo</Value>
     </Setting>
-    <Setting Name="Mp3Bitrate" Type="System.UInt32" Scope="User">
+    <Setting Name="Mp3Bitrate" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">192</Value>
     </Setting>
     <Setting Name="StreamPreferenceFormat" Type="System.String" Scope="User">

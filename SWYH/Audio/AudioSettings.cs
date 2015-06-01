@@ -27,7 +27,7 @@ namespace SWYH.Audio
 
     internal static class AudioSettings
     {
-        public static uint GetMP3Bitrate()
+        public static int GetMP3Bitrate()
         {
             return Settings.Default.Mp3Bitrate;
         }
@@ -64,7 +64,7 @@ namespace SWYH.Audio
             }
         }
 
-        public static void SetMP3Bitrate(uint bitrate)
+        public static void SetMP3Bitrate(int bitrate)
         {
             Settings.Default.Mp3Bitrate = bitrate;
         }
@@ -102,7 +102,7 @@ namespace SWYH.Audio
     {
         public enum Format { Pcm, Mp3 };
 
-        public static uint[] Mp3BitRates = new uint[] { 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320 };
+        public static int[] Mp3BitRates = new int[] { 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320 };
 
         public static readonly NAudio.Wave.WaveFormat Pcm32kHz16bitMono = new NAudio.Wave.WaveFormat(32000, 16, 1);
         public static readonly NAudio.Wave.WaveFormat Pcm32kHz16bitStereo = new NAudio.Wave.WaveFormat(32000, 16, 2);

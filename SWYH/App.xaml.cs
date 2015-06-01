@@ -23,6 +23,9 @@
 
 namespace SWYH
 {
+    using OpenSource.UPnP.AV.RENDERER.CP;
+    using SWYH.Audio;
+    using SWYH.UPnP;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -33,20 +36,12 @@ namespace SWYH
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
-    using OpenSource.UPnP.AV.RENDERER.CP;
-    using SWYH.Audio;
-    using SWYH.UPnP;
 
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
-        private const string SWYH_PROCESS_NAME = "SWYH";
-        private const string RESTART_ARGUMENT_NAME = "--restart";
-        private const string STREAM_TO_ARGUMENT_NAME = "--streamto:";
-        private const int NUMBER_OF_RESTART_TEST = 20;
-
         public static App CurrentInstance { get { return Application.Current as App; } }
         public static bool NeedUpdate { get; private set; }
 
@@ -67,11 +62,11 @@ namespace SWYH
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var startTest = 0;
-            start:
-            var existingProcess = Process.GetProcessesByName(SWYH_PROCESS_NAME);
+        start:
+            var existingProcess = Process.GetProcessesByName(Constants.SWYH_PROCESS_NAME);
             if (existingProcess != null && existingProcess.Length > 1)
             {
-                if (e.Args != null && e.Args.Contains(RESTART_ARGUMENT_NAME) && (startTest++) < NUMBER_OF_RESTART_TEST)
+                if (e.Args != null && e.Args.Contains(Constants.RESTART_ARGUMENT_NAME) && (startTest++) < Constants.NUMBER_OF_RESTART_TEST)
                 {
                     Thread.Sleep(100);
                     goto start;
@@ -85,14 +80,14 @@ namespace SWYH
                 {
                     AppDomain.CurrentDomain.UnhandledException += (ss, ee) =>
                     {
+                        var ex = (Exception)ee.ExceptionObject;
                         StringBuilder error = new StringBuilder();
                         error.AppendLine("Date: " + DateTime.Now.ToString());
-                        var ex = (Exception)ee.ExceptionObject ;
                         error.AppendLine("Message: " + ex.Message);
                         error.AppendLine("Detail: " + ex.ToString());
                         error.AppendLine("------------------------------");
-                        File.AppendAllText("error.log", error.ToString());
-                        MessageBox.Show("An error has occured ! See the 'error.log' file for more informations", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), Constants.SWYH_CRASHLOG_FILENAME), error.ToString());
+                        MessageBox.Show("An unhandled error has occured ! See the '" + Constants.SWYH_CRASHLOG_FILENAME + "' on your desktop for more information", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     };
                 }
                 this.CheckAutomaticDeviceStreamed(e);
@@ -124,7 +119,7 @@ namespace SWYH
             this.notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             this.streamToMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to", null);
             this.searchingItem = new System.Windows.Forms.ToolStripMenuItem("Searching ...", null) { Name = "searchingItem", ForeColor = System.Drawing.Color.Gray };
-            this.streamToMenu.DropDownItems.Add("My device is not listed", null, (s, e2) =>  MessageBox.Show("Perhaps your device is not connected or is not recognized as an UPnP Media Renderer !\nIf your device is an UPnP/DLNA player, try to start the stream of SWYH manually on the device.\nFor more information, go to http://www.streamwhatyouhear.com !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Information));
+            this.streamToMenu.DropDownItems.Add("My device is not listed", null, (s, e2) => MessageBox.Show("Perhaps your device is not connected or is not recognized as an UPnP Media Renderer !\nIf your device is an UPnP/DLNA player, try to start the stream of SWYH manually on the device.\nFor more information, go to http://www.streamwhatyouhear.com !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Information));
             this.streamToMenu.DropDownItems.Add("-");
             this.streamToMenu.DropDownItems.Add(searchingItem);
             this.notifyIcon.ContextMenuStrip.Items.Add(streamToMenu);
@@ -141,9 +136,9 @@ namespace SWYH
 
         private void CheckAutomaticDeviceStreamed(StartupEventArgs startupEvent)
         {
-            if (startupEvent.Args.Any(a => a.StartsWith(STREAM_TO_ARGUMENT_NAME, StringComparison.InvariantCultureIgnoreCase)))
+            if (startupEvent.Args.Any(a => a.StartsWith(Constants.STREAM_TO_ARGUMENT_NAME, StringComparison.InvariantCultureIgnoreCase)))
             {
-                autoStreamTo = startupEvent.Args.First(a => a.StartsWith(STREAM_TO_ARGUMENT_NAME, StringComparison.InvariantCultureIgnoreCase)).Substring(STREAM_TO_ARGUMENT_NAME.Length).Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                autoStreamTo = startupEvent.Args.First(a => a.StartsWith(Constants.STREAM_TO_ARGUMENT_NAME, StringComparison.InvariantCultureIgnoreCase)).Substring(Constants.STREAM_TO_ARGUMENT_NAME.Length).Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
 

@@ -23,21 +23,21 @@
 
 namespace SWYH.Audio
 {
+    using NAudio.Lame;
+    using NAudio.Wave;
     using System;
     using System.Threading;
-    using NAudio.Wave;
-    using SWYH.Audio.Mp3;
 
     internal class WasapiProvider
     {
         private bool isRunning = true;
-        private byte[] buffer = null;
+        private byte[] buffer = new byte[1024];
 
         private WasapiLoopbackCapture loopbackWaveIn = null;
         private PipeStream recordingStream = null;
         private WaveStream rawConvertedStream = null;
         private WaveStream pcmStream = null;
-        private AudioMp3Writer mp3Writer = null;
+        private LameMP3FileWriter mp3Writer = null;
 
         public bool IsRecording { get; private set; }
         public PipeStream LoopbackMp3Stream { get; private set; }
@@ -45,7 +45,7 @@ namespace SWYH.Audio
 
         public WasapiProvider()
         {
-            // Init Pipe
+            // Init Pipes
             this.recordingStream = new PipeStream();
             this.LoopbackMp3Stream = new PipeStream();
             this.LoopbackL16Stream = new PipeStream();
@@ -56,31 +56,43 @@ namespace SWYH.Audio
             // Init Wasapi Capture
             this.loopbackWaveIn = new WasapiLoopbackCapture();
             this.loopbackWaveIn.DataAvailable += new EventHandler<WaveInEventArgs>(this.loopbackWaveIn_DataAvailable);
+            
+            // Init Raw Wav (16bit)
+            WaveStream rawWave16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(this.loopbackWaveIn.WaveFormat.SampleRate, this.loopbackWaveIn.WaveFormat.Channels)));
 
-            // Init Raw Wav (48kHz 16bit Stereo)
-            WaveStream rawWave48k16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(this.loopbackWaveIn.WaveFormat.SampleRate, this.loopbackWaveIn.WaveFormat.Channels)));
-
-            // Convert Wav to PCM with audio format in settings
+            // Convert Raw Wav to PCM with audio format in settings
             var audioFormat = AudioSettings.GetAudioFormat();
-            if (this.loopbackWaveIn.WaveFormat.SampleRate == audioFormat.SampleRate
-                && this.loopbackWaveIn.WaveFormat.BitsPerSample == audioFormat.BitsPerSample
-                && this.loopbackWaveIn.WaveFormat.Channels == audioFormat.Channels)
+            if (rawWave16b.WaveFormat.SampleRate == audioFormat.SampleRate
+                && rawWave16b.WaveFormat.BitsPerSample == audioFormat.BitsPerSample
+                && rawWave16b.WaveFormat.Channels == audioFormat.Channels)
             {
+                // No conversion !
                 this.rawConvertedStream = null;
-                this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawWave48k16b);
+                this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawWave16b);
             }
             else
             {
-                this.rawConvertedStream = new WaveFormatConversionStream(AudioSettings.GetAudioFormat(), rawWave48k16b);
+                if (rawWave16b.WaveFormat.Channels > 2)
+                {
+                    // Multiplexing when more than 2 channels
+                    MultiplexingWaveProvider multiplexer = new MultiplexingWaveProvider(new System.Collections.Generic.List<IWaveProvider>() { rawWave16b }, audioFormat.Channels);
+                    // TODO : manage connection for 2.1, 4.0, 5.1 or 7.1
+                    multiplexer.ConnectInputToOutput(0, 0);
+                    multiplexer.ConnectInputToOutput(1, 0);
+                    multiplexer.ConnectInputToOutput(1, 1);
+                    multiplexer.ConnectInputToOutput(2, 1);
+                    this.rawConvertedStream = new WaveFormatConversionStream(audioFormat, new WaveProviderToWaveStream(multiplexer));
+                }
+                else
+                {
+                    // Wave format conversion
+                    this.rawConvertedStream = new WaveFormatConversionStream(audioFormat, rawWave16b);                
+                }
                 this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawConvertedStream);
             }
 
             // Init MP3 Encoder
-            var mp3WaveFormat = new Mp3.WaveFormat(pcmStream.WaveFormat.SampleRate, pcmStream.WaveFormat.BitsPerSample, pcmStream.WaveFormat.Channels);
-            this.mp3Writer = new AudioMp3Writer(this.LoopbackMp3Stream, mp3WaveFormat, new BE_CONFIG(mp3WaveFormat, AudioSettings.GetMP3Bitrate()));
-
-            // Init Buffer with OptimalBufferSize
-            this.buffer = new byte[this.mp3Writer.OptimalBufferSize];
+            this.mp3Writer = new LameMP3FileWriter(this.LoopbackMp3Stream, pcmStream.WaveFormat, AudioSettings.GetMP3Bitrate());
 
             // Start Recording
             this.loopbackWaveIn.StartRecording();
@@ -111,6 +123,8 @@ namespace SWYH.Audio
             this.isRunning = false;
             Thread.Sleep(200);
             this.loopbackWaveIn.StopRecording();
+            this.pcmStream.Flush();
+            this.pcmStream.Dispose();
             this.recordingStream.Flush();
             this.recordingStream.Dispose();
             if (this.rawConvertedStream != null)
@@ -135,20 +149,30 @@ namespace SWYH.Audio
             {
                 if (this.IsRecording)
                 {
-                    int readBytes = this.pcmStream.Read(buffer, 0, buffer.Length);
-                    if (readBytes > 0)
+                    try
                     {
-                        // MP3 stream
-                        this.mp3Writer.Write(this.buffer, 0, readBytes);
-                        // L16 stream
-                        if (BitConverter.IsLittleEndian)
+                        int readBytes = this.pcmStream.Read(buffer, 0, buffer.Length);
+                        if (readBytes > 0)
                         {
-                            for (int i = 0; i < readBytes; i += 2)
+                            // MP3 stream
+                            this.mp3Writer.Write(this.buffer, 0, readBytes);
+                            // L16 stream
+                            if (BitConverter.IsLittleEndian)
                             {
-                                Array.Reverse(buffer, i, 2);
+                                for (int i = 0; i < readBytes; i += 2)
+                                {
+                                    Array.Reverse(buffer, i, 2);
+                                }
                             }
+                            this.LoopbackL16Stream.Write(buffer, 0, buffer.Length);
                         }
-                        this.LoopbackL16Stream.Write(buffer, 0, buffer.Length);
+                    }
+                    catch
+                    {
+                        if (this.isRunning)
+                        {
+                            throw;
+                        }
                     }
                 }
                 Thread.Sleep(1);

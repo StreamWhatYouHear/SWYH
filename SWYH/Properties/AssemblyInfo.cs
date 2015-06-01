@@ -75,5 +75,5 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.15152.1")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
+[assembly: AssemblyFileVersion("1.4.15152.3")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
 [assembly: GuidAttribute("2ecd245f-4268-48ee-b0f1-0706ead1ba42")]
