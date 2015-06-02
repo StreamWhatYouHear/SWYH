@@ -11,7 +11,7 @@ Web site : http://www.streamwhatyouhear.com/
 - Record What You Hear into MP3 file
 
 ### Getting Started
-- Before installation make sure your environment complies with minimum requirements  (Windows Vista, 7 or 8 (x86/x64) with .NET Framework 4.0 installed)
+- Before installation make sure your environment complies with minimum requirements  (Windows Vista, 7 or 8/8.1 (x86/x64) with .NET Framework 4.0 installed)
 - Download and install the latest release of SWYH on http://www.streamwhatyouhear.com/download/
 - Launch the “Stream What You Hear (SWYH)” application
 - Right-click on the SWYH icon in the systray and go to “Stream to” menu
@@ -29,7 +29,7 @@ http://www.streamwhatyouhear.com/faq/
 ### About
 SWYH was developed by Sebastien Warin (http://sebastien.warin.fr) who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
 
-Since June 2015, I decided to open the SWYH source code to allow everyone to enrich the software.
+Since June 2015, I decided to release the source code of SWYH to enable everyone to understand, diagnose, fix and improve this great application.
 
 Find the original article’s of this project posted on October 12, 2012 (in French) : http://sebastien.warin.fr/2012/10/12/1186-swyh-stream-what-you-hear-envoyer-le-son-de-votre-pc-windows-sur-un-lecteur-upnp-dlna/
 
@@ -37,7 +37,7 @@ This software uses :
 - .NET Framework 4.0
 - WASAPI (Windows Audio Service API) for the sound capture
 - NAudio for the audio stream manipulation : http://naudio.codeplex.com/
-- LAME for the MP3 encoding : http://www.codeproject.com/Articles/5901/C-MP-Compressor
+- LAME for the MP3 encoding : https://github.com/Corey-M/NAudio.Lame
 - Developer Tools for UPnP Technologies for the UPnP stack : http://opentools.homeip.net/dev-tools-for-upnp
 
 ### Supported Media Renderers
