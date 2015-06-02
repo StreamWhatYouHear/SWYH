@@ -99,7 +99,7 @@ namespace SWYH
                 //this.wasapiProvider.StartRecording();
                 this.swyhDevice = new SwyhDevice();
                 this.swyhDevice.Start();
-                notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Double-click on this icon to open the Control Center or right-click to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
             }
         }
 
