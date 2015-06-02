@@ -95,12 +95,23 @@ namespace SWYH
                     byte[] content = new byte[value.Length];
                     if (value.Read(content, 0, content.Length) >= 0)
                     {
-                        if (File.Exists(sfd.FileName))
+                    saveFile:
+                        try
                         {
-                            File.Delete(sfd.FileName);
+                            if (File.Exists(sfd.FileName))
+                            {
+                                File.Delete(sfd.FileName);
+                            }
+                            File.WriteAllBytes(sfd.FileName, content);
+                            MessageBox.Show("Recording saved as " + sfd.FileName, "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
-                        File.WriteAllBytes(sfd.FileName, content);
-                        MessageBox.Show("Recording saved as " + sfd.FileName, "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Information);
+                        catch (Exception ex)
+                        {
+                            if (MessageBox.Show(string.Format("A file error has occurred : '{0}'\nDo you want to retry ?", ex.Message), "Record What You Hear", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+                            {
+                                goto saveFile;
+                            }
+                        }
                     }
                 }
             }
@@ -110,7 +121,6 @@ namespace SWYH
             }
             this.UpdateUi();
         }
-
         private void UpdateUi()
         {
             this.btRecord.IsEnabled = !this.isRecording;

@@ -72,22 +72,8 @@ namespace SWYH.Audio
             }
             else
             {
-                if (rawWave16b.WaveFormat.Channels > 2)
-                {
-                    // Multiplexing when more than 2 channels
-                    MultiplexingWaveProvider multiplexer = new MultiplexingWaveProvider(new System.Collections.Generic.List<IWaveProvider>() { rawWave16b }, audioFormat.Channels);
-                    // TODO : manage connection for 2.1, 4.0, 5.1 or 7.1
-                    multiplexer.ConnectInputToOutput(0, 0);
-                    multiplexer.ConnectInputToOutput(1, 0);
-                    multiplexer.ConnectInputToOutput(1, 1);
-                    multiplexer.ConnectInputToOutput(2, 1);
-                    this.rawConvertedStream = new WaveFormatConversionStream(audioFormat, new WaveProviderToWaveStream(multiplexer));
-                }
-                else
-                {
-                    // Wave format conversion
-                    this.rawConvertedStream = new WaveFormatConversionStream(audioFormat, rawWave16b);                
-                }
+                // Resampler
+                this.rawConvertedStream = new WaveProviderToWaveStream(new MediaFoundationResampler(rawWave16b, audioFormat));
                 this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawConvertedStream);
             }
 
