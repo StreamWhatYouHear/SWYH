@@ -30,8 +30,11 @@ namespace SWYH.Audio
 
     internal class WasapiProvider
     {
-        private bool isRunning = true;
         private byte[] buffer = new byte[1024];
+
+        private bool isRunning = true;
+        private bool hasMP3Clients = false;
+        private bool hasPCMClients = false;
 
         private WasapiLoopbackCapture loopbackWaveIn = null;
         private PipeStream recordingStream = null;
@@ -39,7 +42,6 @@ namespace SWYH.Audio
         private WaveStream pcmStream = null;
         private LameMP3FileWriter mp3Writer = null;
 
-        public bool IsRecording { get; private set; }
         public PipeStream LoopbackMp3Stream { get; private set; }
         public PipeStream LoopbackL16Stream { get; private set; }
 
@@ -87,30 +89,12 @@ namespace SWYH.Audio
             waveProcessorThread.Start();
         }
 
-        public void StartRecording()
-        {
-            if (!this.IsRecording)
-            {
-                this.IsRecording = true;
-            }
-        }
-
-        public void StopRecording()
-        {
-            if (this.IsRecording)
-            {
-                this.IsRecording = false;
-            }
-        }
 
         public void Dispose()
         {
-            this.StopRecording();
             this.isRunning = false;
             Thread.Sleep(200);
             this.loopbackWaveIn.StopRecording();
-            this.pcmStream.Flush();
-            this.pcmStream.Dispose();
             this.recordingStream.Flush();
             this.recordingStream.Dispose();
             if (this.rawConvertedStream != null)
@@ -118,39 +102,48 @@ namespace SWYH.Audio
                 this.rawConvertedStream.Flush();
                 this.rawConvertedStream.Dispose();
             }
+            this.pcmStream.Flush();
+            this.pcmStream.Dispose();
             this.LoopbackMp3Stream.Flush();
             this.LoopbackMp3Stream.Dispose();
             this.LoopbackL16Stream.Flush();
             this.LoopbackL16Stream.Dispose();
         }
 
-        public void UpdateClientsList()
+        internal void UpdateClientsList()
         {
-            this.IsRecording = (App.CurrentInstance.swyhDevice.sessionMp3Streams.Count > 0 || App.CurrentInstance.swyhDevice.sessionPcmStreams.Count > 0);
+            this.hasMP3Clients = App.CurrentInstance.swyhDevice.sessionMp3Streams.Count > 0;
+            this.hasPCMClients = App.CurrentInstance.swyhDevice.sessionPcmStreams.Count > 0;
         }
 
         private void waveProcessor()
         {
             while (this.isRunning)
             {
-                if (this.IsRecording)
+                if (this.hasMP3Clients || this.hasPCMClients)
                 {
                     try
                     {
                         int readBytes = this.pcmStream.Read(buffer, 0, buffer.Length);
                         if (readBytes > 0)
                         {
-                            // MP3 stream
-                            this.mp3Writer.Write(this.buffer, 0, readBytes);
-                            // L16 stream
-                            if (BitConverter.IsLittleEndian)
+                            if (this.hasMP3Clients)
                             {
-                                for (int i = 0; i < readBytes; i += 2)
-                                {
-                                    Array.Reverse(buffer, i, 2);
-                                }
+                                // MP3 stream
+                                this.mp3Writer.Write(this.buffer, 0, readBytes);
                             }
-                            this.LoopbackL16Stream.Write(buffer, 0, buffer.Length);
+                            if (this.hasPCMClients)
+                            {
+                                // L16 stream
+                                if (BitConverter.IsLittleEndian)
+                                {
+                                    for (int i = 0; i < readBytes; i += 2)
+                                    {
+                                        Array.Reverse(buffer, i, 2);
+                                    }
+                                }
+                                this.LoopbackL16Stream.Write(buffer, 0, buffer.Length);
+                            }
                         }
                     }
                     catch
@@ -161,13 +154,16 @@ namespace SWYH.Audio
                         }
                     }
                 }
-                Thread.Sleep(1);
+                else
+                {
+                    Thread.Sleep(1);
+                }
             }
         }
 
         private void loopbackWaveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
-            if (this.IsRecording)
+            if (this.hasMP3Clients || this.hasPCMClients)
             {
                 this.recordingStream.Write(e.Buffer, 0, e.BytesRecorded);
             }

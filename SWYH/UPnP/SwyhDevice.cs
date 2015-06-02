@@ -23,15 +23,15 @@
 
 namespace SWYH.UPnP
 {
+    using OpenSource.UPnP;
+    using SWYH.Audio;
     using System;
     using System.Collections.Concurrent;
     using System.Threading;
     using System.Threading.Tasks;
-    using OpenSource.UPnP;
-    using SWYH.Audio;
 
     /// <summary>
-    /// Summary description for SampleDevice.
+    /// Represent the SWYH UPnP device.
     /// </summary>
     internal class SwyhDevice
     {
@@ -57,7 +57,7 @@ namespace SWYH.UPnP
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
             this.Device.ModelNumber = "1.4";
-            this.Device.SerialNumber = "SHYW_UPNP_14";
+            this.Device.SerialNumber = "SWYH_UPNP_14";
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";
@@ -138,7 +138,10 @@ namespace SWYH.UPnP
                         p.Write(bufferMp3, 0, bytesRead);
                     });
                 }
-                Thread.Sleep(1);
+                else
+                {
+                    Thread.Sleep(1);
+                }
             }
         }
 
@@ -154,7 +157,10 @@ namespace SWYH.UPnP
                         p.Write(bufferPcm, 0, bytesRead);
                     });
                 }
-                Thread.Sleep(1);
+                else
+                {
+                    Thread.Sleep(1);
+                }
             }
         }
 

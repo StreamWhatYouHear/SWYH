@@ -26,6 +26,9 @@ namespace SWYH.Audio
     using NAudio.Wave;
     using System;
 
+    /// <summary>
+    /// Convert IWaveProvider into a WaveStream
+    /// </summary>
     internal class WaveProviderToWaveStream : WaveStream
     {
         private readonly IWaveProvider source;

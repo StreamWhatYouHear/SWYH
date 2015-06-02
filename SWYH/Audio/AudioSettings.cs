@@ -24,14 +24,35 @@
 namespace SWYH.Audio
 {
     using SWYH.Properties;
+    using System;
 
+    /// <summary>
+    /// Represent the SWYH audio settings
+    /// </summary>
     internal static class AudioSettings
     {
+        /// <summary>
+        /// Gets the MP3 bitrate.
+        /// </summary>
+        /// <returns></returns>
         public static int GetMP3Bitrate()
         {
             return Settings.Default.Mp3Bitrate;
         }
 
+        /// <summary>
+        /// Sets the MP3 bitrate.
+        /// </summary>
+        /// <param name="bitrate">The bitrate.</param>
+        public static void SetMP3Bitrate(int bitrate)
+        {
+            Settings.Default.Mp3Bitrate = bitrate;
+        }
+
+        /// <summary>
+        /// Gets the audio format for the capture.
+        /// </summary>
+        /// <returns></returns>
         public static NAudio.Wave.WaveFormat GetAudioFormat()
         {
             switch (Settings.Default.CaptureFormat)
@@ -52,52 +73,62 @@ namespace SWYH.Audio
             }
         }
 
-        public static AudioFormats.Format GetStreamFormat()
-        {
-            switch (Settings.Default.StreamPreferenceFormat)
-            {
-                case "Pcm":
-                    return AudioFormats.Format.Pcm;
-                case "Mp3":
-                default:
-                    return AudioFormats.Format.Mp3;
-            }
-        }
-
-        public static void SetMP3Bitrate(int bitrate)
-        {
-            Settings.Default.Mp3Bitrate = bitrate;
-        }
-        
+        /// <summary>
+        /// Sets the audio format for capture.
+        /// </summary>
+        /// <param name="format">The format.</param>
         public static void SetAudioFormat(NAudio.Wave.WaveFormat format)
         {
             if (format == AudioFormats.Pcm32kHz16bitMono)
+            {
                 Settings.Default.CaptureFormat = "Pcm32kHz16bitMono";
+            }
             else if (format == AudioFormats.Pcm32kHz16bitStereo)
+            {
                 Settings.Default.CaptureFormat = "Pcm32kHz16bitStereo";
+            }
             else if (format == AudioFormats.Pcm44kHz16bitMono)
+            {
                 Settings.Default.CaptureFormat = "Pcm44kHz16bitMono";
+            }
             else if (format == AudioFormats.Pcm44kHz16bitStereo)
+            {
                 Settings.Default.CaptureFormat = "Pcm44kHz16bitStereo";
+            }
             else if (format == AudioFormats.Pcm48kHz16bitMono)
+            {
                 Settings.Default.CaptureFormat = "Pcm48kHz16bitMono";
+            }
             else
+            {
                 Settings.Default.CaptureFormat = "Pcm48kHz16bitStereo";
+            }
         }
 
+        /// <summary>
+        /// Gets the default stream format.
+        /// </summary>
+        /// <returns></returns>
+        public static AudioFormats.Format GetStreamFormat()
+        {
+            AudioFormats.Format format = AudioFormats.Format.Mp3;
+            Enum.TryParse<AudioFormats.Format>(Settings.Default.StreamPreferenceFormat, out format);
+            return format;
+        }
+
+        /// <summary>
+        /// Sets the default stream format.
+        /// </summary>
+        /// <param name="format">The format.</param>
         public static void SetStreamFormat(AudioFormats.Format format)
         {
-            if (format == AudioFormats.Format.Pcm)
-            {
-                Settings.Default.StreamPreferenceFormat = "Pcm";
-            }
-            else
-            {
-                Settings.Default.StreamPreferenceFormat = "Mp3";
-            }
+            Settings.Default.StreamPreferenceFormat = format.ToString();
         }
     }
 
+    /// <summary>
+    /// Represent SWYH audio formats
+    /// </summary>
     internal static class AudioFormats
     {
         public enum Format { Pcm, Mp3 };
