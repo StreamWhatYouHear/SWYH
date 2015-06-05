@@ -58,6 +58,7 @@ This software uses :
 - … and many more
 
 ### Supported Media Players
+- Sonos system (http://www.streamwhatyouhear.com/forums/topic/sonos-is-supported/)
 - Freebox V6 Player (with MP3 stream only)
 - Bouygues BBox
 - PlayStation 3 (with PCM/L16 stream only)
@@ -67,7 +68,6 @@ This software uses :
 - Windows Media Player
 - Intel AV Controller
 - Smartphone applications (WP7, Android & iPhone)
-- Sonos IS (http://www.streamwhatyouhear.com/forums/topic/sonos-is-supported/)
 - … and many more
 
 ### Not Supported
