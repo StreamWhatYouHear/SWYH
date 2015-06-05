@@ -65,7 +65,7 @@ This software uses :
 - Onkyo Amps (tested on TX-NR609, TX-NR808 PCM/L16 stream only, CR-N755)
 - Western Digital WD TV HD (with PCM/L16 stream only)
 - Toshiba Places STB2F
-- Windows Media Player
+- Windows Applications (Windows Media Player, VLC, Home Cinema Media Player, etc..)
 - Intel AV Controller
 - Smartphone applications (WP7, Android & iPhone)
 - … and many more
