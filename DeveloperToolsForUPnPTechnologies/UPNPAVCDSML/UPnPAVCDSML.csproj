@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>UPNPAVCDSML</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UPNPAVCds</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\x86\Debug\UPNPAVCDSML.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;c:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;c:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\x86\Release\UPNPAVCDSML.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;c:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;c:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Accumulator_ContainerUpdateIDs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AvsExceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BlankObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CdsMetadataCaches.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICdsElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ImageDimensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IMediaResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InnerXmlWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IUPnPMedia.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IValueType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaComparer2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaEnums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaProperties.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaSorter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MediaSorter2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MetadataValueComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MimeTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PreventNullCast.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyBool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyDateTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyEnumWriteStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyInt.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyLanguage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyLong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyMappings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyPersonWithRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyStorageMedium.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyUInt.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyULong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PropertyUri.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProtocolInfoString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ResourceBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SearchClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SortedObjectCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StorageMediums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagExtractor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ToXmlData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ToXmlFormatter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_DateTime.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_Hashtable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_Int.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_Long.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_SortedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_TimeSpan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_UInt.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="_ULong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UPnP\UPnP.csproj">
+      <Project>{584ed187-8f2a-4b58-a266-85f3f212b092}</Project>
+      <Name>UPnP</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

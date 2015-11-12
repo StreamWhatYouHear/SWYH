@@ -1,0 +1,2007 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UPnP</name>
+    </assembly>
+    <members>
+        <member name="T:Intel.UPNP.LockRMWO">
+            <summary>
+            This is a synchronization object (that should have a better name
+            but I couldn't think of the real term).
+            
+            In any case, it allows many simultaneous "read" operations
+            but only write operation at any time.
+            
+            The read and write operations should span large chunks of code.
+            It may not be efficient to use this class if you want to guard
+            really small code blocks. This class uses a Mutex, which
+            forces a small degree of blocking for any operation,
+            including read ops.
+            
+            If a client issues a write op:
+            	- all subsequent read/write ops are blocked/queued,
+            	- write op blocks until all existing read-ops complete,
+            	- write op blocks until all previous write ops complete
+            	- then the write op is done
+            	- then read or write ops continue
+            	
+            If a client issues a read op:
+            	- all subsequent write ops are blocked
+            	- read op blocks until write op is complete
+            	- read op blocks until 
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LockRMWO.StartRead">
+            <summary>
+            Starts a read operation if no write operations are being serviced.
+            Otherwise, the write operation is queued. 
+            
+            A successive write operation is queued until all pending read
+            operations are considered complete through EndRead().
+            
+            A successive read operation is allowed to execute simultaneously.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LockRMWO.EndRead">
+            <summary>
+            Finishes a read operation and allows write operations
+            to begin if no read operations are still being
+            serviced.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LockRMWO.StartWrite">
+            <summary>
+            Starts a write operation if no read ops are being serviced.
+            Queues a write operation if a read is still in progress.
+            
+            A successive write operation is queued until all pending read/write 
+            operations are considered completed.
+            
+            A successive read operation is queued.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LockRMWO.EndWrite">
+            <summary>
+            Completes a write operation
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.AsyncSocket">
+            <summary>
+            An event based AsyncSocket Object
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.AsyncSocket.BufferReadLength">
+            <summary>
+            The number of bytes read
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.AsyncSocket.BufferBeginPointer">
+            <summary>
+            The index to begin reading
+            <para>
+            setting the BeginPointer equal to the BufferSize has
+            the same result as setting it to zero
+            </para>
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.AsyncSocket.BufferSize">
+            <summary>
+            The size of the data chunk
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.#ctor(System.IO.Stream)">
+            <summary>
+            Creates a new AsyncSocket, with a stream object to write to
+            </summary>
+            <param name="WriteStream">The Stream to use</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.#ctor(System.Int32)">
+            <summary>
+            Creates a new AsyncSocket, with a fixed size buffer to write to
+            </summary>
+            <param name="BufferSize">Size of buffer</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Attach(System.Net.IPEndPoint,System.Net.Sockets.ProtocolType)">
+            <summary>
+            Attaches this AsyncSocket to a new Socket instance, using the given info.
+            </summary>
+            <param name="local">Local interface to use</param>
+            <param name="PType">Protocol Type</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Attach(System.Net.Sockets.Socket)">
+            <summary>
+            Attach this AsyncSocket to an existing Socket
+            </summary>
+            <param name="UseThisSocket">The Socket</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.AddMembership(System.Net.IPEndPoint,System.Net.IPAddress)">
+            <summary>
+            Join a multicast group
+            </summary>
+            <param name="local">Interface to use</param>
+            <param name="MulticastAddress">MulticastAddress to join</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.DropMembership(System.Net.IPAddress)">
+            <summary>
+            Leave a multicast group
+            </summary>
+            <param name="MulticastAddress">Multicast Address to leave</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Connect(System.Net.IPEndPoint)">
+            <summary>
+            Connect to a remote socket
+            </summary>
+            <param name="Remote">IPEndPoint to connect to</param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Begin">
+            <summary>
+            Start AsyncReads
+            </summary>
+            <returns>Successfully started</returns>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Close">
+            <summary>
+            Closes the socket
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Send(System.Byte[])">
+            <summary>
+            Asynchronously send bytes
+            </summary>
+            <param name="buffer"></param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Send(System.Byte[],System.Object)">
+            <summary>
+            Asynchronously send bytes
+            </summary>
+            <param name="buffer"></param>
+            <param name="Tag"></param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Send(System.Byte[],System.Int32,System.Int32,System.Object)">
+            <summary>
+            Asyncronously send bytes
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="length"></param>
+            <param name="Tag"></param>
+        </member>
+        <member name="M:Intel.UPNP.AsyncSocket.Send(System.Byte[],System.Int32,System.Int32,System.Net.IPEndPoint,System.Object)">
+            <summary>
+            Asynchronously send a UDP payload
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="length"></param>
+            <param name="dest"></param>
+            <param name="Tag"></param>
+        </member>
+        <member name="E:Intel.UPNP.AsyncSocket.OnReceive">
+            <summary>
+            This is triggered when there is data to be processed
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.AsyncSocket.OnSendReady">
+            <summary>
+            This is triggered when the SendQueue is ready for more
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.AsyncSocket.OnConnect">
+            <summary>
+            This is triggered when a Connection attempt was successful
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.AsyncSocket.OnConnectFailed">
+            <summary>
+            This is triggered when a Connection attempt failed
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.AsyncSocket.OnDisconnect">
+            <summary>
+            This is triggered when the underlying socket closed
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.AsyncSocket.Pending">
+            <summary>
+            Number of bytes in the send queue pending
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.AsyncSocket.Total">
+            <summary>
+            Total bytes send
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.AsyncSocket.LocalEndPoint">
+            <summary>
+            The Local EndPoint
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.AsyncSocket.RemoteEndPoint">
+            <summary>
+            The Remote EndPoint
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.Base64">
+            <summary>
+            Convenience class for Base64 operations
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.Base64.StringToBase64(System.String)">
+            <summary>
+            Encodes a String as Base64
+            </summary>
+            <param name="TheString">The String to encode</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.Base64.Base64ToString(System.String)">
+            <summary>
+            Decodes a Base64 String, and returns it as a String
+            </summary>
+            <param name="b64">The Encoding</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.Base64.Encode(System.Byte[])">
+            <summary>
+            Encodes a Byte Array as Base64
+            </summary>
+            <param name="buffer">The Byte Array to Encode</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.Base64.Encode(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Encodes a Specific part of a Byte Array as Base64
+            </summary>
+            <param name="buffer">The Byte Array to Encode</param>
+            <param name="offset">The offset to begin encoding</param>
+            <param name="length">The number of bytes to encode</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.Base64.Decode(System.String)">
+            <summary>
+            Decodes a Base64 Encoding, and returns the Byte Array
+            </summary>
+            <param name="Text">The Encoding</param>
+            <returns></returns>
+        </member>
+        <member name="T:Intel.UPNP.DText">
+            <summary>
+            Summary description for DText.
+            </summary>
+        </member>
+        <member name="T:Intel.Utilities.EventLogger">
+            <summary>
+            This class can be used as the master event logging class for all
+            of an application and its libraries. The application should set the
+            system log file upon startup. All exceptions should be sent to the log
+            using the Log(Exception) method.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.EventLogger.SetLog(System.String,System.String,System.String)">
+            <summary>
+            Set the application wide event logging to a Windows event log file.
+            </summary>
+            <param name="sourceName">Generaly the name of the application</param>
+            <param name="logName">The name of the system log file</param>
+            <param name="productVersion">The application's version string</param>
+        </member>
+        <member name="M:Intel.Utilities.EventLogger.SetOnExceptionAction(System.Boolean)">
+            <summary>
+            Set the action to take when an exception is logged into the event
+            logger. This action will be taken in addition to logging the exception
+            in the system logs.
+            </summary>
+            <param name="showMessageBox">Show a message box with the event</param>
+        </member>
+        <member name="M:Intel.Utilities.EventLogger.StopLog">
+            <summary>
+            Stop application wide logging
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.EventLogger.Log(System.String)">
+            <summary>
+            Log an information string into the system log.
+            </summary>
+            <param name="information">Information string to be logged</param>
+        </member>
+        <member name="M:Intel.Utilities.EventLogger.Log(System.Exception,System.String)">
+            <summary>
+            Log an exception into the system log.
+            </summary>
+            <param name="exception">Exception to be logged</param>
+        </member>
+        <member name="T:Intel.Utilities.ExceptionForm">
+            <summary>
+            Summary description for ExceptionForm.
+            </summary>
+        </member>
+        <member name="F:Intel.Utilities.ExceptionForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.ExceptionForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.ExceptionForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.HTTPMessage">
+            <summary>
+            A generic HTTP/UPnP Packet
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.#ctor">
+            <summary>
+            Contructs an Empty Packet
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.RemoveTag(System.String)">
+            <summary>
+            Removes a header
+            </summary>
+            <param name="TagName"></param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.AddTag(System.String,System.String)">
+            <summary>
+            Add/Change a Header
+            </summary>
+            <param name="TagName">Header Tag</param>
+            <param name="TagData">Header Value</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.GetTag(System.String)">
+            <summary>
+            Returns the value for this tag
+            </summary>
+            <param name="TagName">Header Tag</param>
+            <returns>Header Value</returns>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.ParseByteArray(System.Byte[])">
+            <summary>
+            Parses a Byte Array, and build a Packet.
+            </summary>
+            <param name="buffer">The Array of Bytes</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.ParseByteArray(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Parses a Byte Array at a specific location, and builds a Packet.
+            </summary>
+            <param name="buffer">The Array of Bytes</param>
+            <param name="indx">The Start Index</param>
+            <param name="count">The number of Bytes to process</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.EscapeString(System.String)">
+            <summary>
+            Escapes a string
+            </summary>
+            <param name="TheString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.HTTPMessage.UnEscapeString(System.String)">
+            <summary>
+            Unescapes a string
+            </summary>
+            <param name="TheString"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.BodyBuffer">
+            <summary>
+            Get/Set the body as a Byte Array
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.CharSet">
+            <summary>
+            Returns the Character encoding of the body, if it was defined
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.ContentType">
+            <summary>
+            Gets/Sets the Content-type field
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.StringBuffer">
+            <summary>
+            Gets the Body (encoded as CharSet) as a String, Sets the body as a UTF-8 encoded string
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.StringPacket">
+            <summary>
+            Returns the entire packet as a String, for debug purposes only. Note, the body is treated as a UTF-8 string
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.RawPacket">
+            <summary>
+            Returns the entire packet as a Byte Array
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.Directive">
+            <summary>
+            Get/Set the HTTP Command
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.DirectiveObj">
+            <summary>
+            Get/Set the Object the Command is operating on
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.StatusCode">
+            <summary>
+            Get/Set the HTTP Status Code
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPMessage.StatusData">
+            <summary>
+            Get/Set the Extra data associated with the Status Code
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.HTTPRequest">
+            <summary>
+            This is a convenience class to facilitate HTTP communication. This class
+            handles the creation and sending of requests with an <seealso cref="T:Intel.UPNP.HTTPSession"/>
+            object. HTTPRequest also allows you to pipeline requests, whether or not the server supports it, 
+            because that functionality is abstracted away, so even if pipelining is not supported,
+            this object will serialize the requests, and open seperate sessions.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPRequest.#ctor">
+            <summary>
+            Instantiates a new Request Object
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPRequest.Dispose">
+            <summary>
+            Terminates and disposes this object
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPRequest.PipelineRequest(System.Net.IPEndPoint,Intel.UPNP.HTTPMessage,System.Object)">
+            <summary>
+            Pipelines a request packet
+            </summary>
+            <param name="dest">Destination IPEndPoint</param>
+            <param name="MSG">HTTPMessage Packet</param>
+            <param name="Tag">State Data</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPRequest.PipelineRequest(System.Uri,System.Object)">
+            <summary>
+            Pipelines a Uri request
+            </summary>
+            <param name="Resource">Uri to GET</param>
+            <param name="Tag">State Data</param>
+        </member>
+        <member name="E:Intel.UPNP.HTTPRequest.OnResponse">
+            <summary>
+            Fired when a the response is received
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPRequest.OnSniffPacket">
+            <summary>
+            Fired when anything is sent/received on the socket
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPRequest.OnSniff">
+            <summary>
+            Fired when anything is sent/received on the socket
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.HTTPSession">
+            <summary>
+            A useful HTTPSession Object
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.HTTPSession.UserStream">
+            <summary>
+            User Stream object
+            <para>
+            If this value is set, (usually in the HeaderHandler), the body
+            will be written to this stream object, instead of calling the receive callback.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.HTTPSession.StateObject">
+            <summary>
+            State Object, for custom use by the end-user/developer
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.#ctor(System.Net.IPEndPoint,System.Net.IPEndPoint,Intel.UPNP.HTTPSession.SessionHandler,Intel.UPNP.HTTPSession.SessionHandler,System.Object)">
+            <summary>
+            Creates a new HTTPSession
+            </summary>
+            <param name="Local">Source IPEndPoint to use</param>
+            <param name="Remote">Remote IPEndPoint to connect to</param>
+            <param name="CreateCallback">Succussful callback</param>
+            <param name="CreateFailedCallback">Failed callback</param>
+            <param name="State">StateObject</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.#ctor(System.Net.Sockets.Socket,Intel.UPNP.HTTPSession.ReceiveHeaderHandler,Intel.UPNP.HTTPSession.ReceiveHandler)">
+            <summary>
+            Attach to an existing Socket
+            </summary>
+            <param name="TheSocket">The socket to use</param>
+            <param name="HeaderCallback">Header Callback</param>
+            <param name="RequestCallback">Request/Responses callback</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.#ctor(System.Net.IPEndPoint,System.Net.Sockets.Socket,Intel.UPNP.HTTPSession.ReceiveHeaderHandler,Intel.UPNP.HTTPSession.ReceiveHandler)">
+            <summary>
+            Attach to an existing Socket
+            </summary>
+            <param name="Local">A Specific Local IPEndPoint</param>
+            <param name="TheSocket">The Socket</param>
+            <param name="HeaderCallback">Header Callback</param>
+            <param name="RequestCallback">Request/Response callback</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.CloseStreamObject(System.IO.Stream)">
+            <summary>
+            Closes an Object that was being streamed. <see cref="T:Intel.UPNP.HTTPSession"/> checks
+            to see that the provided stream matches the CurrentStreamObject. In either
+            case, the stream is closed. If the streams match then CurrentStreamObject is additionally
+            set to null.
+            </summary>
+            <param name="stream">Tells the <see cref="T:Intel.UPNP.HTTPSession"/> object to close this stream.</param>
+        </member>
+        <member name="F:Intel.UPNP.HTTPSession.StreamLock">
+            <summary>
+            This object is used simply for locking the CurrentStreamObject field.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.PostStreamObject(System.IO.Stream,System.String,System.String)">
+            <summary>
+            HTTP Post a stream
+            </summary>
+            <param name="SObject">Stream Object</param>
+            <param name="PostWhat">The POST data</param>
+            <param name="ContentType">Content-type</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.SendStreamObject(System.IO.Stream,System.Int64,System.String)">
+            <summary>
+            HTTP/1.1 200 OK, a stream object
+            </summary>
+            <param name="SObject">The Stream Object</param>
+            <param name="length">How much of the object to send? 0 if all</param>
+            <param name="ContentType">Content Type</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.SendStreamObject(System.IO.Stream,System.String)">
+            <summary>
+            HTTP/1.1 200 OK an entire StreamObject
+            </summary>
+            <param name="SObject">The Stream Object</param>
+            <param name="ContentType">Content-type</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.CancelAllEvents">
+            <summary>
+            Unhooks all events
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.Send(Intel.UPNP.HTTPMessage)">
+            <summary>
+            Sends a Packet to the computer connected to this session
+            </summary>
+            <param name="Packet">The Packet to Send</param>
+        </member>
+        <member name="M:Intel.UPNP.HTTPSession.Close">
+            <summary>
+            Close the session
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnReceive">
+            <summary>
+            This is triggered when the entire packet is received
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnSniffPacket">
+            <summary>
+            This is triggered whenever anything goes on the wire
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnHeader">
+            <summary>
+            This is triggered when the Headers are received
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnStreamDone">
+            <summary>
+            This is triggered when the Stream object is finished sending/receiving
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnCreateSession">
+            <summary>
+            This is triggered when a Session is sucessfully created
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnCreateFailed">
+            <summary>
+            This is triggered when a Session creation failed.
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnClosed">
+            <summary>
+            This is triggered when the session closed
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.HTTPSession.OnSendReady">
+            <summary>
+            This is triggered when the underlying AsyncSocket's SendQueue is empty
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPSession.SessionID">
+            <summary>
+            An uniquely generated Session ID
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPSession.Source">
+            <summary>
+            The IPEndPoint that initiated this Session.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.HTTPSession.Remote">
+            <summary>
+            The IPEndPoint that this Session was created for
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.HTTPSessionWatcher">
+            <summary>
+            Summary description for HTTPSessionWatcher.
+            </summary>
+        </member>
+        <member name="T:Intel.Utilities.InstanceTracker">
+            <summary>
+            Summary description for InstanceTracker.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker.Add(System.Object)">
+            <summary>
+            Add one to the counter for the type specified by object o.
+            </summary>
+            <param name="o"></param>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker.Remove(System.Object)">
+            <summary>
+            Remove one to the counter for the type specified by object o.
+            </summary>
+            <param name="o"></param>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker.Display">
+            <summary>
+            Display the tracking debug window to the user. If an instance of the windows
+            is already shown, it will pop it back to front.
+            </summary>
+        </member>
+        <member name="T:Intel.Utilities.InstanceTracker2">
+            <summary>
+            Summary description for InstanceTracker2.
+            </summary>
+        </member>
+        <member name="F:Intel.Utilities.InstanceTracker2.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker2.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Intel.Utilities.InstanceTracker2.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.LifeTimeMonitor">
+            <summary>
+            This class keeps track of many timers as once. The users can setup one
+            timer per object it passes in. The class will call back at the right
+            moment with the reference to the object on which the timer was setup.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LifeTimeMonitor.#ctor">
+            <summary>
+            Instantiates a new Monitor
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.LifeTimeMonitor.Remove(System.Object)">
+            <summary>
+            Remove the pending callback associated with this object.
+            </summary>
+            <param name="obj">Object associated with the pending callback</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.LifeTimeMonitor.Add(System.Object,System.Double)">
+            <summary>
+            Add a new callback event for a given object in a given number of
+            seconds in the future. This class will call back at the appropriate
+            time unless the event was removed, or was added with a new time.
+            There can only be one pending event per object.
+            </summary>
+            <param name="obj">Object that will be returned to the user when the event is triggered</param>
+            <param name="secondTimeout">Number of seconds to wait before calling the event</param>
+        </member>
+        <member name="E:Intel.UPNP.LifeTimeMonitor.OnExpired">
+            <summary>
+            Triggered when the lifetime duration passes
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.NetworkInfo">
+            <summary>
+            This class monitors local IP addresses and sends events when a address
+            is added or removed. Generally, this class should be created and
+            GetLocalAddresses() should be used to query all currently available
+            interfaces. Subsequent changes to the list will trigger events;
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.NetworkInfo.#ctor">
+            <summary>
+            Instantiates a new Monitor
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.NetworkInfo.#ctor(Intel.UPNP.NetworkInfo.InterfaceHandler)">
+            <summary>
+            Instantiates a new Monitor
+            </summary>
+            <param name="onNewInterfaceSink">Interface Callback</param>
+        </member>
+        <member name="M:Intel.UPNP.NetworkInfo.GetLocalAddresses">
+            <summary>
+            Retreve all IP addresses present on the local host.
+            </summary>
+            <returns>List of IP addresses present on the local host.</returns>
+        </member>
+        <member name="M:Intel.UPNP.NetworkInfo.PollInterface(Intel.UPNP.LifeTimeMonitor,System.Object)">
+            <summary>
+            Calledn every second to check for interface changes.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.NetworkInfo.GetFreePort(System.Int32,System.Int32,System.Net.IPAddress)">
+            *** - This method should be eliminated if possible.
+            <summary>
+            Returns a random free port on a specific interface
+            </summary>
+            <param name="LowRange">The lower bound</param>
+            <param name="UpperRange">The upper bound</param>
+            <param name="OnThisIP">The interface</param>
+            <returns></returns>
+        </member>
+        <member name="E:Intel.UPNP.NetworkInfo.OnNewInterface">
+            <summary>
+            Triggered when a new Interface appears on the network
+            </summary>
+            
+        </member>
+        <member name="E:Intel.UPNP.NetworkInfo.OnInterfaceDisabled">
+            <summary>
+            Triggered when an interface goes down
+            </summary>
+            
+        </member>
+        <member name="T:Intel.UPNP.ProtocolTypes">
+            <summary>
+            Summary description for Class1.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.SafeTimer">
+            <summary>
+            Safe timer, that doesn't spawn new threads, or resources that you own
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.SafeTimer.ElapsedWeakEvent">
+            <summary>
+            These group of members are used to notify the modules above that an event has fired
+            without holding any strong references
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.SafeTimer.Interval">
+            <summary>
+            Time Period
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.ReallySafeTimer.Interval">
+            <summary>
+            Time Period
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.ReallySafeTimer.OnElapsed">
+            <summary>
+            Triggered when the time period elapses
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.SafeTimer_SINGLE">
+            <summary>
+            Summary description for SafeTimer_SINGLE.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.IUPnPService">
+            <summary>
+            An interface that is used by the Code generator to encapsulate an implementation
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.IUPnPService.GetUPnPService">
+            <summary>
+            Gets the underlying UPnPService object
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.IUPnPDevice">
+            <summary>
+            An interface that is used to encapsulate a device implementation
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.IUPnPDevice.GetUPnPDevice">
+            <summary>
+            Gets the underlying UPnPDevice
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.ServiceGenerator">
+            <summary>
+            CodeGenerator class that parses SCPD files, and returns Device/Control Point implementations
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.ServiceGenerator.GenerateServiceFromSCPD(System.String)">
+            <summary>
+            Generates a UPnPService object from an SCPD XML
+            </summary>
+            <param name="SCPD_XML">XML String</param>
+            <returns>UPnPService</returns>
+        </member>
+        <member name="M:Intel.UPNP.ServiceGenerator.GenerateCP(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Generates Control Point Implementation
+            </summary>
+            <param name="ClassName">Class Name to generate</param>
+            <param name="ns">Namespace to use</param>
+            <param name="SavePath">Path to save source</param>
+            <param name="ServiceURN">Service URN to use</param>
+            <param name="SCPD_XML">SCPD XML</param>
+        </member>
+        <member name="M:Intel.UPNP.ServiceGenerator.Generate(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Generates Device side implementation from SCPD XML
+            </summary>
+            <param name="ClassName">Class Name to build</param>
+            <param name="ns">Namespace to use</param>
+            <param name="SavePath">Path to save source</param>
+            <param name="ServiceID">Service ID to use</param>
+            <param name="ServiceURN">Service URN to use</param>
+            <param name="SCPD_XML">SCPD XML String</param>
+        </member>
+        <member name="T:Intel.UPNP.SSDPSession">
+            <summary>
+            An SSDP Session Class, used by UPnPControlPoint
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.SSDPSession.#ctor(System.Net.Sockets.Socket,Intel.UPNP.SSDPSession.ReceiveHandler)">
+            <summary>
+            Sets up a new WebSession from a connected Socket
+            </summary>
+            <param name="TheSocket">The Socket on which to create the session</param>
+            <param name="RequestCallback">The callback handler for processing data</param>
+        </member>
+        <member name="M:Intel.UPNP.SSDPSession.#ctor(System.Net.Sockets.Socket,Intel.UPNP.SSDPSession.ReceiveHandler,System.Boolean)">
+            <summary>
+            Sets up a new WebSession from a connected Socket
+            </summary>
+            <param name="TheSocket">The Socket on which to create the session</param>
+            <param name="RequestCallback">The callback handler for processing data</param>
+            <param name="Unicast"></param>
+        </member>
+        <member name="M:Intel.UPNP.SSDPSession.SendTo(Intel.UPNP.HTTPMessage,System.Net.IPEndPoint)">
+            <summary>
+            Sends a Packet to the computer connected to this session
+            </summary>
+            <param name="Packet">The Packet to Send</param>
+        </member>
+        <member name="M:Intel.UPNP.SSDPSession.Close">
+            <summary>
+            Close the session
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.SSDPSession.Source">
+            <summary>
+            The IPEndPoint that initiated this Session.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.SSDPSession.Remote">
+            <summary>
+            The IPEndPoint that this Session was created for
+            </summary>
+        </member>
+        <member name="T:Intel.Utilities.StringCompressor">
+            <summary>
+            Summary description for StringCompresser.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.SyncInvokeAdapter">
+            <summary>
+            A helper class used by UPnPService to build a blocking implementation on top of non-blocking code
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UnsafeTimer">
+            <summary>
+            Summary description for UnsafeTimer.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.SSDP">
+            <summary>
+            The class that handles SSDP Communication
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.SSDP.#ctor(System.Net.IPEndPoint,System.Int32)">
+            <summary>
+            Constructs a new SSDP Server
+            </summary>
+            <param name="LocalEP">The EndPoint which this will bind to</param>
+            <param name="Expiration">The number of seconds before a Refresh will be triggered</param>
+        </member>
+        <member name="M:Intel.UPNP.SSDP.ParseURL(System.String,System.String@,System.Int32@,System.String@)">
+            <summary>
+            Parses a URL
+            </summary>
+            <param name="ServiceURL">The URL to Parse</param>
+            <param name="WebIP">The IPAddress</param>
+            <param name="Port">The Port Number</param>
+            <param name="ServiceName">The Object</param>
+        </member>
+        <member name="M:Intel.UPNP.SSDP.BroadcastData(Intel.UPNP.HTTPMessage)">
+            <summary>
+            Multicasts a HTTPMessage
+            </summary>
+            <param name="Packet">The Packet to Multicast</param>
+        </member>
+        <member name="M:Intel.UPNP.SSDP.UnicastData(Intel.UPNP.HTTPMessage,System.Net.IPEndPoint)">
+            <summary>
+            Unicasts a HTTPMessage
+            </summary>
+            <param name="msg">The Packet to Unicast</param>
+            <param name="dest">The IPEndPoint to unicast to</param>
+        </member>
+        <member name="E:Intel.UPNP.SSDP.OnSniffPacket">
+            <summary>
+            Packet Sniffing Event
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.SSDP.OnRefresh">
+            <summary>
+            This is triggered to notify a Device its timeout has elapsed
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.SSDP.OnNotify">
+            <summary>
+            This is triggered when another Device on the network has sent a NOTIFY
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.SSDP.OnSearch">
+            <summary>
+            This is triggered when somebody on the network has issued an M-SEARCH
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.MiniWebServer">
+            <summary>
+            A generic Web Server
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.MiniWebServer.#ctor(System.Net.IPEndPoint)">
+            <summary>
+            Instantiates a new MiniWebServer listenting on the given EndPoint
+            </summary>
+            <param name="local">IPEndPoint to listen on</param>
+        </member>
+        <member name="M:Intel.UPNP.MiniWebServer.#ctor(System.Uri)">
+            <summary>
+            Constructs a new WebServer, listening on the given Uri
+            </summary>
+            <param name="BaseURL">The URL you want this to listen to</param>
+        </member>
+        <member name="E:Intel.UPNP.MiniWebServer.OnSession">
+            <summary>
+            Triggered when a new session is created
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.MiniWebServer.OnReceive">
+            <summary>
+            This is triggered when an HTTP packet is received
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.MiniWebServer.OnHeader">
+            <summary>
+            Triggered when an HTTP Header is received
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPControlPoint">
+            <summary>
+            The object by which you can leverage UPnPDevices on your network.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPControlPoint.#ctor">
+            <summary>
+            Constructs a new Control Point, and waits for your commands and receives events
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPControlPoint.CreateDeviceAsync(System.Uri,System.Int32)">
+            <summary>
+            Creates a device from a URL. [Depracated] use UPnPDeviceFactory
+            </summary>
+            <param name="DescriptionURL"></param>
+            <param name="LifeTime"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPControlPoint.FindDeviceAsync(System.String)">
+            <summary>
+            Searches for a SearchTarget Asynchronously
+            </summary>
+            <param name="SearchTarget">The Target</param>
+        </member>
+        <member name="E:Intel.UPNP.UPnPControlPoint.OnSearch">
+            <summary>
+            Triggered when an AsyncSearch result returns
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPControlPoint.OnCreateDevice">
+            <summary>
+            Triggered when an Async CreateDevice returns...
+            <para>
+            Depracated. Use UPnPDeviceFactory</para>
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPControlPoint.OnNotify">
+            <summary>
+            This event is triggered when other UPnPDevices on your network are alive.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPDebugObject">
+            <summary>
+            Summary description for UPnPDebugObject.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPDevice">
+            <summary>
+            The container to hold UPnPDevices and UPnPServices.
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPDevice.HasPresentation">
+            <summary>
+            bool that indicates if a presentation page exists
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPDevice.Services">
+            <summary>
+            Array of UPnPServices contained in this device
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPDevice.EmbeddedDevices">
+            <summary>
+            Array of UPnPDevices contained in this device
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.CreateRootDevice(System.Int32,System.Double,System.String)">
+            <summary>
+            Instantiate a "root" Device
+            </summary>
+            <param name="DeviceExpiration">Refresh Cycle</param>
+            <param name="version">Major.Minor</param>
+            <param name="RootDir">Root path for use by the WebServer to serve misc. docs</param>
+            <returns>UPnPDevice Instance</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.CreateEmbeddedDevice(System.Double,System.String)">
+            <summary>
+            Instantiate an "embedded" Device
+            </summary>
+            <param name="version">Major.Minor</param>
+            <param name="UDN">Globally Unique Identifier</param>
+            <returns>UPnPDevice Instance</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.#ctor">
+            <summary>
+            Constructs a UPnPDevice for use as a control point
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.GetDevices(System.String)">
+            <summary>
+            Recursively searches the device heirarchy and returns an array of UPnPDevices that match the urn
+            </summary>
+            <param name="urn">The URN</param>
+            <returns>Array of UPnPDevices</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.GetServices(System.String)">
+            <summary>
+            Recursively searches the device heirarchy and returns an array of UPnPServices that match the urn
+            </summary>
+            <param name="urn">The URN</param>
+            <returns>Array of UPnPServices</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.AddDevice(Intel.UPNP.IUPnPDevice)">
+            <summary>
+            Add a UPnPDevice to this device
+            </summary>
+            <param name="device">Device</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.AddDevice(Intel.UPNP.UPnPDevice)">
+            <summary>
+            Add a UPnPDevice to this device
+            </summary>
+            <param name="device">Device</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.StartDevice">
+            <summary>
+            Start the UPnPDevice
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.StopDevice">
+            <summary>
+            Stop the container and all services, and BYEBYE
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.Advertise">
+            <summary>
+            Force the device to (re)Advertise
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.AddService(Intel.UPNP.IUPnPService)">
+            <summary>
+            Add a UPnPService to this device
+            </summary>
+            <param name="service">Service</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.AddService(Intel.UPNP.UPnPService)">
+            <summary>
+            Add a UPnPService to this device
+            </summary>
+            <param name="service">Service</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.AddVirtualDirectory(System.String,Intel.UPNP.UPnPDevice.VirtualDirectoryHandler,Intel.UPNP.UPnPDevice.VirtualDirectoryHandler)">
+            <summary>
+            Add a virutal directory to the MiniWebServer
+            </summary>
+            <param name="dir">The virtual directory</param>
+            <param name="callback">The callback to receive packets</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.ContainsSearchTarget(System.String,System.String,System.Collections.ArrayList)">
+            <summary>
+            Adds response packets for matches in a search request
+            </summary>
+            <param name="ST">SearchTarget</param>
+            <param name="Location">Location</param>
+            <param name="ResponseList">ArrayList</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDevice.GetRootDeviceXML(System.Net.IPEndPoint)">
+            <summary>
+            Retreives the XML for this UPnPDevice Container
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="E:Intel.UPNP.UPnPDevice.OnUpdate">
+            <summary>
+            Triggered when the device has switched Uri.
+            <para>
+            Only applies to Control Point
+            </para>
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.Root">
+            <summary>
+            bool that indicates if this is a RootDevice
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.ParentDevice">
+            <summary>
+            Pointer to the parent device, if this is a non-root device
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.Icon">
+            <summary>
+            Reference to the icon for this device
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.PresentationURL">
+            <summary>
+            Enter the Presentation file, and the PresentationURL will be built
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.StandardDeviceType">
+            <summary>
+            Enter the type, and the URN will be automatically generated for a Standard UPnP Device Type
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPDevice.Version">
+            <summary>
+            Get the version of this device
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPDeviceFactory">
+            <summary>
+            A helper class to instantiate UPnPDevice(s) from Description XML Uri(s)
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDeviceFactory.#ctor">
+            <summary>
+            Instantiate a reusable Factory
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDeviceFactory.#ctor(System.Uri,System.Int32,Intel.UPNP.UPnPDeviceFactory.UPnPDeviceHandler,Intel.UPNP.UPnPDeviceFactory.UPnPDeviceFailedHandler)">
+            <summary>
+            Instantiate a one-time use Factory
+            </summary>
+            <param name="DescLocation">XML Description Uri</param>
+            <param name="MaxSeconds">Device Refresh Cycle</param>
+            <param name="deviceCB">Success Callback</param>
+            <param name="failedCB">Failure Callback</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDeviceFactory.CreateDevice(System.Uri,System.Int32)">
+            <summary>
+            Create a UPnPDevice from a Uri
+            </summary>
+            <param name="DescLocation">XML Description Uri</param>
+            <param name="MaxSeconds">Device refresh Cycle</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPDeviceFactory.Shutdown">
+            <summary>
+            Disable the re-useable factory
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPDeviceFactory.OnFailed">
+            <summary>
+            Triggered when the Factory failed to create a device
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPDeviceFactory.OnDevice">
+            <summary>
+            Triggered when the Factory creates a device
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPDeviceWatcher">
+            <summary>
+            Summary description for UPnPDeviceWatcher.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPInternalSmartControlPoint">
+            <summary>
+            This class implements the real functionality of the UPnP Smart Control Point
+            System. For performance raisons, we want all the instances of the Smart
+            Control Point classes to be connected and re-use information to avoid
+            as much un-necessary UPnP network traffic as possible. This internal class
+            is only instanciated once and does all the work on behalf of all of the
+            Smart Control Point objects.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPInternalSmartControlPoint.UPnPControlPointSearchSink(System.Net.IPEndPoint,System.Net.IPEndPoint,System.Uri,System.String,System.String,System.Int32)">
+            <summary>
+            Triggered when a SSDP search result is received
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPInternalSmartControlPoint.SSDPNotifySink(System.Net.IPEndPoint,System.Net.IPEndPoint,System.Uri,System.Boolean,System.String,System.String,System.Int32,Intel.UPNP.HTTPMessage)">
+            <summary>
+            Triggered when a SSDP notification is received
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPInternalSmartControlPoint.DeviceLifeTimeClockSink(Intel.UPNP.LifeTimeMonitor,System.Object)">
+            <summary>
+            Triggered when a device lifetime has expired
+            </summary>
+            <param name="Obj"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPInternalSmartControlPoint.DeviceUpdateClockSink(Intel.UPNP.LifeTimeMonitor,System.Object)">
+            <summary>
+            Triggered when a device must be updated to a new source IP address
+            </summary>
+            <param name="Obj"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPInternalSmartControlPoint.DeviceFactoryCreationSink(Intel.UPNP.UPnPDeviceFactory,Intel.UPNP.UPnPDevice,System.Uri)">
+            <summary>
+            Triggered when a new UPnP device is created.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPModeratedStateVariable">
+            <summary>
+            This object derives from UPnPStateVariable. This implementation adds the ability
+            to moderate the event, as defined in UPnP A/V.
+            <para>
+            Simply set the Accumulator and Moderation Period.
+            </para>
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPStateVariable">
+            <summary>
+            A UPnPStateVariable
+            <para>
+            This object is the "meat" of UPnP. It is used to event the current state of a 
+            variable to subscribed control points. This object is also used by control points to determine the 
+            types of the parameters for a given action.
+            </para>
+            </summary>
+            <exception cref="T:Intel.UPNP.UPnPStateVariable.CannotRemoveException">This gets thrown if an attempt is made to remove
+            a UPnPState variable when something is dependent on it. Possible reasons include:
+            <list type="bullet">
+            <description>An action has a related state variable pointing to this</description>
+            <description>The association list in this object, is referencing an existing action</description>
+            </list></exception>
+            <exception cref="T:Intel.UPNP.UPnPStateVariable.OutOfRangeException">
+            This gets thrown if a value is passed that is out of the range specified by this object</exception>
+        </member>
+        <member name="F:Intel.UPNP.UPnPStateVariable.SendEvent">
+            <summary>
+            Bool indicating if this UPnPStateVariable is evented
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.#ctor(System.String,System.Object)">
+            <summary>
+            Constructs a UPnPStateVariable
+            <para>
+            This constructor creates a UPnPStateVariable with the given name, and assigns it the given default value.
+            This UPnPStateVariable will be evented, unless otherwise modified.
+            </para>
+            </summary>
+            <param name="VarName">Name of this StateVariable</param>
+            <param name="VarValue">Initial Value</param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Intel.UPNP.UPnPStateVariable.#ctor(System.String,System.Type,System.Boolean)" -->
+        <member name="M:Intel.UPNP.UPnPStateVariable.#ctor(System.String,System.Object,System.String[])">
+            <summary>
+            Constructs a UPnPStateVariable
+            <para>
+            The UPnPStateVariable is created with the given name, assigned the given default value, and given
+            the given AllowedValueList.
+            </para>
+            </summary>
+            <param name="VarName">Name of this StateVariable</param>
+            <param name="VarValue">Initial Value</param>
+            <param name="AllowedValues">Allowed Values</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.SetRange(System.Object,System.Object,System.Object)">
+            <summary>
+            Sets the Allowed Range for this UPnPStateVariable. And of these values can be null.
+            </summary>
+            <param name="Min">Inclusive Minimum Value</param>
+            <param name="Max">Inclusive Maximum Value</param>
+            <param name="Step">Step</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.GetNetType">
+            <summary>
+            Gets the CLR type of this UPnPStateVariable
+            </summary>
+            <returns>The Type</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.ConvertFromUPnPType(System.String)">
+            <summary>
+            Converts UPnPTypes to CLRTypes
+            </summary>
+            <param name="TheType">UPnPType</param>
+            <returns>CLRType</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.ConvertToUPnPType(System.Type)">
+            <summary>
+            Converts CLRTypes to UPnPTypes
+            </summary>
+            <param name="TheType">CLRType</param>
+            <returns>UPnPType</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.AddAssociation(System.String,System.String)">
+            <summary>
+            Associate this UPnPStateVariable to an Action
+            </summary>
+            <param name="ActionName">Name of Action to associate with</param>
+            <param name="ArgumentName">Nme of Argument to associate with</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStateVariable.RemoveAssociation(System.String,System.String)">
+            <summary>
+            Removes an association for this UPnPStateVariable
+            </summary>
+            <param name="ActionName">Action to disassociate with</param>
+            <param name="ArgumentName">Argument to disassociate with</param>
+        </member>
+        <member name="E:Intel.UPNP.UPnPStateVariable.OnModified">
+            <summary>
+            This Event is triggered whenever the value for this UPnPStateVariable has been modified.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.Minimum">
+            <summary>
+            Get/Set the Minimum Value
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.Maximum">
+            <summary>
+            Get/Set the Maximum Value
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.Step">
+            <summary>
+            Get/Set the Step
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.DefaultValue">
+            <summary>
+            Get/Set the default value for this UPnPStateVariable
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.Name">
+            <summary>
+            Get the name of this UPnPStateVariable
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.AllowedStringValues">
+            <summary>
+            Get/Set the AllowedValue list for this UPnPStateVariable as a string array.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.Value">
+            <summary>
+            Gets/Sets the current value
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPStateVariable.ValueType">
+            <summary>
+            Gets the UPnP Type
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPStateVariable.CannotRemoveException">
+            <summary>
+            This gets thrown if an attempt is made to remove
+            a UPnPStateVariable when something is dependent on it. Possible reasons include:
+            <list type="bullet">
+            <term>An action has a related state variable pointing to this</term>
+            <term>The association list in this object, is referencing an existing action</term>
+            </list>
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPStateVariable.OutOfRangeException">
+            <summary>
+            This gets thrown if a value is passed that is out of the range specified by this object
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPModeratedStateVariable.Accumulator">
+            <summary>
+            The Accumulator to use. DefaultAccumulator is used by default.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPModeratedStateVariable.ModerationPeriod">
+            <summary>
+            The Moderation period to use. Zero if none, positive number otherwise.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPModeratedStateVariable.IAccumulator">
+            <summary>
+            This is the interface which describes an accumulator, which is what
+            the ModeratedUPnPStateVariable uses to merge values together.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPModeratedStateVariable.IAccumulator.Merge(System.Object,System.Object)">
+            <summary>
+            This is called by the UPnPModeratedStateVariable, to merge two values together
+            </summary>
+            <param name="current">The Current Value</param>
+            <param name="newobject">The Value to Merge</param>
+            <returns>Merged Value</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPModeratedStateVariable.IAccumulator.Reset">
+            <summary>
+            This is called by the UPnPModeratedStateVariable at the end of the moderation period, after
+            the UPnPEvent has been sent.
+            </summary>
+            <returns>The value to (re)set the UPnPStateVariable to</returns>
+        </member>
+        <member name="T:Intel.UPNP.UPnPModeratedStateVariable.DefaultAccumulator">
+            <summary>
+            This is the default implementation that is used by the UPnPModeratedStateVariable
+            by default. This implementation simply writes the most recent value.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.DelayedResponseException">
+            <summary>
+            There are times when you wish to do asynchronous processing when dispatched
+            from the UPnPService. If you call <see cref="!:DelayInvokeRespose"/> and give it
+            a Unique handle, then throw this exception, then from any thread you can call 
+            <see cref="M:Intel.UPNP.UPnPService.DelayedInvokeResponse(System.Int64,System.Object,Intel.UPNP.UPnPArgument[],Intel.UPNP.UPnPCustomException)"/> to complete the transaction.
+            This is useful if for example you need to query other services in order to complete the action.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPAlreadySubscribedException">
+            <summary>
+            This exception gets thrown if you try to subscribe to a service, that you already subscribed to.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPInvokeException">
+            <summary>
+            This gets thrown if an exception was thrown during an Invoke attempt
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPCustomException">
+            <summary>
+            This gets thrown if a SOAP Fault was returned during an invoke attempt.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPArgument">
+            <summary>
+            UPnPArgument
+            <para>
+            This object is used to represent parameters in an action.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPArgument.Name">
+            <summary>
+            Name of the Argument
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPArgument.Direction">
+            <summary>
+            Direction of the Argument
+            <para>
+            Can be, "in" or "out"
+            </para>
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Intel.UPNP.UPnPArgument.DataType" -->
+        <member name="F:Intel.UPNP.UPnPArgument.DataValue">
+            <summary>
+            Value to be assigned/obtained to/from this argument
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPArgument.IsReturnValue">
+            <summary>
+            Bool indicating if this argument is/was a return value.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPArgument.#ctor(System.String,System.Object)">
+            <summary>
+            Construct a UPnPArgument
+            </summary>
+            <param name="name">Name</param>
+            <param name="val">Value</param>
+        </member>
+        <member name="P:Intel.UPNP.UPnPArgument.RelatedStateVar">
+            <summary>
+            Get/Set the Related UPnPStateVariable for this argument.
+            <para>
+            This tree is automatically built for the Control Point, and must be
+            assembled if building a device.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPArgument.ParentAction">
+            <summary>
+            Returns the UPnPAction that this argument was obtained from
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPAction">
+            <summary>
+            UPnPAction
+            <para>
+            This object is used to represent the Actions represented by a UPnPService.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPAction.SpecialCase">
+            <summary>
+            This is a special delegate if assigned will override an action dispatch. This is to be used for special cases only.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPAction.ValidateArgs(Intel.UPNP.UPnPArgument[])">
+            <summary>
+            Validates an argument array. This includes Number, Name, Type,Range, and allowed Value List.
+            </summary>
+            <param name="Args">Array of UPnPArguments to validate</param>
+            <returns>True if OK, detailed exception otherwise</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPAction.GetRetArg">
+            <summary>
+            Returns the Return argument for this action.
+            <para>
+            null is returned if there in none.
+            </para>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPAction.GetArg(System.String)">
+            <summary>
+            Returns the UPnPArgument of the given name, for this action.
+            <para>
+            null if it doesn't exist
+            </para>
+            </summary>
+            <param name="ArgName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Intel.UPNP.UPnPAction.HasReturnValue">
+            <summary>
+            Returns true if this Action has a return value, false otherwise.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPAction.ArgumentList">
+            <summary>
+            Returns the Argument list for this Action.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPService">
+            <summary>
+            UPnPService.
+            <para>
+            This is the object that represents all the consumables for a UPnPDevice.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Intel.UPNP.UPnPService.ParentDevice">
+            <summary>
+            The UPnPDevice which contains this UPnPService.
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.#ctor(System.Double,System.String,System.String,System.Boolean,System.Object)">
+            <summary>
+            Instantiate a UPnPService
+            </summary>
+            <param name="version">Major.Minor</param>
+            <param name="serviceID">DeviceUnique Identifier</param>
+            <param name="serviceType">ServiceType</param>
+            <param name="IsStandardService">Standard Type?</param>
+            <param name="Instance">Instance of object containing methods to expose</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.#ctor(System.Double,System.Object)">
+            <summary>
+            Constructs a new Service Object that can expose a service
+            </summary>
+            <param name="version">Major.Minor</param>
+            <param name="InstanceObject">Instance of object that contains methods to expose</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetActions">
+            <summary>
+            Retrieves Actions exposed by this Service
+            </summary>
+            <returns>Array of Actions</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetStateVariables">
+            <summary>
+            Retrieves all StateVariables in this Service
+            </summary>
+            <returns>Array of StateVariables</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetAction(System.String)">
+            <summary>
+            Returns the UPnPAction of the given name.
+            <para>
+            null if it doesn't exist
+            </para>
+            </summary>
+            <param name="ActionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.Subscribe(System.Int32,Intel.UPNP.UPnPService.UPnPEventSubscribeHandler)">
+            <summary>
+            Subscribe to UPnPEvents
+            </summary>
+            <param name="Timeout">Subscription Cycle</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.UnSubscribe(Intel.UPNP.UPnPService.UPnPEventHandler)">
+            <summary>
+            Unsubscribe to UPnPEvent
+            </summary>
+            <param name="cb"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetServiceXML(System.Xml.XmlTextWriter)">
+            <summary>
+            Retreives the XML for this Service
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.InvokeAsync(System.String,Intel.UPNP.UPnPArgument[],System.Object,Intel.UPNP.UPnPService.UPnPServiceInvokeHandler,Intel.UPNP.UPnPService.UPnPServiceInvokeErrorHandler)">
+            <summary>
+            Invokes a method on this service with specific callbacks
+            </summary>
+            <param name="MethodName">Name of Method</param>
+            <param name="InVarArr">Array of UPnPArguments</param>
+            <param name="InvokeCallback">Callback for Success</param>
+            <param name="ErrorCallback">Callback for Failed</param>
+            <returns>Unique Handle identifier</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.InvokeAsync(System.String,Intel.UPNP.UPnPArgument[])">
+            <summary>
+            Invokes a Method on this Service
+            </summary>
+            <param name="MethodName">Name of Method</param>
+            <param name="InVarArr">Array of UPnPArguments</param>
+            <returns>Unique Handle Identifier</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.InvokeSync(System.String,Intel.UPNP.UPnPArgument[])">
+            <summary>
+            Remotely Invokes a method exposed by this Service, in a blocking fashion.
+            </summary>
+            <param name="MethodName">The name of the Method to Remotely Invoke</param>
+            <param name="InVarArr">An array of UPnPArguments containing the input parameters</param>
+            <returns>The return value</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.SerializeObjectInstance(System.Object)">
+            <summary>
+            Serializes an Object Instance to the UPnP Way ;)
+            </summary>
+            <param name="data">Object to be serialized</param>
+            <returns>The serialized data, in string form</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.CreateObjectInstance(System.Type,System.String)">
+            <summary>
+            Create a CLR Object Instance
+            <para>
+            if null, will return default instance value.
+            </para>
+            </summary>
+            <param name="ObjectType">Type</param>
+            <param name="data">Serialized Data</param>
+            <returns>CLR Object</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.AddMethod(Intel.UPNP.UPnPAction)">
+            <summary>
+            Adds a UPnPAction to this service
+            </summary>
+            <param name="action">Action to add</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.RemoveMethod(System.String)">
+            <summary>
+            Remove a UPnPAction, by name
+            </summary>
+            <param name="MethodName">Name of Action</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.RemoveMethod(Intel.UPNP.UPnPAction)">
+            <summary>
+            Remove a UPnPAction, using name of object
+            </summary>
+            <param name="action">Action to remove</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.AddMethod(System.String)">
+            <summary>
+            Add a method to expose in this service
+            </summary>
+            <param name="MethodName">The name of the method to expose</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.SetStateVariable(System.String,System.Object)">
+            <summary>
+            Changes the state of a StateVariable, and sends events if neccessary.
+            </summary>
+            <param name="VarName">The name of the variable to set</param>
+            <param name="VarValue">The new value</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.AddStateVariable(Intel.UPNP.UPnPStateVariable)">
+            <summary>
+            Add a UPnPStateVariable
+            </summary>
+            <param name="NewVar"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.RemoveStateVariable(Intel.UPNP.UPnPStateVariable)">
+            <summary>
+            Remove a UPnPStateVariable
+            <para>
+            An exception will be thrown if you try to remove a UPnPStateVariable that is associated with an action,
+            or a UPnPStateVariable that is referenced by an Action.
+            </para>
+            </summary>
+            <param name="stateVariable">UPnPStateVariable to remove</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetStateVariableObject(System.String,System.String)">
+            <summary>
+            Get a UPnPStateVariable associated with a given Action/Argument.
+            </summary>
+            <param name="MethodName">Action</param>
+            <param name="ArgName">Argument</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetStateVariableObject(System.String)">
+            <summary>
+            Get UPnPStateVariable by name
+            </summary>
+            <param name="VarName">Name</param>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetStateVariable(System.String)">
+            <summary>
+            Returns the current value of a StateVariable
+            </summary>
+            <param name="VarName">The name of the StateVariable</param>
+            <returns>Current Value</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetCaller">
+            <summary>
+            Gets the IPEndPoint of the ControlPoint which called
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.GetReceiver">
+            <summary>
+            Gets the IPEndPoint of the Interface that recieved the invocation request
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.DelayInvokeRespose(System.Int64,Intel.UPNP.UPnPArgument[]@)">
+            <summary>
+            This will allow you to process a request, in an Async fashion.
+            <para>
+            Call this method from the dispatch thread, and specify a unique ID. Use this ID to call
+            DelayedInvokeResponse.
+            </para>
+            </summary>
+            <param name="ID">Unique ID</param>
+            <param name="OutArgs">Array of Args that you will need to assign in your callback</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPService.DelayedInvokeResponse(System.Int64,System.Object,Intel.UPNP.UPnPArgument[],Intel.UPNP.UPnPCustomException)">
+            <summary>
+            This is used to complete an AsyncRequest in an AsyncFashion.
+            <para>
+            You must either assign all the Argument values, or return an exception with "e"
+            </para>
+            </summary>
+            <param name="id">ID</param>
+            <param name="RetArg">Return Argument</param>
+            <param name="OutArgs">Out Arguments</param>
+            <param name="e">Exception</param>
+        </member>
+        <member name="E:Intel.UPNP.UPnPService.OnUPnPEvent">
+            <summary>
+            This event is triggered when a UPnPEvent is received from the device.
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPService.OnSubscribe">
+            <summary>
+            This event is triggered when a subscription request returns.
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPService.OnInvokeResponse">
+            <summary>
+            This event is triggered when an AsyncInvoke request successfully returns.
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPService.OnInvokeError">
+            <summary>
+            This event is triggered when an AsyncInvoke request failed.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPService.ServiceURN">
+            <summary>
+            Get/Set the URN for this Service.
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPService.ServiceID">
+            <summary>
+            Get/Set the ID for this Service.
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPServiceWatcher">
+            <summary>
+            Summary description for UPnPServiceWatcher.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Intel.UPNP.UPnPSmartControlPoint" -->
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.#ctor">
+            <summary>
+            Keep track of all UPnP devices on the network
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.#ctor(Intel.UPNP.UPnPSmartControlPoint.DeviceHandler)">
+            <summary>
+            Keep track of all UPnP devices on the network. The user can expect the OnAddedDeviceSink
+            delegate to immidiatly be called for each device that is already known.
+            </summary>
+            <param name="OnAddedDeviceSink">Delegate called when a UPnP device is detected</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.#ctor(Intel.UPNP.UPnPSmartControlPoint.DeviceHandler,System.String)">
+            <summary>
+            Keep track of all UPnP devices on the network. The user can expect the OnAddedDeviceSink
+            delegate to immidiatly be called for each device that is already known.
+            </summary>
+            <param name="OnAddedDeviceSink"></param>
+            <param name="DevicePartialMatchFilter"></param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.#ctor(Intel.UPNP.UPnPSmartControlPoint.DeviceHandler,Intel.UPNP.UPnPSmartControlPoint.ServiceHandler,System.String[])">
+            <summary>
+            Keep track of all UPnP devices on the network. The user can expect the OnAddedDeviceSink or OnAddedServiceSink
+            delegate to immidiatly be called for each device that is already known.
+            <para>
+            if multiple filters are supplied, the results will be that of the parent device which satisfies all the search criteria. 
+            </para>
+            </summary>
+            <param name="OnAddedDeviceSink"></param>
+            <param name="OnAddedServiceSink"></param>
+            <param name="Filters">Array of strings, which represent the search criteria</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.#ctor(Intel.UPNP.UPnPSmartControlPoint.DeviceHandler,Intel.UPNP.UPnPSmartControlPoint.ServiceHandler,System.String)">
+            <summary>
+            Keep track of all UPnP devices on the network. The user can expect the OnAddedDeviceSink
+            delegate to immidiatly be called for each device that is already known that matches the
+            filter.
+            </summary>
+            <param name="OnAddedDeviceSink">Delegate called when a UPnP device is detected that match the filter</param>
+            <param name="DevicePartialMatchFilter">Sets the filter to UPnP devices that start with this string</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.Rescan">
+            <summary>
+            Rescans the network
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.HandleAddedDevice(Intel.UPNP.UPnPInternalSmartControlPoint,Intel.UPNP.UPnPDevice)">
+            <summary>
+            Forward the OnAddedDevice event to the user.
+            </summary>
+            <param name="sender">UPnPInternalSmartControlPoint that sent the event</param>
+            <param name="device">The UPnPDevice object that was added</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.HandleUpdatedDevice(Intel.UPNP.UPnPInternalSmartControlPoint,Intel.UPNP.UPnPDevice)">
+            <summary>
+            Forward the OnUpdatedDevice event to the user.
+            </summary>
+            <param name="sender">UPnPInternalSmartControlPoint that sent the event</param>
+            <param name="device">The UPnPDevice object that was updated</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.HandleRemovedDevice(Intel.UPNP.UPnPInternalSmartControlPoint,Intel.UPNP.UPnPDevice)">
+            <summary>
+            Forward the OnRemovedDevice event to the user.
+            </summary>
+            <param name="sender">UPnPInternalSmartControlPoint that sent the event</param>
+            <param name="device">The UPnPDevice object that was removed from the network</param>
+        </member>
+        <member name="M:Intel.UPNP.UPnPSmartControlPoint.HandleExpiredDevice(Intel.UPNP.UPnPInternalSmartControlPoint,Intel.UPNP.UPnPDevice)">
+            <summary>
+            Forward the HandleExpiredDevice event to the user as an OnRemovedDevice event.
+            </summary>
+            <param name="sender">UPnPInternalSmartControlPoint that sent the event</param>
+            <param name="device">The UPnPDevice object that was removed from the network</param>
+        </member>
+        <member name="E:Intel.UPNP.UPnPSmartControlPoint.OnAddedDevice">
+            <summary>
+            Triggered when a Device that passes the filter appears on the network
+            <para>
+            Also triggered when a device that contains objects that pass all the filters appears on the network. This only applies if more than one filter is passed.
+            </para>
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPSmartControlPoint.OnRemovedDevice">
+            <summary>
+            Triggered when a Device that passes the filter disappears from the network
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPSmartControlPoint.OnAddedService">
+            <summary>
+            Triggered when a Service that passes the filter appears on the network
+            </summary>
+        </member>
+        <member name="E:Intel.UPNP.UPnPSmartControlPoint.OnRemovedService">
+            <summary>
+            Triggered when a Service that passes the filter disappears from the network
+            </summary>
+        </member>
+        <member name="P:Intel.UPNP.UPnPSmartControlPoint.Devices">
+            <summary>
+            An arraylist of Devices
+            </summary>
+        </member>
+        <member name="T:Intel.UPNP.UPnPStringFormatter">
+            <summary>
+            Helper class that escapes/unescapes XML reserved characters
+            </summary>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStringFormatter.EscapeString(System.String)">
+            <summary>
+            Escape reserved characters
+            </summary>
+            <param name="InString">Input</param>
+            <returns>Result</returns>
+        </member>
+        <member name="M:Intel.UPNP.UPnPStringFormatter.UnEscapeString(System.String)">
+            <summary>
+            Unescapes encoded reserved characters
+            </summary>
+            <param name="InString">Input</param>
+            <returns>Result</returns>
+        </member>
+        <member name="T:Intel.Utilities.WeakEvent">
+            <summary>
+            Summary description for WeakEvent.
+            </summary>
+        </member>
+    </members>
+</doc>

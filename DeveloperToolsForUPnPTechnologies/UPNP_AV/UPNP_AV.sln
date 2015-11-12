@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPNP_AV", "UPNP_AV.csproj", "{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Debug.ActiveCfg = Debug|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Debug.Build.0 = Debug|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Release.ActiveCfg = Release|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

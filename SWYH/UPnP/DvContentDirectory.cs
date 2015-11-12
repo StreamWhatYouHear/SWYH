@@ -28,6 +28,8 @@ namespace SWYH.UPnP
     using SWYH.Audio;
     using System;
     using System.Collections.Generic;
+    using System.Net;
+    using System.Net.Sockets;
     using System.Text;
     using System.Web;
     using System.Xml;
@@ -1299,12 +1301,29 @@ namespace SWYH.UPnP
             //<upnp:genre>Indie</upnp:genre>
             //<upnp:class>object.item.audioItem.musicTrack</upnp:class>
             //</item>
-            return  "<item id=\"" + id + "\" parentID=\"" + parentID + "\" restricted=\"" + restricted + "\">" +
+            StringBuilder ressources = new StringBuilder();
+            List<IPEndPoint> endPointsList = new List<IPEndPoint>();
+            try
+            {
+                endPointsList.Add(this.GetReceiver());
+            }
+            catch (NullReferenceException)
+            {
+                endPointsList.AddRange(this.GetUPnPService().ParentDevice.LocalIPEndPoints);
+            }
+            foreach (IPEndPoint ip in endPointsList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork && !ip.ToString().StartsWith("127.0.0.1"))
+                {
+                    ressources.Append("<res bitsPerSample=\"" + bitsPerSample + "\" protocolInfo=\"" + protocolInfo + "\" duration=\"" + duration + "\" nrAudioChannels=\"" + nrAudioChannels + "\" bitrate=\"" + bitrate + "\" sampleFrequency=\"" + sampleFrequency + "\">" +
+                                            HttpUtility.HtmlEncode("http://" + ip.ToString() + "/stream/" + resFileName) +
+                                       "</res>");
+                }
+            }
+            return "<item id=\"" + id + "\" parentID=\"" + parentID + "\" restricted=\"" + restricted + "\">" +
                         "<dc:title>" + HttpUtility.HtmlEncode(title) + "</dc:title>" +
                         "<upnp:artist>" + artist + "</upnp:artist>" +
-                        "<res bitsPerSample=\"" + bitsPerSample + "\" protocolInfo=\"" + protocolInfo + "\" duration=\"" + duration + "\" nrAudioChannels=\"" + nrAudioChannels + "\" bitrate=\"" + bitrate + "\" sampleFrequency=\"" + sampleFrequency + "\">" +
-                            HttpUtility.HtmlEncode("http://" + this.GetReceiver().ToString() + "/stream/" + resFileName) +
-                        "</res>" +
+                        ressources.ToString() +
                         "<upnp:album>" + album + "</upnp:album>" +
                         "<upnp:genre>" + genre + "</upnp:genre>" +
                         "<upnp:class>" + upnpClass + "</upnp:class>" +

@@ -96,22 +96,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UPnP, Version=1.0.4701.41113, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UPnP.dll</HintPath>
-    </Reference>
-    <Reference Include="UPNPAVCDSML, Version=1.0.4569.26838, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UPNPAVCDSML.dll</HintPath>
-    </Reference>
-    <Reference Include="UPNPAV_RendererStack, Version=1.0.4569.26839, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UPNPAV_RendererStack.dll</HintPath>
-    </Reference>
-    <Reference Include="UPNP_AV, Version=1.0.4569.26838, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UPNP_AV.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -211,10 +195,6 @@
     <Content Include="libmp3lame.64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Libs\UPnP.dll" />
-    <Content Include="Libs\UPNPAVCDSML.dll" />
-    <Content Include="Libs\UPNPAV_RendererStack.dll" />
-    <Content Include="Libs\UPNP_AV.dll" />
     <Content Include="Resources\About.htm" />
     <Content Include="Resources\Error404.htm" />
   </ItemGroup>
@@ -239,6 +219,24 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DeveloperToolsForUPnPTechnologies\UPNPAVCDSML\UPnPAVCDSML.csproj">
+      <Project>{8ea0e595-45ec-40c1-82ce-269f4fa9ebb3}</Project>
+      <Name>UPnPAVCDSML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeveloperToolsForUPnPTechnologies\UPNPAV_RendererStack\UPnPAV_RendererStack.csproj">
+      <Project>{e01b6019-acc6-40a6-a511-48d285d51c40}</Project>
+      <Name>UPnPAV_RendererStack</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeveloperToolsForUPnPTechnologies\UPnP\UPnP.csproj">
+      <Project>{584ed187-8f2a-4b58-a266-85f3f212b092}</Project>
+      <Name>UPnP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DeveloperToolsForUPnPTechnologies\UPNP_AV\UPnPAV.csproj">
+      <Project>{b2439738-5f46-4e59-95a1-92c3df38696f}</Project>
+      <Name>UPnPAV</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

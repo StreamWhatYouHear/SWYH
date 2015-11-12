@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPNPAV_RendererStack", "UPNPAV_RendererStack.csproj", "{E01B6019-ACC6-40A6-A511-48D285D51C40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPnP", "..\UPnP\UPnP.csproj", "{584ED187-8F2A-4B58-A266-85F3F212B092}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPNP_AV", "..\UPNP_AV\UPNP_AV.csproj", "{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPNPAVCDSML", "..\UPNPAVCDSML\UPNPAVCDSML.csproj", "{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E01B6019-ACC6-40A6-A511-48D285D51C40}.Debug.ActiveCfg = Debug|.NET
+		{E01B6019-ACC6-40A6-A511-48D285D51C40}.Debug.Build.0 = Debug|.NET
+		{E01B6019-ACC6-40A6-A511-48D285D51C40}.Release.ActiveCfg = Release|.NET
+		{E01B6019-ACC6-40A6-A511-48D285D51C40}.Release.Build.0 = Release|.NET
+		{584ED187-8F2A-4B58-A266-85F3F212B092}.Debug.ActiveCfg = Debug|.NET
+		{584ED187-8F2A-4B58-A266-85F3F212B092}.Debug.Build.0 = Debug|.NET
+		{584ED187-8F2A-4B58-A266-85F3F212B092}.Release.ActiveCfg = Release|.NET
+		{584ED187-8F2A-4B58-A266-85F3F212B092}.Release.Build.0 = Release|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Debug.ActiveCfg = Debug|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Debug.Build.0 = Debug|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Release.ActiveCfg = Release|.NET
+		{7B4035A7-6E1C-42EE-AA17-924BDCB5DC1F}.Release.Build.0 = Release|.NET
+		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Debug.ActiveCfg = Debug|.NET
+		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Debug.Build.0 = Debug|.NET
+		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Release.ActiveCfg = Release|.NET
+		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
