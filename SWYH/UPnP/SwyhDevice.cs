@@ -176,9 +176,12 @@ namespace SWYH.UPnP
             {
                 WebSession.OnStreamDone += (s, e) =>
                 {
-                    PipeStream value;
-                    while (!sessionMp3Streams.TryRemove(s.SessionID, out value)) ; ;
-                    App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                    if (sessionMp3Streams.ContainsKey(s.SessionID))
+                    {
+                        PipeStream value;
+                        sessionMp3Streams.TryRemove(s.SessionID, out value);
+                        App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                    }
                 };
                 PipeStream stream = sessionMp3Streams.GetOrAdd(WebSession.SessionID, new PipeStream());
                 App.CurrentInstance.wasapiProvider.UpdateClientsList();
@@ -188,9 +191,12 @@ namespace SWYH.UPnP
             {
                 WebSession.OnStreamDone += (s, e) =>
                 {
-                    PipeStream value;
-                    while (!sessionPcmStreams.TryRemove(s.SessionID, out value)) ; ;
-                    App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                    if (sessionPcmStreams.ContainsKey(s.SessionID))
+                    {
+                        PipeStream value;
+                        sessionPcmStreams.TryRemove(s.SessionID, out value);
+                        App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                    }
                 };
                 PipeStream stream = sessionPcmStreams.GetOrAdd(WebSession.SessionID, new PipeStream());
                 App.CurrentInstance.wasapiProvider.UpdateClientsList();

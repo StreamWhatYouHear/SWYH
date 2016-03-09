@@ -35,7 +35,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sebastien.warin.fr")]
 [assembly: AssemblyProduct("Stream What You Hear (SWYH)")]
-[assembly: AssemblyCopyright("Copyright ©  2012 - 2015 Sebastien.warin.fr")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2016 Sebastien.warin.fr")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -75,5 +75,5 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.15316.0")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
+[assembly: AssemblyFileVersion("1.4.16069.0")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
 [assembly: GuidAttribute("2ecd245f-4268-48ee-b0f1-0706ead1ba42")]
