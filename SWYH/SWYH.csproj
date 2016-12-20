@@ -197,6 +197,7 @@
     </Content>
     <Content Include="Resources\About.htm" />
     <Content Include="Resources\Error404.htm" />
+    <None Include="Resources\swyh32_Win10.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

@@ -109,9 +109,18 @@ namespace SWYH
             this.aboutWindow = new AboutWindow();
             this.httpWindow = new HTTPLiveStreamWindow();
             this.recordWindow = new RecordWindow();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon();
+            System.IntPtr iconHandle = SWYH.Properties.Resources.swyh32_Win10.GetHicon();
+            System.Drawing.Icon icon;
+            int build = Environment.OSVersion.Version.Build;
+            int minor = Environment.OSVersion.Version.Minor;
+            if (build > 6 || (build == 6 && minor >= 2))
+                icon = System.Drawing.Icon.FromHandle(iconHandle);
+            else
+                icon = SWYH.Properties.Resources.swyh32;
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
-                Icon = SWYH.Properties.Resources.swyh32,
+                Icon = icon,
                 Text = string.Format("Stream What You Hear {0}.{1}{2}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart, (fileVersion.ProductPrivatePart % 2) == 0 ? "" : " (BETA)"),
                 Visible = true
             };
