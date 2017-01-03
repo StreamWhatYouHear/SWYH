@@ -235,13 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\swyh128.ico" />
-    <Resource Include="Resources\Icons\swyh128.png" />
-    <Resource Include="Resources\Icons\swyh16.ico" />
-    <Resource Include="Resources\Icons\swyh16.png" />
-    <Resource Include="Resources\Icons\swyh32.ico" />
-    <Resource Include="Resources\Icons\swyh32.png" />
-    <Resource Include="Resources\Icons\swyh48.ico" />
-    <Resource Include="Resources\Icons\swyh48.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="libmp3lame.32.dll">
@@ -252,7 +245,11 @@
     </Content>
     <Content Include="Resources\About.htm" />
     <Content Include="Resources\Error404.htm" />
-    <None Include="Resources\swyh32_Win10.png" />
+    <Resource Include="Resources\Icons\swyh128.png" />
+    <Resource Include="Resources\Icons\swyh128_v2.png" />
+    <Resource Include="Resources\Icons\swyh48.ico" />
+    <None Include="Resources\Icons\swyh48_v2.ico" />
+    <None Include="Resources\Icons\swyh128_v2.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: DvContentDirectory.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2017 - Sebastien Warin <http://sebastien.warin.fr> and others	
  *
  *   This file is part of Stream What Your Hear.
  *	 

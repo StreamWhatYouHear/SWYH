@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: SwyhDevice.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2017 - Sebastien Warin <http://sebastien.warin.fr> and others	
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -61,8 +61,8 @@ namespace SWYH.UPnP
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";
-            this.Device.Icon = Properties.Resources.swyh128.ToBitmap();
-            this.Device.Icon2 = Properties.Resources.swyh48.ToBitmap();
+            this.Device.Icon = Properties.Resources.swyh128_v2.ToBitmap();
+            this.Device.Icon2 = Properties.Resources.swyh48_v2.ToBitmap();
             this.Device.AddCustomFieldInDescription("dlna:X_DLNADOC", "DMS-1.50", "urn:schemas-dlna-org:device-1-0");
 
             DvX_MS_MediaReceiverRegistrar X_MS_MediaReceiverRegistrar = new DvX_MS_MediaReceiverRegistrar();

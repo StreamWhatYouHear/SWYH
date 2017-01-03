@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: AssemblyInfo.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2017 - Sebastien Warin <http://sebastien.warin.fr> and others	
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -22,8 +22,6 @@
  */
 
 using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -35,7 +33,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sebastien.warin.fr")]
 [assembly: AssemblyProduct("Stream What You Hear (SWYH)")]
-[assembly: AssemblyCopyright("Copyright ©  2012-2016 Sebastien.warin.fr")]
+[assembly: AssemblyCopyright("Copyright ©  2012-2017 Sebastien.warin.fr and others")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -56,11 +54,11 @@ using System.Windows;
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located
-    //(used if a resource is not found in the page, 
-    // or application resource dictionaries)
+                                     //(used if a resource is not found in the page, 
+                                     // or application resource dictionaries)
     ResourceDictionaryLocation.SourceAssembly //where the generic resource dictionary is located
-    //(used if a resource is not found in the page, 
-    // app, or any theme specific resource dictionaries)
+                                              //(used if a resource is not found in the page, 
+                                              // app, or any theme specific resource dictionaries)
 )]
 
 
@@ -74,6 +72,6 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.4.0.0")]
-[assembly: AssemblyFileVersion("1.4.16069.0")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
+[assembly: AssemblyVersion("1.5.0.0")]
+[assembly: AssemblyFileVersion("1.5.17003.1")] // MAJOR.minor.BuildDate.Release (Si Release impaire = BETA) || http://www.epochconverter.com/epoch/daynumbers.php
 [assembly: GuidAttribute("2ecd245f-4268-48ee-b0f1-0706ead1ba42")]

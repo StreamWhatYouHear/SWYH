@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: App.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2017 - Sebastien Warin <http://sebastien.warin.fr> and others	
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -55,6 +55,7 @@ namespace SWYH
     {
         public static App CurrentInstance { get { return Application.Current as App; } }
         public static bool NeedUpdate { get; private set; }
+
         private string[] autoStreamTo = new string[0];
         private AVRendererDiscovery rendererDiscovery = null;
         internal SwyhDevice swyhDevice = null;
@@ -67,11 +68,12 @@ namespace SWYH
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem streamToChromecastMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
-        private bool directClose = false;   //Skip the statements in Application_Exit function.
+        private bool isStarted = false;
 
-        private readonly ChromecastService ChromecastService = ChromecastService.Current;
-        private SharpCasterDemoController _controller;
-        private ObservableCollection<Chromecast> c_devices;
+        private readonly ChromecastService chromecastService = ChromecastService.Current;
+        private SharpCasterDemoController chromecastController;
+        private ObservableCollection<Chromecast> chromecastDevices;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             var startTest = 0;
@@ -85,7 +87,6 @@ namespace SWYH
                     goto start;
                 }
                 MessageBox.Show("Stream What You Hear is already running !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                directClose = true;   //Skip the statements in Application_Exit function, otherwise it will casue null object exception
                 this.Shutdown();
             }
             else
@@ -106,8 +107,7 @@ namespace SWYH
                 }
                 if (new NAudio.CoreAudioApi.MMDeviceEnumerator().EnumerateAudioEndPoints(NAudio.CoreAudioApi.DataFlow.Render, NAudio.CoreAudioApi.DeviceState.Active).Count == 0)    //Check the available interface.
                 {
-                    System.Windows.Forms.MessageBox.Show("Unable to find your sound interface, please check your sound interface in control panel.", "Cannot find the sound interface");
-                    directClose = true;    //Skip the statements in Application_Exit function, otherwise it will casue null object exception
+                    MessageBox.Show("Unable to find your default audio interface !\n\nPlease check your audio settings in the Control Panel", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Error);
                     this.Shutdown();
                 }
                 else
@@ -115,80 +115,18 @@ namespace SWYH
                     this.CheckAutomaticDeviceStreamed(e);
                     this.CheckNewVersion();
                     this.InitializeUI();
-                    DoStuff();
+                    this.InitializeChromecast();
                     this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
                     this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
                     this.wasapiProvider = new WasapiProvider();
                     this.swyhDevice = new SwyhDevice();
                     this.swyhDevice.Start();
-                    notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                    this.notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                    this.isStarted = true;
                 }
             }
         }
 
-        private void updateChromecastList()
-        {
-            streamToChromecastMenu.DropDownItems.Clear();
-            if (c_devices.Count != 0)
-            {
-                foreach (var device in c_devices)
-                {
-                    var menuItem = new System.Windows.Forms.ToolStripMenuItem(device.FriendlyName, null, c_Selected)
-                    {
-                        Tag = device
-                    };
-                    streamToChromecastMenu.DropDownItems.Add(menuItem);
-                }
-            }
-        }
-
-        private async Task DoStuff()
-        {
-            c_devices = await ChromecastService.StartLocatingDevices();
-            updateChromecastList();
-        }
-
-        public async void c_Selected(object sender, EventArgs e)
-        {
-            var menuItem = (System.Windows.Forms.ToolStripMenuItem)sender;
-            var device = menuItem.Tag as Chromecast;
-            if (device != null)
-            {
-                if (menuItem.Checked)
-                {
-                    menuItem.Checked = false;
-                    ChromecastService.ChromeCastClient.ConnectedChanged -= ChromeCastClient_Connected;
-                    ChromecastService.ChromeCastClient.ApplicationStarted -= Client_ApplicationStarted;
-                    await _controller.Stop();
-                    await _controller.StopApplication();
-                    //TODO: Disconnect from the chromecast. Dispose the socket connection
-                    //reference: https://github.com/tapanila/SharpCaster/blob/master/SharpCaster/ChromeCastClient.cs Line:191
-
-                }
-                else
-                {
-                    menuItem.Checked = true;
-                    ChromecastService.ChromeCastClient.ConnectedChanged += ChromeCastClient_Connected;
-                    ChromecastService.ChromeCastClient.ApplicationStarted += Client_ApplicationStarted;
-                    ChromecastService.ConnectToChromecast(device);
-                }
-            }
-        }
-        private async void Client_ApplicationStarted(object sender, ChromecastApplication e)
-        {
-            while (_controller == null)
-            {
-                await Task.Delay(500);
-            }
-            await _controller.LoadMedia(SWYH.App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3).FirstOrDefault(), null, null, "BUFFERED", 0D, null);
-        }
-        private async void ChromeCastClient_Connected(object sender, EventArgs e)
-        {
-            if (_controller == null)
-            {
-                _controller = await ChromecastService.ChromeCastClient.LaunchSharpCaster();
-            }
-        }
         private void InitializeUI()
         {
             FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
@@ -197,17 +135,9 @@ namespace SWYH
             this.httpWindow = new HTTPLiveStreamWindow();
             this.recordWindow = new RecordWindow();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon();
-            System.IntPtr iconHandle = SWYH.Properties.Resources.swyh32_Win10.GetHicon();
-            System.Drawing.Icon icon;
-            int build = Environment.OSVersion.Version.Build;
-            int minor = Environment.OSVersion.Version.Minor;
-            if (build > 6 || (build == 6 && minor >= 2))
-                icon = System.Drawing.Icon.FromHandle(iconHandle);
-            else
-                icon = SWYH.Properties.Resources.swyh32;
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
-                Icon = icon,
+                Icon = SWYH.Properties.Resources.swyh128_v2,
                 Text = string.Format("Stream What You Hear {0}.{1}{2}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart, (fileVersion.ProductPrivatePart % 2) == 0 ? "" : " (BETA)"),
                 Visible = true
             };
@@ -384,9 +314,74 @@ namespace SWYH
                 }));
         }
 
+        private async Task InitializeChromecast()
+        {
+            this.chromecastDevices = await this.chromecastService.StartLocatingDevices();
+            this.UpdateChromecastDevicesList();
+        }
+
+        private void UpdateChromecastDevicesList()
+        {
+            this.streamToChromecastMenu.DropDownItems.Clear();
+            if (this.chromecastDevices.Count != 0)
+            {
+                foreach (var device in this.chromecastDevices)
+                {
+                    var menuItem = new System.Windows.Forms.ToolStripMenuItem(device.FriendlyName, null, streamToChromecastMenu_DeviceSelected)
+                    {
+                        Tag = device
+                    };
+                    this.streamToChromecastMenu.DropDownItems.Add(menuItem);
+                }
+            }
+        }
+
+        public async void streamToChromecastMenu_DeviceSelected(object sender, EventArgs e)
+        {
+            var menuItem = (System.Windows.Forms.ToolStripMenuItem)sender;
+            var device = menuItem.Tag as Chromecast;
+            if (device != null)
+            {
+                if (menuItem.Checked)
+                {
+                    menuItem.Checked = false;
+                    chromecastService.ChromeCastClient.ConnectedChanged -= ChromeCastClient_Connected;
+                    chromecastService.ChromeCastClient.ApplicationStarted -= Client_ApplicationStarted;
+                    await chromecastController.Stop();
+                    await chromecastController.StopApplication();
+                    //TODO: Disconnect from the chromecast. Dispose the socket connection
+                    //reference: https://github.com/tapanila/SharpCaster/blob/master/SharpCaster/ChromeCastClient.cs Line:191
+                }
+                else
+                {
+                    menuItem.Checked = true;
+                    chromecastService.ChromeCastClient.ConnectedChanged += ChromeCastClient_Connected;
+                    chromecastService.ChromeCastClient.ApplicationStarted += Client_ApplicationStarted;
+                    chromecastService.ConnectToChromecast(device);
+                }
+            }
+        }
+
+        private async void Client_ApplicationStarted(object sender, ChromecastApplication e)
+        {
+            while (chromecastController == null)
+            {
+                await Task.Delay(500);
+            }
+            await chromecastController.LoadMedia(SWYH.App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3).FirstOrDefault(), null, null, "BUFFERED", 0D, null);
+        }
+
+        private async void ChromeCastClient_Connected(object sender, EventArgs e)
+        {
+            if (chromecastController == null)
+            {
+                chromecastController = await chromecastService.ChromeCastClient.LaunchSharpCaster();
+            }
+        }
+
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            if (!directClose)
+            if (this.isStarted)
             {
                 this.CloseStreamingConnections();
                 this.swyhDevice.Stop();

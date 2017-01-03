@@ -132,30 +132,10 @@ namespace SWYH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon swyh16 {
+        internal static System.Drawing.Icon swyh128_v2 {
             get {
-                object obj = ResourceManager.GetObject("swyh16", resourceCulture);
+                object obj = ResourceManager.GetObject("swyh128_v2", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon swyh32 {
-            get {
-                object obj = ResourceManager.GetObject("swyh32", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap swyh32_Win10 {
-            get {
-                object obj = ResourceManager.GetObject("swyh32_Win10", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -165,6 +145,16 @@ namespace SWYH.Properties {
         internal static System.Drawing.Icon swyh48 {
             get {
                 object obj = ResourceManager.GetObject("swyh48", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon swyh48_v2 {
+            get {
+                object obj = ResourceManager.GetObject("swyh48_v2", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

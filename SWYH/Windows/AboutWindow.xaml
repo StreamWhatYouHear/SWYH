@@ -23,8 +23,9 @@
             <Run Text="Simply stream the sound from your PC to an UPnP / DLNA device"/>
         </TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5">
-            <TextBlock TextWrapping="Wrap" FontFamily="Segoe WP Semibold" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="145"><Run Text="Copyright (c) 2012 - 2015 - "/></TextBlock>
-            <TextBlock HorizontalAlignment="Right" Cursor="Hand" MouseLeftButtonDown="tbSwarinWebSite_Click"  TextWrapping="Wrap" VerticalAlignment="Bottom" Width="113" FontFamily="Segoe WP Semibold" TextDecorations="Underline" Foreground="#FF003EFF"><Run Text="Sebastien.warin.fr"/></TextBlock>
+            <TextBlock TextWrapping="Wrap" FontFamily="Segoe WP Semibold" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0, 0, 5, 0"><Run Text="Copyright (c) 2012 - 2017 -"/></TextBlock>
+            <TextBlock HorizontalAlignment="Right" Cursor="Hand" MouseLeftButtonDown="tbSwarinWebSite_Click"  TextWrapping="Wrap" VerticalAlignment="Bottom"  FontFamily="Segoe WP Semibold" TextDecorations="Underline" Foreground="#FF003EFF"><Run Text="Sebastien.warin.fr"/></TextBlock>
+            <TextBlock TextWrapping="Wrap" FontFamily="Segoe WP Semibold" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5, 0, 0, 0"><Run Text="and others "/></TextBlock>
         </StackPanel>
         <TextBlock Cursor="Hand" FontFamily="Segoe WP Semibold" MouseLeftButtonUp="btUpdate_MouseLeftButtonUp" Foreground="#FF003EFF" HorizontalAlignment="Right" Margin="0,75,-10,0" Name="btUpdate" TextAlignment="Center" TextDecorations="Underline" TextWrapping="Wrap" VerticalAlignment="Top" Width="113"><Run Text="Update now !" /></TextBlock>
     </Grid>
