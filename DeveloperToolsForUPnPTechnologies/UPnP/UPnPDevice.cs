@@ -1412,6 +1412,12 @@ namespace OpenSource.UPnP
             ArrayList ResponseList = new ArrayList();
             HTTPMessage msg;
             string Location = null;
+
+            if (!WebServerTable.ContainsKey(local.Address.ToString()))
+            {
+                NewDeviceInterface(null, local.Address);
+            }
+
             if (local.AddressFamily == AddressFamily.InterNetwork)
             {
                 Location = "http://" + local.Address.ToString() + ":" + ((MiniWebServer)WebServerTable[local.Address.ToString()]).LocalIPEndPoint.Port.ToString() + "/";
