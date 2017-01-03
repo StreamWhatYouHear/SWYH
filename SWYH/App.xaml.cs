@@ -150,6 +150,8 @@ namespace SWYH
             {
                 autoStreamTo = startupEvent.Args.First(a => a.StartsWith(Constants.STREAM_TO_ARGUMENT_NAME, StringComparison.InvariantCultureIgnoreCase)).Substring(Constants.STREAM_TO_ARGUMENT_NAME.Length).Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             }
+            else
+                autoStreamTo = new string[] { SWYH.Properties.Settings.Default.Renderer };
         }
 
         private void CheckNewVersion()
@@ -260,6 +262,7 @@ namespace SWYH
                 {
                     rendererItem.Checked = false;
                     connectionAV.Stop();
+                    SWYH.Properties.Settings.Default.Renderer = "";
                 }
                 else
                 {
@@ -270,8 +273,9 @@ namespace SWYH
                         connectionAV.Stop();
                         renderer.CreateConnection(media, DateTime.Now.Ticks);
                         connectionAV.Play();
-                    }
+                        SWYH.Properties.Settings.Default.Renderer = connectionAV.FriendlyName;                    }
                 }
+                SWYH.Properties.Settings.Default.Save();
             }
         }
 
