@@ -43,7 +43,6 @@ namespace SWYH
         {
             InitializeComponent();
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Start();
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -66,6 +65,7 @@ namespace SWYH
 
         private void btRecord_Click(object sender, RoutedEventArgs e)
         {
+            timer.Start();
             this.isRecording = true;
             this.startDate = DateTime.Now;
             App.CurrentInstance.swyhDevice.sessionMp3Streams.GetOrAdd(Int32.MinValue, new PipeStream());
@@ -75,6 +75,7 @@ namespace SWYH
 
         private void btStop_Click(object sender, RoutedEventArgs e)
         {
+            timer.Stop();
             this.isRecording = false;
             PipeStream value = null;
             while (!App.CurrentInstance.swyhDevice.sessionMp3Streams.TryRemove(Int32.MinValue, out value)) ; ;
@@ -144,6 +145,7 @@ namespace SWYH
                 this.UpdateUi();
             }
             this.Hide();
+            timer.Stop();
         }
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
