@@ -67,6 +67,7 @@ namespace SWYH
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem streamToChromecastMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
+        private bool directClose = false;   //Skip the statements in Application_Exit function.
 
         private readonly ChromecastService ChromecastService = ChromecastService.Current;
         private SharpCasterDemoController _controller;
@@ -84,6 +85,7 @@ namespace SWYH
                     goto start;
                 }
                 MessageBox.Show("Stream What You Hear is already running !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                directClose = true;   //Skip the statements in Application_Exit function, otherwise it will casue null object exception
                 this.Shutdown();
             }
             else
@@ -102,16 +104,25 @@ namespace SWYH
                         MessageBox.Show("An unhandled error has occured ! See the '" + Constants.SWYH_CRASHLOG_FILENAME + "' on your desktop for more information", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     };
                 }
-                this.CheckAutomaticDeviceStreamed(e);
-                this.CheckNewVersion();
-                this.InitializeUI();
-                DoStuff();
-                this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
-                this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
-                this.wasapiProvider = new WasapiProvider();
-                this.swyhDevice = new SwyhDevice();
-                this.swyhDevice.Start();
-                notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                if (new NAudio.CoreAudioApi.MMDeviceEnumerator().EnumerateAudioEndPoints(NAudio.CoreAudioApi.DataFlow.Render, NAudio.CoreAudioApi.DeviceState.Active).Count == 0)    //Check the available interface.
+                {
+                    System.Windows.Forms.MessageBox.Show("Unable to find your sound interface, please check your sound interface in control panel.", "Cannot find the sound interface");
+                    directClose = true;    //Skip the statements in Application_Exit function, otherwise it will casue null object exception
+                    this.Shutdown();
+                }
+                else
+                {
+                    this.CheckAutomaticDeviceStreamed(e);
+                    this.CheckNewVersion();
+                    this.InitializeUI();
+                    DoStuff();
+                    this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
+                    this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
+                    this.wasapiProvider = new WasapiProvider();
+                    this.swyhDevice = new SwyhDevice();
+                    this.swyhDevice.Start();
+                    notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                }
             }
         }
 
@@ -375,12 +386,15 @@ namespace SWYH
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            this.CloseStreamingConnections();
-            this.swyhDevice.Stop();
-            this.wasapiProvider.Dispose();
-            if (this.notifyIcon != null)
+            if (!directClose)
             {
-                this.notifyIcon.Dispose();
+                this.CloseStreamingConnections();
+                this.swyhDevice.Stop();
+                this.wasapiProvider.Dispose();
+                if (this.notifyIcon != null)
+                {
+                    this.notifyIcon.Dispose();
+                }
             }
         }
     }
