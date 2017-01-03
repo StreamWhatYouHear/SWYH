@@ -2602,8 +2602,16 @@ namespace OpenSource.UPnP
             InitialEventTable.Remove(sender);
             if (success)
             {
-                System.Drawing.Image i = System.Drawing.Image.FromStream(new MemoryStream(data));
-                if (i != null) _icon = i;
+                System.Drawing.Image icon = null;
+                try
+                {
+                    icon = System.Drawing.Image.FromStream(new MemoryStream(data));
+                }
+                catch
+                {
+                    System.Diagnostics.Debug.WriteLine("Unable to load icon for " + url);
+                }
+                if (icon != null) _icon = icon;
             }
         }
 

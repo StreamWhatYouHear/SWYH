@@ -27,6 +27,8 @@ namespace SWYH.UPnP
     using SWYH.Audio;
     using System;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -50,19 +52,22 @@ namespace SWYH.UPnP
         {
             this.Device = UPnPDevice.CreateRootDevice(1800, 1.0, "\\");
 
-            this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):"; //Environment.MachineName + ": Stream What You Hear";
-            this.Device.Manufacturer = "Sebastien.Warin.fr";
+            this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):";
+            this.Device.Manufacturer = "Sebastien.warin.fr";
             this.Device.ManufacturerURL = "http://sebastien.warin.fr";
             this.Device.ModelURL = new Uri("http://www.streamwhatyouhear.com");
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
-            this.Device.ModelNumber = "1.4";
-            this.Device.SerialNumber = "SWYH_UPNP_14";
+
+            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
+            this.Device.SerialNumber = string.Format("SWYH_UPNP_{0}{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
+
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";
-            this.Device.Icon = Properties.Resources.swyh128_v2.ToBitmap();
-            this.Device.Icon2 = Properties.Resources.swyh48_v2.ToBitmap();
+            this.Device.Icon = Properties.Resources.swyh128.ToBitmap();
+            this.Device.Icon2 = Properties.Resources.swyh48.ToBitmap();
             this.Device.AddCustomFieldInDescription("dlna:X_DLNADOC", "DMS-1.50", "urn:schemas-dlna-org:device-1-0");
 
             DvX_MS_MediaReceiverRegistrar X_MS_MediaReceiverRegistrar = new DvX_MS_MediaReceiverRegistrar();
