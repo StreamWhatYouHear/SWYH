@@ -21,6 +21,8 @@
  *	 along with Stream What Your Hear. If not, see <http://www.gnu.org/licenses/>.
  */
 
+using NAudio.CoreAudioApi;
+
 namespace SWYH
 {
     using OpenSource.UPnP.AV.RENDERER.CP;
@@ -194,6 +196,7 @@ namespace SWYH
                     {
                         var connectionAV = renderer.Connections[0] as AVConnection;
                         connectionAV.Stop();
+                        ToggleMuteWindowsAudioDevices(false);
                     }
                 }
             }
@@ -275,6 +278,32 @@ namespace SWYH
             }
         }
 
+        public static bool ToggleMuteWindowsAudioDevices(bool muted = false)
+        {
+            //Instantiate an Enumerator to find audio devices
+            NAudio.CoreAudioApi.MMDeviceEnumerator MMDE = new NAudio.CoreAudioApi.MMDeviceEnumerator();
+            //Get all the devices, no matter what condition or status
+            NAudio.CoreAudioApi.MMDeviceCollection DevCol = MMDE.EnumerateAudioEndPoints(NAudio.CoreAudioApi.DataFlow.All, NAudio.CoreAudioApi.DeviceState.All);
+            //Loop through all devices
+            foreach (NAudio.CoreAudioApi.MMDevice dev in DevCol)
+            {
+                try
+                {
+                    //Show us the human understandable name of the device
+                    //System.Diagnostics.Debug.Print(dev.FriendlyName);
+                    if (dev.State == DeviceState.Active)
+                        //[Un]Mute it
+                        dev.AudioEndpointVolume.Mute = muted;
+                }
+                catch (Exception ex)
+                {
+                    //Do something with exception when an audio endpoint could not be muted
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void connectionAV_OnPlayStateChanged(AVConnection sender, AVConnection.PlayState NewState)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
@@ -286,10 +315,12 @@ namespace SWYH
                         {
                             if (NewState == AVConnection.PlayState.STOPPED)
                             {
+                                ToggleMuteWindowsAudioDevices(false);
                                 item.Checked = false;
                             }
                             else if (NewState == AVConnection.PlayState.PLAYING)
                             {
+                                ToggleMuteWindowsAudioDevices(true);
                                 item.Checked = true;
                             }
                         }
@@ -309,6 +340,7 @@ namespace SWYH
                     this.notifyIcon.Dispose();
                 }
             }
+            ToggleMuteWindowsAudioDevices(false);
         }
     }
 }
