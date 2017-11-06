@@ -38,6 +38,7 @@ namespace SWYH.UPnP
         private bool isRunning = true;
         private byte[] bufferMp3 = new byte[2048];
         private byte[] bufferPcm = new byte[2048];
+        private static EventWaitHandle ewh = new EventWaitHandle(false, EventResetMode.AutoReset);
 
         internal ConcurrentDictionary<int, PipeStream> sessionMp3Streams = new ConcurrentDictionary<int, PipeStream>();
         internal ConcurrentDictionary<int, PipeStream> sessionPcmStreams = new ConcurrentDictionary<int, PipeStream>();
@@ -124,6 +125,7 @@ namespace SWYH.UPnP
         {
             this.isRunning = false;
             this.Device.StopDevice();
+            App.ToggleMuteWindowsAudioDevices(false);
         }
 
         private void duplicateMp3AudioStream()

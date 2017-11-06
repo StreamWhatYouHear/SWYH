@@ -28,7 +28,7 @@ namespace SWYH
         public const string SWYH_PROCESS_NAME = "SWYH";
         public const string RESTART_ARGUMENT_NAME = "--restart";
         public const string STREAM_TO_ARGUMENT_NAME = "--streamto:";
-        public const int NUMBER_OF_RESTART_TEST = 20;
+        public const int NUMBER_OF_RESTART_TEST = 30;
 
         public const string SWYH_CRASHLOG_FILENAME = "SWYH_crash.log";
         public const string REGISTRY_START_SUBKEY = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
