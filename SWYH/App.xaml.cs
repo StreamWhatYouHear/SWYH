@@ -24,9 +24,15 @@
 namespace SWYH
 {
     using OpenSource.UPnP.AV.RENDERER.CP;
+    using SharpCaster.Controllers;
+    using SharpCaster.Models;
+    using SharpCaster.Models.ChromecastStatus;
+    using SharpCaster.Models.Metadata;
+    using SharpCaster.Services;
     using SWYH.Audio;
     using SWYH.UPnP;
     using System;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -36,17 +42,6 @@ namespace SWYH
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
-    using SharpCaster;
-    using SharpCaster.Controllers;
-    using SharpCaster.Extensions;
-    using SharpCaster.Models;
-    using SharpCaster.Models.ChromecastStatus;
-    using SharpCaster.Models.MediaStatus;
-    using SharpCaster.Services;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Collections.ObjectModel;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -66,7 +61,6 @@ namespace SWYH
         private RecordWindow recordWindow = null;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
-        private System.Windows.Forms.ToolStripMenuItem streamToChromecastMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
         private bool isStarted = false;
 
@@ -115,7 +109,6 @@ namespace SWYH
                     this.CheckAutomaticDeviceStreamed(e);
                     this.CheckNewVersion();
                     this.InitializeUI();
-                    this.InitializeChromecast();
                     this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
                     this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
                     this.wasapiProvider = new WasapiProvider();
@@ -123,6 +116,7 @@ namespace SWYH
                     this.swyhDevice.Start();
                     this.notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
                     this.isStarted = true;
+                    this.SearchChromecasts();
                 }
             }
         }
@@ -142,14 +136,12 @@ namespace SWYH
                 Visible = true
             };
             this.notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            this.streamToMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to UPnP/DLNA", null);
-            this.streamToChromecastMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to Chromecast", null);
+            this.streamToMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to", null);
             this.searchingItem = new System.Windows.Forms.ToolStripMenuItem("Searching ...", null) { Name = "searchingItem", ForeColor = System.Drawing.Color.Gray };
             this.streamToMenu.DropDownItems.Add("My device is not listed", null, (s, e2) => MessageBox.Show("Perhaps your device is not connected or is not recognized as an UPnP Media Renderer !\nIf your device is an UPnP/DLNA player, try to start the stream of SWYH manually on the device.\nFor more information, go to http://www.streamwhatyouhear.com !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Information));
             this.streamToMenu.DropDownItems.Add("-");
             this.streamToMenu.DropDownItems.Add(searchingItem);
             this.notifyIcon.ContextMenuStrip.Items.Add(streamToMenu);
-            this.notifyIcon.ContextMenuStrip.Items.Add(streamToChromecastMenu);
             var toolsMenu = new System.Windows.Forms.ToolStripMenuItem("Tools", null);
             toolsMenu.DropDownItems.Add("HTTP Live Streaming", null, (s, e2) => this.httpWindow.Show());
             toolsMenu.DropDownItems.Add("Record What You Hear", null, (s, e2) => this.recordWindow.Show());
@@ -239,10 +231,7 @@ namespace SWYH
                             }
                         }
                     }
-                    if (this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count >= 2)
-                    {
-                        this.streamToMenu.DropDownItems.RemoveByKey(this.searchingItem.Name);
-                    }
+                    this.DisplaySearchingItemIfNeeded();
                 }));
         }
 
@@ -259,10 +248,7 @@ namespace SWYH
                         connectionAV.OnPlayStateChanged -= new AVConnection.PlayStateChangedHandler(connectionAV_OnPlayStateChanged);
                     }
                 }
-                if (!this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count == 2)
-                {
-                    this.streamToMenu.DropDownItems.Add(searchingItem);
-                }
+                this.DisplaySearchingItemIfNeeded();
             }));
         }
 
@@ -314,26 +300,49 @@ namespace SWYH
                 }));
         }
 
-        private async Task InitializeChromecast()
+        private void SearchChromecasts()
         {
-            this.chromecastDevices = await this.chromecastService.StartLocatingDevices();
-            this.UpdateChromecastDevicesList();
+            Task.Factory.StartNew(async  ()  => 
+            {
+                while (isStarted)
+                {
+                    this.chromecastDevices = await this.chromecastService.StartLocatingDevices();
+                    this.UpdateChromecastDevicesList();
+                    await Task.Delay(30000);
+                }
+            }, TaskCreationOptions.LongRunning);
         }
 
         private void UpdateChromecastDevicesList()
         {
-            this.streamToChromecastMenu.DropDownItems.Clear();
-            if (this.chromecastDevices.Count != 0)
+            this.Dispatcher.BeginInvoke(new Action(() =>
             {
-                foreach (var device in this.chromecastDevices)
+                if (this.chromecastDevices.Count != 0)
                 {
-                    var menuItem = new System.Windows.Forms.ToolStripMenuItem(device.FriendlyName, null, streamToChromecastMenu_DeviceSelected)
+                    foreach (var device in this.chromecastDevices)
                     {
-                        Tag = device
-                    };
-                    this.streamToChromecastMenu.DropDownItems.Add(menuItem);
+                        string deviceTitle = string.Format("{0} (Chromecast)", device.FriendlyName);
+                        if (!this.streamToMenu.DropDownItems.ContainsKey(deviceTitle))
+                        {
+                            var menuItem = new System.Windows.Forms.ToolStripMenuItem(deviceTitle, null, streamToChromecastMenu_DeviceSelected)
+                            {
+                                Name = deviceTitle,
+                                Tag = device
+                            };
+                            this.streamToMenu.DropDownItems.Add(menuItem);
+                        }
+
+                    }
                 }
-            }
+                foreach (System.Windows.Forms.ToolStripMenuItem item in this.streamToMenu.DropDownItems.OfType<System.Windows.Forms.ToolStripMenuItem>().ToList()) // copy list
+                {
+                    if (item.Name.EndsWith("(Chromecast)") && !this.chromecastDevices.Any(d => d.DeviceUri == ((Chromecast)item.Tag).DeviceUri))
+                    {
+                        this.streamToMenu.DropDownItems.Remove(item);
+                    }
+                }
+                this.DisplaySearchingItemIfNeeded();
+            }), null);
         }
 
         public async void streamToChromecastMenu_DeviceSelected(object sender, EventArgs e)
@@ -349,6 +358,7 @@ namespace SWYH
                     chromecastService.ChromeCastClient.ApplicationStarted -= Client_ApplicationStarted;
                     await chromecastController.Stop();
                     await chromecastController.StopApplication();
+                    chromecastService.DisconnectChromecast();
                     //TODO: Disconnect from the chromecast. Dispose the socket connection
                     //reference: https://github.com/tapanila/SharpCaster/blob/master/SharpCaster/ChromeCastClient.cs Line:191
                 }
@@ -368,7 +378,13 @@ namespace SWYH
             {
                 await Task.Delay(500);
             }
-            await chromecastController.LoadMedia(SWYH.App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3).FirstOrDefault(), null, null, "BUFFERED", 0D, null);
+            await chromecastController.LoadMedia(
+                SWYH.App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3).FirstOrDefault(),
+               metadata: new GenericMediaMetadata
+               {
+                   title = swyhDevice.Device.FriendlyName,
+                   subtitle = "Demo"
+               }); //, images= new System.Collections.Generic.List<SharpCaster.Models.MediaStatus.ChromecastImage>() { new SharpCaster.Models.MediaStatus.ChromecastImage() { url = new Uri("https://github.com/StreamWhatYouHear/SWYH/blob/master/SWYH/Resources/Icons/swyh128.png?raw=true") } } });
         }
 
         private async void ChromeCastClient_Connected(object sender, EventArgs e)
@@ -376,6 +392,18 @@ namespace SWYH
             if (chromecastController == null)
             {
                 chromecastController = await chromecastService.ChromeCastClient.LaunchSharpCaster();
+            }
+        }
+
+        private void DisplaySearchingItemIfNeeded()
+        {
+            if (this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count >= 2)
+            {
+                this.streamToMenu.DropDownItems.RemoveByKey(this.searchingItem.Name);
+            }
+            else if (!this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count == 2)
+            {
+                this.streamToMenu.DropDownItems.Add(searchingItem);
             }
         }
 
