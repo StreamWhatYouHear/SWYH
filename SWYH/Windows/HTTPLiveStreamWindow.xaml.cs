@@ -23,27 +23,30 @@
 
 namespace SWYH
 {
-    using System.Linq;
+    using System.Collections.Generic;
     using System.Windows;
+    using System.Windows.Controls;
 
     /// <summary>
     /// Interaction logic for HTTPLiveStreamWindow.xaml
     /// </summary>
     public partial class HTTPLiveStreamWindow : Window
     {
+        public List<string> Uris => App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3);
+
         public HTTPLiveStreamWindow()
         {
             InitializeComponent();
+            this.DataContext = this;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            txtUrl.Text = App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3).FirstOrDefault();
         }
 
         private void TextBlock_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            System.Windows.Clipboard.SetText(txtUrl.Text);
+            System.Windows.Clipboard.SetText(((TextBlock)sender).DataContext as string);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
