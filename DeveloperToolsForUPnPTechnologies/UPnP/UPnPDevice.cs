@@ -764,8 +764,6 @@ namespace OpenSource.UPnP
         {
             try
             {
-                //String tmp = ip.ToString();
-
                 MiniWebServer WebServer;
                 WebServer = new MiniWebServer(new IPEndPoint(ip, UseThisPort));
                 if ((this.OnSniff != null) || (this.OnSniffPacket != null)) WebServer.OnSession += new MiniWebServer.NewSessionHandler(SniffSessionSink);
@@ -774,6 +772,12 @@ namespace OpenSource.UPnP
                 WebServer.OnHeader += new MiniWebServer.HTTPReceiveHandler(HandleHeaderRequest);
                 WebServerTable[ip.ToString()] = WebServer;
                 SendNotify(ip);
+
+                // Use the same port for all network interfaces
+                if (UseThisPort == 0)
+                {
+                    UseThisPort = WebServer.LocalIPEndPoint.Port;
+                }
             }
             catch (SocketException ex)
             {
