@@ -2,10 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Stream What You Hear (SWYH)"
-#define MyAppVersion "1.4"
 #define MyAppPublisher "Sebastien.warin.fr"
 #define MyAppURL "http://www.streamwhatyouhear.com"
 #define MyAppExeName "SWYH.exe"
+
+; Updated by the build server
+#define MyAppVersion "1.0"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
