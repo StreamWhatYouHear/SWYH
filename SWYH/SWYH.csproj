@@ -111,6 +111,7 @@
     <Compile Include="Audio\WasapiProvider.cs" />
     <Compile Include="Audio\WaveProviderToWaveStream.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="SemVer.cs" />
     <Compile Include="Windows\HTTPLiveStreamWindow.xaml.cs">
       <DependentUpon>HTTPLiveStreamWindow.xaml</DependentUpon>
     </Compile>
