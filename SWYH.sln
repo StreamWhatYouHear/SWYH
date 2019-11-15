@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.25928.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWYH", "SWYH\SWYH.csproj", "{9F7F5728-3DC1-4FA2-8D4B-F91AA3ABA754}"
 EndProject
@@ -22,6 +22,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPnPAV_RendererStack", "DeveloperToolsForUPnPTechnologies\UPNPAV_RendererStack\UPnPAV_RendererStack.csproj", "{E01B6019-ACC6-40A6-A511-48D285D51C40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPnPAVCDSML", "DeveloperToolsForUPnPTechnologies\UPNPAVCDSML\UPnPAVCDSML.csproj", "{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharpCaster", "SharpCaster", "{926D9905-0954-4958-B0EE-35223F1CC600}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCaster.Portable", "SharpCaster\SharpCaster\SharpCaster.Portable.csproj", "{56D42483-550D-4817-844B-6C27D880130F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +101,22 @@ Global
 		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Release|x64.ActiveCfg = Release|Any CPU
 		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3}.Release|x86.ActiveCfg = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|x64.Build.0 = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Debug|x86.Build.0 = Debug|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|x64.ActiveCfg = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|x64.Build.0 = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|x86.ActiveCfg = Release|Any CPU
+		{56D42483-550D-4817-844B-6C27D880130F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,5 +126,6 @@ Global
 		{B2439738-5F46-4E59-95A1-92C3DF38696F} = {D1A9AE0B-AAC3-402B-A9BE-42F881FCC9B8}
 		{E01B6019-ACC6-40A6-A511-48D285D51C40} = {D1A9AE0B-AAC3-402B-A9BE-42F881FCC9B8}
 		{8EA0E595-45EC-40C1-82CE-269F4FA9EBB3} = {D1A9AE0B-AAC3-402B-A9BE-42F881FCC9B8}
+		{56D42483-550D-4817-844B-6C27D880130F} = {926D9905-0954-4958-B0EE-35223F1CC600}
 	EndGlobalSection
 EndGlobal
