@@ -1,0 +1,3 @@
+[submodule "SharpCaster"]
+	path = SharpCaster
+	url = https://github.com/StreamWhatYouHear/SharpCaster
