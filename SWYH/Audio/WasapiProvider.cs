@@ -62,11 +62,13 @@ namespace SWYH.Audio
             string captureDeviceID = SWYH.Properties.Settings.Default.AudioDevice;
             if (captureDeviceID != "")
             {
-                try
+                foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
                 {
-                    captureDevice = enumerator.GetDevice(captureDeviceID);
+                    if (wasapi.ID == captureDeviceID)
+                    {
+                        captureDevice = wasapi;
+                    }
                 }
-                catch { }
             }
             if (captureDevice == null)
             {
