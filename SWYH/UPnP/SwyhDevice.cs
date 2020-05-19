@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: SwyhDevice.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -27,6 +27,8 @@ namespace SWYH.UPnP
     using SWYH.Audio;
     using System;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -50,14 +52,17 @@ namespace SWYH.UPnP
         {
             this.Device = UPnPDevice.CreateRootDevice(1800, 1.0, "\\");
 
-            this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):"; //Environment.MachineName + ": Stream What You Hear";
-            this.Device.Manufacturer = "Sebastien.Warin.fr";
+            this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):";
+            this.Device.Manufacturer = "Sebastien.warin.fr";
             this.Device.ManufacturerURL = "http://sebastien.warin.fr";
             this.Device.ModelURL = new Uri("http://www.streamwhatyouhear.com");
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
-            this.Device.ModelNumber = "1.4";
-            this.Device.SerialNumber = "SWYH_UPNP_14";
+
+            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
+            this.Device.SerialNumber = string.Format("SWYH_UPNP_{0}{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
+
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";

@@ -764,8 +764,6 @@ namespace OpenSource.UPnP
         {
             try
             {
-                //String tmp = ip.ToString();
-
                 MiniWebServer WebServer;
                 WebServer = new MiniWebServer(new IPEndPoint(ip, UseThisPort));
                 if ((this.OnSniff != null) || (this.OnSniffPacket != null)) WebServer.OnSession += new MiniWebServer.NewSessionHandler(SniffSessionSink);
@@ -774,6 +772,12 @@ namespace OpenSource.UPnP
                 WebServer.OnHeader += new MiniWebServer.HTTPReceiveHandler(HandleHeaderRequest);
                 WebServerTable[ip.ToString()] = WebServer;
                 SendNotify(ip);
+
+                // Use the same port for all network interfaces
+                if (UseThisPort == 0)
+                {
+                    UseThisPort = WebServer.LocalIPEndPoint.Port;
+                }
             }
             catch (SocketException ex)
             {
@@ -1412,6 +1416,12 @@ namespace OpenSource.UPnP
             ArrayList ResponseList = new ArrayList();
             HTTPMessage msg;
             string Location = null;
+
+            if (!WebServerTable.ContainsKey(local.Address.ToString()))
+            {
+                NewDeviceInterface(null, local.Address);
+            }
+
             if (local.AddressFamily == AddressFamily.InterNetwork)
             {
                 Location = "http://" + local.Address.ToString() + ":" + ((MiniWebServer)WebServerTable[local.Address.ToString()]).LocalIPEndPoint.Port.ToString() + "/";
@@ -2596,8 +2606,16 @@ namespace OpenSource.UPnP
             InitialEventTable.Remove(sender);
             if (success)
             {
-                System.Drawing.Image i = System.Drawing.Image.FromStream(new MemoryStream(data));
-                if (i != null) _icon = i;
+                System.Drawing.Image icon = null;
+                try
+                {
+                    icon = System.Drawing.Image.FromStream(new MemoryStream(data));
+                }
+                catch
+                {
+                    System.Diagnostics.Debug.WriteLine("Unable to load icon for " + url);
+                }
+                if (icon != null) _icon = icon;
             }
         }
 

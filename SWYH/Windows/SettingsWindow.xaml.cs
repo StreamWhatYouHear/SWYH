@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: SettingsWindow.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -28,12 +28,22 @@ namespace SWYH
     using System.Diagnostics;
     using System.Text.RegularExpressions;
     using System.Windows;
+    using System.Collections.Generic;
+    using System.Windows.Data;
+    using NAudio.CoreAudioApi;
 
     /// <summary>
     /// TODO : refactor this code with WPF style ;)
     /// </summary>
     public partial class SettingsWindow : Window
     {
+        class GroupItem
+        {
+            public string ID { get; set; }
+            public string Name { get; set; }
+            public string Category { get; set; }
+        }
+
         public SettingsWindow()
         {
             InitializeComponent();
@@ -54,9 +64,20 @@ namespace SWYH
             {
                 this.comboBox2.Items.Add(bitrate);
             }
+            List<GroupItem> deviceItems = new List<GroupItem>();
+            deviceItems.Add(new GroupItem() { ID = "", Name = "Default", Category = "" });
+            var enumerator = new MMDeviceEnumerator();
+            foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
+            {
+                deviceItems.Add(new GroupItem() { ID = wasapi.ID, Name = wasapi.FriendlyName, Category = wasapi.DataFlow.ToString() + " devices" });
+            }
+            ListCollectionView deviceItemsView = new ListCollectionView(deviceItems);
+            deviceItemsView.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            this.comboBoxDevice.ItemsSource = deviceItemsView;
             // Select setting values
             this.comboBox1.SelectedItem = Audio.AudioFormats.AsString(Audio.AudioSettings.GetAudioFormat());
             this.comboBox2.SelectedItem = Audio.AudioSettings.GetMP3Bitrate();
+            this.comboBoxDevice.SelectedValue = SWYH.Properties.Settings.Default.AudioDevice;
             this.radioButton1.IsChecked = (Audio.AudioSettings.GetStreamFormat() == Audio.AudioFormats.Format.Mp3);
             this.radioButton2.IsChecked = !this.radioButton1.IsChecked;
             this.cbDebug.IsChecked = SWYH.Properties.Settings.Default.Debug;
@@ -78,6 +99,7 @@ namespace SWYH
             this.RegisterInStartup(this.cbRunAtWindowsStartup.IsChecked.Value);
             if (this.comboBox1.SelectedItem.ToString() == Audio.AudioFormats.AsString(Audio.AudioSettings.GetAudioFormat()) &&
                 this.comboBox2.SelectedItem.ToString() == Audio.AudioSettings.GetMP3Bitrate().ToString() &&
+                this.comboBoxDevice.SelectedValue.ToString() == SWYH.Properties.Settings.Default.AudioDevice &&
                 ((this.radioButton1.IsChecked.Value && Audio.AudioSettings.GetStreamFormat() == Audio.AudioFormats.Format.Mp3) ||
                  (this.radioButton2.IsChecked.Value && Audio.AudioSettings.GetStreamFormat() == Audio.AudioFormats.Format.Pcm)) &&
                 this.cbDebug.IsChecked == SWYH.Properties.Settings.Default.Debug &&
@@ -117,6 +139,7 @@ namespace SWYH
                     }
                     Audio.AudioSettings.SetMP3Bitrate(int.Parse(this.comboBox2.SelectedItem.ToString()));
                     Audio.AudioSettings.SetStreamFormat(this.radioButton1.IsChecked.Value ? Audio.AudioFormats.Format.Mp3 : Audio.AudioFormats.Format.Pcm);
+                    SWYH.Properties.Settings.Default.AudioDevice = this.comboBoxDevice.SelectedValue.ToString();
                     SWYH.Properties.Settings.Default.HTTPPort = (this.cbUseSpecificPort.IsChecked.HasValue && this.cbUseSpecificPort.IsChecked.Value) ? Int32.Parse(this.textBox1.Text) : 0;
                     SWYH.Properties.Settings.Default.Debug = this.cbDebug.IsChecked.HasValue && this.cbDebug.IsChecked.Value;
                     // Save !

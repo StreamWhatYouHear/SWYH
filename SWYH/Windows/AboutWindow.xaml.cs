@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: AboutWindow.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -41,7 +41,7 @@ namespace SWYH
         {
             this.btUpdate.Visibility = (App.NeedUpdate) ? Visibility.Visible : System.Windows.Visibility.Collapsed;
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-            this.version.Text = string.Format("Version{3} {0}.{1} (Build {2})", version.ProductMajorPart, version.ProductMinorPart, version.ProductBuildPart, (version.ProductPrivatePart % 2) == 0 ? "" : " BETA");
+            this.version.Text = string.Format("Version {0}", version.ProductVersion);
         }
 
         private void btUpdate_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

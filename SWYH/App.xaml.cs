@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: App.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -24,6 +24,7 @@
 namespace SWYH
 {
     using OpenSource.UPnP.AV.RENDERER.CP;
+    using Semver;
     using SWYH.Audio;
     using SWYH.UPnP;
     using System;
@@ -164,8 +165,8 @@ namespace SWYH
                     string lastVersionStr = wc.DownloadString(Constants.UPDATE_VERSION_URL);
                     if (!string.IsNullOrEmpty(lastVersionStr))
                     {
-                        Version lastVersion = new Version(lastVersionStr);
-                        Version currentVersion = new Version(fileVersion.FileVersion);
+                        SemVersion lastVersion = SemVersion.Parse(lastVersionStr);
+                        SemVersion currentVersion = SemVersion.Parse(fileVersion.FileVersion);
                         App.NeedUpdate = (lastVersion > currentVersion);
                         if (App.NeedUpdate)
                         {

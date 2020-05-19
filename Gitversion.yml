@@ -1,0 +1,7 @@
+﻿mode: ContinuousDeployment
+continuous-delivery-fallback-tag: ''
+assembly-informational-format: "{NuGetVersionV2}+{ShortSha}"
+assembly-file-versioning-scheme: MajorMinorPatchTag
+branches:
+  develop:
+    tag: beta

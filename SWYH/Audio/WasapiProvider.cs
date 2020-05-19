@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: WasapiProvider.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2015 - Sebastien Warin <http://sebastien.warin.fr>	   	
+ *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -25,6 +25,7 @@ namespace SWYH.Audio
 {
     using NAudio.Lame;
     using NAudio.Wave;
+    using NAudio.CoreAudioApi;
     using System;
     using System.Threading;
 
@@ -36,7 +37,7 @@ namespace SWYH.Audio
         private bool hasMP3Clients = false;
         private bool hasPCMClients = false;
 
-        private WasapiLoopbackCapture loopbackWaveIn = null;
+        private WasapiCapture loopbackWaveIn = null;
         private PipeStream recordingStream = null;
         private WaveStream rawConvertedStream = null;
         private WaveStream pcmStream = null;
@@ -55,8 +56,34 @@ namespace SWYH.Audio
             // Init Wave Processor thread
             Thread waveProcessorThread = new Thread(new ThreadStart(this.waveProcessor)) { Priority = ThreadPriority.Highest };
 
+            // Init capture audio device
+            MMDevice captureDevice = null;
+            var enumerator = new MMDeviceEnumerator();
+            string captureDeviceID = SWYH.Properties.Settings.Default.AudioDevice;
+            if (captureDeviceID != "")
+            {
+                foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
+                {
+                    if (wasapi.ID == captureDeviceID)
+                    {
+                        captureDevice = wasapi;
+                    }
+                }
+            }
+            if (captureDevice == null)
+            {
+                captureDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            }
+
             // Init Wasapi Capture
-            this.loopbackWaveIn = new WasapiLoopbackCapture();
+            if (captureDevice.DataFlow == DataFlow.Render)
+            {
+                this.loopbackWaveIn = new WasapiLoopbackCapture(captureDevice);
+            }
+            else
+            {
+                this.loopbackWaveIn = new WasapiCapture(captureDevice);
+            }
             this.loopbackWaveIn.DataAvailable += new EventHandler<WaveInEventArgs>(this.loopbackWaveIn_DataAvailable);
             
             // Init Raw Wav (16bit)
