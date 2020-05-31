@@ -112,6 +112,10 @@ namespace SWYH
                     notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
                 }
             }
+            using (Process p = Process.GetCurrentProcess())
+            {
+                p.PriorityClass = ProcessPriorityClass.AboveNormal;
+            }
         }
 
         private void InitializeUI()
