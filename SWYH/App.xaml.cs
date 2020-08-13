@@ -33,6 +33,7 @@ namespace SWYH
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -60,6 +61,18 @@ namespace SWYH
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
         private bool directClose = false;   //Skip the statements in Application_Exit function.
+
+        private uint m_previousExecutionState;  // cf. SetThreadExecutionState
+
+        private static class NativeMethods
+        {
+            // Import SetThreadExecutionState Win32 API and necessary flags
+            [DllImport("kernel32.dll")]
+            public static extern uint SetThreadExecutionState(uint esFlags);
+            public const uint ES_CONTINUOUS = 0x80000000;
+            public const uint ES_SYSTEM_REQUIRED = 0x00000001;
+        }
+
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -112,6 +125,19 @@ namespace SWYH
                     notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
                 }
             }
+            // raise priority a bit above normal user tasks
+            using (Process p = Process.GetCurrentProcess())
+            {
+                p.PriorityClass = ProcessPriorityClass.AboveNormal;
+            }
+            // Set new state to prevent system sleep (note: still allows screen saver)
+            m_previousExecutionState = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS | NativeMethods.ES_SYSTEM_REQUIRED);
+            if (0 == m_previousExecutionState) {
+                System.Windows.Forms.MessageBox.Show("Call to SetThreadExecutionState failed unexpectedly.", "Stream What You hear");
+                // No way to recover; fail gracefully
+                this.Shutdown();
+            }
+
         }
 
         private void InitializeUI()
@@ -310,6 +336,11 @@ namespace SWYH
                     this.notifyIcon.Dispose();
                 }
             }
+            // Restore previous state
+            if (0 == NativeMethods.SetThreadExecutionState(m_previousExecutionState)) {
+                // No way to recover; already exiting
+            }
+
         }
     }
 }

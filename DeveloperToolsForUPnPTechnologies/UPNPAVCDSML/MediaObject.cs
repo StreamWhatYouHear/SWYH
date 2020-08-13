@@ -1757,6 +1757,8 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 				instantiateTheseForChildItems, 
 				instantiateTheseForChildContainers
 				);
+			if (String.IsNullOrEmpty(this.Title)) {
+				this.Title = "(no title found)";
 
 			this.ThrowExceptionIfBadTitle(this.Title);
 			this.ThrowExceptionIfBadClass(this.Class);	
