@@ -1,21 +1,21 @@
 ﻿<Window x:Class="SWYH.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Stream What You Hear - Sebastien.warin.fr" Height="383" Width="432" Icon="/SWYH;component/Resources/Icons/swyh48.ico" 
+        Title="Stream What You Hear - Sebastien.warin.fr" Height="428" Width="432" Icon="/SWYH;component/Resources/Icons/swyh48.ico" 
         Loaded="Window_Loaded" WindowState="Normal" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True" KeyDown="Window_KeyDown">
     <Grid>
-        <TextBlock Margin="144,12,12,0" TextWrapping="Wrap" FontFamily="Showcard Gothic" TextAlignment="Center" Height="43" VerticalAlignment="Top"><Run FontSize="21.333" FontFamily="Segoe WP Black" Text="Settings"/></TextBlock>
+        <TextBlock Margin="144,12,12,0" TextWrapping="Wrap" FontFamily="Showcard Gothic" TextAlignment="Center" Height="27" VerticalAlignment="Top"><Run FontSize="21.333" FontFamily="Segoe WP Black" Text="Settings"/></TextBlock>
         <Image HorizontalAlignment="Left" Margin="12,12,0,0" Source="../Resources/Icons/swyh128.png" Stretch="Fill" Width="128" Height="128" VerticalAlignment="Top"/>
-        <Button x:Name="btValid" Content="OK" Height="23" HorizontalAlignment="Left" Margin="172,322,0,0" VerticalAlignment="Top" Width="75" Click="btValid_Click" />
-        <Button x:Name="btCancel" Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="329,322,0,0" VerticalAlignment="Top" Width="75" Click="btCancel_Click" />
-        <GroupBox Header="Stream To" Height="75" HorizontalAlignment="Left" Margin="149,53,0,0" Name="groupBox1" VerticalAlignment="Top" Width="261">
+        <Button x:Name="btValid" Content="OK" Height="23" HorizontalAlignment="Left" Margin="172,367,0,0" VerticalAlignment="Top" Width="75" Click="btValid_Click" />
+        <Button x:Name="btCancel" Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="329,367,0,0" VerticalAlignment="Top" Width="75" Click="btCancel_Click" />
+        <GroupBox Header="Stream To" Height="75" HorizontalAlignment="Left" Margin="149,40,0,0" Name="groupBox1" VerticalAlignment="Top" Width="261">
             <Grid>
                 <RadioButton Content="MP3" Height="16" HorizontalAlignment="Left" Margin="38,30,0,0" Name="radioButton1" GroupName="StreamFormat" VerticalAlignment="Top" />
                 <RadioButton Content="PCM/L16" Height="16" HorizontalAlignment="Left" Margin="152,30,0,0" Name="radioButton2" GroupName="StreamFormat" VerticalAlignment="Top" />
                 <Label Content="Send stream to DLNA device using :" HorizontalAlignment="Left" Margin="6,0,0,0" Name="label1" Height="28" VerticalAlignment="Top" />
             </Grid>
         </GroupBox>
-        <GroupBox Header="Format" Height="92" HorizontalAlignment="Left" Margin="149,128,0,0" Name="groupBox2" VerticalAlignment="Top" Width="261">
+        <GroupBox Header="Format" Height="92" HorizontalAlignment="Left" Margin="149,115,0,0" Name="groupBox2" VerticalAlignment="Top" Width="261">
             <Grid>
                 <Label Content="Capture :" Height="28" HorizontalAlignment="Left" Margin="6,6,0,0" Name="label2" VerticalAlignment="Top" />
                 <ComboBox Height="23" HorizontalAlignment="Left" Margin="70,6,0,0" Name="comboBox1" VerticalAlignment="Top" Width="173" />
@@ -23,7 +23,27 @@
                 <ComboBox Height="23" HorizontalAlignment="Left" Margin="160,40,0,0" Name="comboBox2" VerticalAlignment="Top" Width="83"  />
             </Grid>
         </GroupBox>
-        <GroupBox Header="General" Height="95" HorizontalAlignment="Left" Margin="149,220,0,0" Name="groupBox3" VerticalAlignment="Top" Width="261">
+        <GroupBox Header="Audio source" Height="58" HorizontalAlignment="Left" Margin="149,207,0,0" Name="groupBoxDevice" VerticalAlignment="Top" Width="261">
+            <Grid>
+                <ComboBox Height="23" HorizontalAlignment="Left" Margin="12,6,0,0" Name="comboBoxDevice" VerticalAlignment="Top" Width="231" SelectedValuePath="ID">
+                    <ComboBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontWeight="Bold" Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ComboBox.GroupStyle>
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="General" Height="95" HorizontalAlignment="Left" Margin="149,265,0,0" Name="groupBox3" VerticalAlignment="Top" Width="261">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="228*" />
