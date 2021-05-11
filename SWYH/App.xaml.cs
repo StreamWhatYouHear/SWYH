@@ -56,6 +56,7 @@ namespace SWYH
         private AboutWindow aboutWindow = null;
         private HTTPLiveStreamWindow httpWindow = null;
         private RecordWindow recordWindow = null;
+        private VolumeWindow volumeWindow = null;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
@@ -121,6 +122,7 @@ namespace SWYH
             this.aboutWindow = new AboutWindow();
             this.httpWindow = new HTTPLiveStreamWindow();
             this.recordWindow = new RecordWindow();
+            this.volumeWindow = new VolumeWindow();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
                 Icon = SWYH.Properties.Resources.swyh32,
@@ -143,6 +145,15 @@ namespace SWYH
             this.notifyIcon.ContextMenuStrip.Items.Add("About", null, (s, e2) => this.aboutWindow.Show());
             this.notifyIcon.ContextMenuStrip.Items.Add("-");
             this.notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e2) => this.Shutdown());
+            this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(NotifyIcon_Click);
+        }
+
+        private void NotifyIcon_Click(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                this.volumeWindow.ShowWithPosition();
+            }
         }
 
         private void CheckAutomaticDeviceStreamed(StartupEventArgs startupEvent)
