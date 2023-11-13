@@ -107,7 +107,14 @@ namespace SWYH
                     this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
                     this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
                     this.wasapiProvider = new WasapiProvider();
-                    this.swyhDevice = new SwyhDevice();
+
+                    if (!Guid.TryParse(SWYH.Properties.Settings.Default.UniqueDeviceName, out _))
+                    {
+                        SWYH.Properties.Settings.Default.UniqueDeviceName = Guid.NewGuid().ToString();
+                        SWYH.Properties.Settings.Default.Save();
+                    }
+
+                    this.swyhDevice = new SwyhDevice(SWYH.Properties.Settings.Default.UniqueDeviceName);
                     this.swyhDevice.Start();
                     notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
                 }

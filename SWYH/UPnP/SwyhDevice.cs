@@ -48,7 +48,7 @@ namespace SWYH.UPnP
         public DvContentDirectory ContentDirectory { get; private set; }
         public DvConnectionManager ConnectionManager { get; private set; }
 
-        public SwyhDevice()
+        public SwyhDevice(string UniqueDeviceName = "")
         {
             this.Device = UPnPDevice.CreateRootDevice(1800, 1.0, "\\");
 
@@ -63,12 +63,10 @@ namespace SWYH.UPnP
             this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
             this.Device.SerialNumber = string.Format("SWYH_UPNP_{0}{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
 
-            if (!Guid.TryParse(SWYH.Properties.Settings.Default.UniqueDeviceName, out _))
+            if (Guid.TryParse(UniqueDeviceName, out _))
             {
-                SWYH.Properties.Settings.Default.UniqueDeviceName = Guid.NewGuid().ToString();
-                SWYH.Properties.Settings.Default.Save();
+                this.Device.UniqueDeviceName = UniqueDeviceName;
             }
-            this.Device.UniqueDeviceName = SWYH.Properties.Settings.Default.UniqueDeviceName;
 
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
