@@ -82,7 +82,37 @@ namespace SWYH.Properties {
                 this["AudioDevice"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int Volume
+        {
+            get
+            {
+                return ((int)(this["Volume"]));
+            }
+            set
+            {
+                this["Volume"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Mute
+        {
+            get
+            {
+                return ((bool)(this["Mute"]));
+            }
+            set
+            {
+                this["Mute"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

@@ -127,6 +127,9 @@
     <Compile Include="UPnP\DvContentDirectory.cs" />
     <Compile Include="UPnP\DvX_MS_MediaReceiverRegistrar.cs" />
     <Compile Include="UPnP\SwyhDevice.cs" />
+    <Compile Include="Windows\Volume.xaml.cs">
+      <DependentUpon>Volume.xaml</DependentUpon>
+    </Compile>
     <Page Include="Windows\HTTPLiveStreamWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -148,6 +151,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\RecordWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Volume.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -39,6 +39,7 @@ namespace SWYH.Audio
 
         private WasapiCapture loopbackWaveIn = null;
         private PipeStream recordingStream = null;
+        private Wave32To16Stream rawWave16b = null;
         private WaveStream rawConvertedStream = null;
         private WaveStream pcmStream = null;
         private LameMP3FileWriter mp3Writer = null;
@@ -85,9 +86,10 @@ namespace SWYH.Audio
                 this.loopbackWaveIn = new WasapiCapture(captureDevice);
             }
             this.loopbackWaveIn.DataAvailable += new EventHandler<WaveInEventArgs>(this.loopbackWaveIn_DataAvailable);
-            
+
             // Init Raw Wav (16bit)
-            WaveStream rawWave16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(this.loopbackWaveIn.WaveFormat.SampleRate, this.loopbackWaveIn.WaveFormat.Channels)));
+            this.rawWave16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(this.loopbackWaveIn.WaveFormat.SampleRate, this.loopbackWaveIn.WaveFormat.Channels)));
+            SetVolume(SWYH.Properties.Settings.Default.Volume, SWYH.Properties.Settings.Default.Mute);
 
             // Convert Raw Wav to PCM with audio format in settings
             var audioFormat = AudioSettings.GetAudioFormat();
@@ -116,6 +118,10 @@ namespace SWYH.Audio
             waveProcessorThread.Start();
         }
 
+        public void SetVolume(int volume, bool muted)
+        {
+            rawWave16b.Volume = muted ? 0 : (float)volume * 2 / 100;
+        }
 
         public void Dispose()
         {
