@@ -63,6 +63,13 @@ namespace SWYH.UPnP
             this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
             this.Device.SerialNumber = string.Format("SWYH_UPNP_{0}{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
 
+            if (!Guid.TryParse(SWYH.Properties.Settings.Default.UniqueDeviceName, out _))
+            {
+                SWYH.Properties.Settings.Default.UniqueDeviceName = Guid.NewGuid().ToString();
+                SWYH.Properties.Settings.Default.Save();
+            }
+            this.Device.UniqueDeviceName = SWYH.Properties.Settings.Default.UniqueDeviceName;
+
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";

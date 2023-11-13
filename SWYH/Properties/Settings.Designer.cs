@@ -85,6 +85,21 @@ namespace SWYH.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UniqueDeviceName
+        {
+            get
+            {
+                return ((string)(this["UniqueDeviceName"]));
+            }
+            set
+            {
+                this["UniqueDeviceName"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool Debug {
             get {
