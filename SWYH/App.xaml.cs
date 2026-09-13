@@ -78,10 +78,22 @@ namespace SWYH
 
         internal static FileVersionInfo FileVersion => FileVersionInfo.GetVersionInfo(ExecutablePath);
 
-        internal static SemVersion Version => new SemVersion(
-            App.FileVersion.ProductMajorPart,
-            Math.Max(App.FileVersion.ProductMinorPart, 0),
-            Math.Max(App.FileVersion.ProductBuildPart, 0));
+        internal static SemVersion Version
+        {
+            get
+            {
+                var informationalVersion = FileVersion.ProductVersion;
+                if (!string.IsNullOrEmpty(informationalVersion) && SemVersion.TryParse(informationalVersion, out var semver))
+                {
+                    return semver;
+                }
+
+                return new SemVersion(
+                    App.FileVersion.ProductMajorPart,
+                    Math.Max(App.FileVersion.ProductMinorPart, 0),
+                    Math.Max(App.FileVersion.ProductBuildPart, 0));
+            }
+        }
 
         internal static void OpenUrl(string url)
         {
