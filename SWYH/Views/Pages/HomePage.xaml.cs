@@ -24,7 +24,11 @@
 namespace SWYH.Views.Pages
 {
     using SWYH.ViewModels;
+    using System;
+    using System.Threading.Tasks;
+    using System.Windows;
     using System.Windows.Controls;
+    using Wpf.Ui.Controls;
 
     /// <summary>
     /// Interaction logic for HomePage.xaml
@@ -40,5 +44,27 @@ namespace SWYH.Views.Pages
             InitializeComponent();
             this.Unloaded += (s, e) => this.ViewModel.Dispose();
         }
+
+        private void ChangeAudioSource_Click(object sender, RoutedEventArgs e)
+        {
+            App.CurrentInstance.ShowMainWindow(typeof(SettingsPage));
+        }
+
+        private async void CopyUrlButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Wpf.Ui.Controls.Button button)
+            {
+                return;
+            }
+
+            var originalIcon = button.Icon;
+            var originalToolTip = button.ToolTip;
+            button.Icon = new SymbolIcon { Symbol = SymbolRegular.Checkmark24 };
+            button.ToolTip = "Copied!";
+            await Task.Delay(1200);
+            button.Icon = originalIcon;
+            button.ToolTip = originalToolTip;
+        }
     }
 }
+

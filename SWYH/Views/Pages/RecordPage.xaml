@@ -2,10 +2,11 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="Record">
     <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Text="Record What You Hear" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-        <TextBlock Text="Captures the streamed audio to a local MP3 file." Foreground="Gray"
+        <TextBlock Text="Captures the streamed audio to a local MP3 file." Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                    HorizontalAlignment="Center" Margin="0,4,0,24"/>
         <TextBlock x:Name="tbTime" Text="0:00:00.000" FontSize="32" FontWeight="Light" HorizontalAlignment="Center" Margin="0,0,0,24"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

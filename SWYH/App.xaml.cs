@@ -135,6 +135,7 @@ namespace SWYH
                 {
                     this.CheckAutomaticDeviceStreamed(e);
                     this.CheckNewVersion();
+                    ApplicationThemeManager.Apply(ApplicationTheme.Dark, Wpf.Ui.Controls.WindowBackdropType.Mica, updateAccent: false);
                     ApplicationAccentColorManager.Apply(Color.FromRgb(0x2F, 0x7C, 0xF6), ApplicationTheme.Dark);
                     this.SwyhService = new SwyhService();
                     this.SwyhService.SetAutoStreamTargets(this.autoStreamTo);
@@ -170,7 +171,7 @@ namespace SWYH
             });
         }
 
-        private void ShowMainWindow(Type navigateTo = null)
+        internal void ShowMainWindow(Type navigateTo = null)
         {
             if (navigateTo != null)
             {

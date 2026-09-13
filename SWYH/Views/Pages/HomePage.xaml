@@ -6,6 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       d:DesignHeight="720" d:DesignWidth="480"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="Home">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24,16,24,24">
@@ -56,7 +57,7 @@
                                 <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                 <ui:Button Grid.Column="1" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}"
                                            Command="{Binding DataContext.CopyUrlCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                           CommandParameter="{Binding}" ToolTip="Copy URL"/>
+                                           CommandParameter="{Binding}" Click="CopyUrlButton_Click" ToolTip="Copy URL"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
@@ -67,10 +68,17 @@
             <TextBlock Text="AUDIO SOURCE" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
             <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1" CornerRadius="8" Padding="12,10">
-                <StackPanel Orientation="Horizontal">
-                    <ui:SymbolIcon Symbol="Speaker224" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="{Binding CaptureDeviceName}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Speaker224" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding CaptureDeviceName}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <ui:Button Grid.Column="1" Appearance="Transparent" Content="Change" Click="ChangeAudioSource_Click"/>
+                </Grid>
             </Border>
 
             <!-- Devices -->

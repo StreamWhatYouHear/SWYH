@@ -24,7 +24,9 @@
                            PaneDisplayMode="Left"
                            IsPaneOpen="False"
                            IsBackButtonVisible="Collapsed"
-                           OpenPaneLength="170">
+                           OpenPaneLength="170"
+                           Transition="FadeInWithSlide"
+                           TransitionDuration="300">
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="Home" Icon="{ui:SymbolIcon Home24}" TargetPageType="{x:Type pages:HomePage}"/>
                 <ui:NavigationViewItem Content="Record" Icon="{ui:SymbolIcon RecordStop24}" TargetPageType="{x:Type pages:RecordPage}"/>
