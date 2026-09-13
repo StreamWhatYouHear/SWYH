@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master
       - develop
       - 'feature/**'
       - 'fix/**'
@@ -12,6 +13,7 @@ on:
   pull_request:
     branches:
       - main
+      - master
       - develop
   workflow_dispatch:
 
@@ -99,13 +101,13 @@ jobs:
           if-no-files-found: error
 
       - name: Publish GitHub Release (Beta / Stable)
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.gitversion.outputs.semVer }}
           name: SWYH v${{ steps.gitversion.outputs.semVer }}
           prerelease: ${{ github.ref == 'refs/heads/develop' || contains(steps.gitversion.outputs.semVer, '-') }}
-          make_latest: ${{ github.ref == 'refs/heads/main' }}
+          make_latest: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
           generate_release_notes: true
           files: artifacts/*
         env:

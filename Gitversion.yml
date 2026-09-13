@@ -1,12 +1,16 @@
-﻿mode: ContinuousDeployment
+﻿workflow: GitFlow/v1
 next-version: 2.0.0
+mode: ContinuousDelivery
 assembly-file-versioning-scheme: MajorMinorPatchTag
 branches:
   main:
     regex: ^master$|^main$
-    mode: ContinuousDeployment
-    tag: ''
+    label: ''
   develop:
     regex: ^dev(elop)?(ment)?$
-    mode: ContinuousDeployment
-    tag: beta
+    label: beta
+    mode: ContinuousDelivery
+
+
+
+
