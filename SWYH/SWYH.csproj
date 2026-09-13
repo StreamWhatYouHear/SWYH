@@ -8,7 +8,11 @@
     <RootNamespace>SWYH</RootNamespace>
     <AssemblyName>SWYH</AssemblyName>
     <ApplicationIcon>Resources\Icons\swyh.ico</ApplicationIcon>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Version>2.0.0</Version>
+    <Company>Sebastien.warin.fr</Company>
+    <Product>Stream What You Hear (SWYH)</Product>
+    <Copyright>Copyright © 2012-2026 Sebastien.warin.fr and others</Copyright>
+    <Description>Stream your PC audio to UPnP/DLNA devices</Description>
     <Deterministic>false</Deterministic>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

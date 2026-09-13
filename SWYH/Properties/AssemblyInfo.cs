@@ -28,14 +28,6 @@ using System.Windows;
 
 [assembly: SupportedOSPlatform("windows10.0")]
 [assembly: Guid("2ecd245f-4268-48ee-b0f1-0706ead1ba42")]
-[assembly: AssemblyTitle("Stream What You Hear")]
-[assembly: AssemblyDescription("Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Sebastien.warin.fr")]
-[assembly: AssemblyProduct("Stream What You Hear (SWYH)")]
-[assembly: AssemblyCopyright("Copyright © 2012-2026 Sebastien.warin.fr ans others")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 
 [assembly: ThemeInfo(
@@ -46,8 +38,3 @@ using System.Windows;
                                               //(used if a resource is not found in the page, 
                                               // app, or any theme specific resource dictionaries)
 )]
-
-// Version 10.0 for local development
-// Automatically update by the build pipeline with GitVersion
-[assembly: AssemblyVersion("10.0.0.0")]
-[assembly: AssemblyFileVersion("10.0.0.0")]

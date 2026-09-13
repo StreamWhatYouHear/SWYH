@@ -1,11 +1,29 @@
+#ifndef MyAppName
 #define MyAppName "Stream What You Hear (SWYH)"
+#endif
+#ifndef MyAppPublisher
 #define MyAppPublisher "Sebastien.warin.fr"
+#endif
+#ifndef MyAppURL
 #define MyAppURL "https://www.streamwhatyouhear.com"
+#endif
+#ifndef MyAppExeName
 #define MyAppExeName "SWYH.exe"
+#endif
 
 ; Updated by the build server
-#define ShortVersion "1.0"
-#define FullVersion "1.0-dev"
+#ifndef ShortVersion
+#define ShortVersion "2.0.0"
+#endif
+#ifndef FullVersion
+#define FullVersion "2.0.0-dev"
+#endif
+#ifndef SourceDir
+#define SourceDir "publish"
+#endif
+#ifndef OutputDir
+#define OutputDir "artifacts"
+#endif
 
 [Setup]
 AppId={{5FBEA9D3-668E-4B88-BF6C-E1BCF441ECFD}
@@ -16,14 +34,15 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\Stream What You Hear
+DefaultDirName={autopf}\Stream What You Hear
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputDir=SWYH\bin\Release
-OutputBaseFilename=SWYH_{#FullVersion}
+OutputDir={#OutputDir}
+OutputBaseFilename=SWYH_{#FullVersion}_Setup
 SetupIconFile=SWYH\Resources\Icons\swyh.ico
 Compression=lzma
 SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -51,7 +70,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "SWYH\bin\Any CPU\Release\net10.0-windows10.0.19041.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

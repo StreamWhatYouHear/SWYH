@@ -1,0 +1,110 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'fix/**'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+          configFilePath: Gitversion.yml
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup -y --no-progress
+
+      - name: Prepare Artifacts Directory
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts
+
+      - name: Publish SWYH (Win-x64 Standalone)
+        shell: pwsh
+        run: |
+          dotnet publish SWYH/SWYH.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:Platform="Any CPU" `
+            -p:Version="${{ steps.gitversion.outputs.semVer }}" `
+            -p:FileVersion="${{ steps.gitversion.outputs.assemblySemFileVer }}" `
+            -p:AssemblyVersion="${{ steps.gitversion.outputs.assemblySemVer }}" `
+            -p:InformationalVersion="${{ steps.gitversion.outputs.informationalVersion }}" `
+            -o ./publish
+
+      - name: Create Portable Zip Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path ./publish/* -DestinationPath "artifacts/SWYH_${{ steps.gitversion.outputs.semVer }}_portable.zip" -Force
+
+      - name: Build Inno Setup Installer
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            $iscc = (Get-Command iscc).Source
+          }
+          & $iscc "SWYH Installer.iss" `
+            /DShortVersion="${{ steps.gitversion.outputs.majorMinorPatch }}" `
+            /DFullVersion="${{ steps.gitversion.outputs.semVer }}" `
+            /DSourceDir="publish" `
+            /DOutputDir="artifacts"
+
+      - name: Upload Workflow Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: SWYH-${{ steps.gitversion.outputs.semVer }}
+          path: artifacts/*
+          if-no-files-found: error
+
+      - name: Publish GitHub Release (Beta / Stable)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.gitversion.outputs.semVer }}
+          name: SWYH v${{ steps.gitversion.outputs.semVer }}
+          prerelease: ${{ github.ref == 'refs/heads/develop' || contains(steps.gitversion.outputs.semVer, '-') }}
+          make_latest: ${{ github.ref == 'refs/heads/main' }}
+          generate_release_notes: true
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,7 +1,11 @@
 ﻿mode: ContinuousDeployment
-continuous-delivery-fallback-tag: ''
-assembly-informational-format: "{NuGetVersionV2}+{ShortSha}"
 assembly-file-versioning-scheme: MajorMinorPatchTag
 branches:
+  main:
+    regex: ^master$|^main$
+    mode: ContinuousDeployment
+    tag: ''
   develop:
+    regex: ^dev(elop)?(ment)?$
+    mode: ContinuousDeployment
     tag: beta
