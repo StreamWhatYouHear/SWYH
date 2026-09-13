@@ -1,6 +1,6 @@
 #define MyAppName "Stream What You Hear (SWYH)"
 #define MyAppPublisher "Sebastien.warin.fr"
-#define MyAppURL "http://www.streamwhatyouhear.com"
+#define MyAppURL "https://www.streamwhatyouhear.com"
 #define MyAppExeName "SWYH.exe"
 
 ; Updated by the build server

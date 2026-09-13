@@ -1,7 +1,7 @@
 # Stream What You Hear
 Stream What You Hear (SWYH) is a Windows application to broadcast the sound of your computer (ie: “what you hear”) on an UPnP/DLNA device such as TVs, amps, network receivers, game consoles, etc...
 
-Web site : http://www.streamwhatyouhear.com/
+Web site : https://www.streamwhatyouhear.com/
 
 ### Features
 - Capture any sound on your computer (“what you hear”)
@@ -12,19 +12,15 @@ Web site : http://www.streamwhatyouhear.com/
 
 ### Getting Started
 - Before installation make sure your environment complies with minimum requirements (Windows 10 or later). SWYH is published as a self-contained .NET 10 Windows executable.
-- Download and install the latest release of SWYH on http://www.streamwhatyouhear.com/download/
+- Download and install the latest release of SWYH on https://www.streamwhatyouhear.com/download/
 - Launch the “Stream What You Hear (SWYH)” application
 - Right-click on the SWYH icon in the systray and go to “Stream to” menu
 - Select your device and wait few seconds
 
-More information on http://www.streamwhatyouhear.com/getting-started/
+More information on https://www.streamwhatyouhear.com/getting-started/
  
 ### FAQ
-http://www.streamwhatyouhear.com/faq/
-
-### Forums
-- EN : http://www.streamwhatyouhear.com/forums/forum/en/
-- FR :  http://www.streamwhatyouhear.com/forums/forum/fr/
+https://www.streamwhatyouhear.com/faq/
 
 ### About
 SWYH was developed by Sebastien Warin (https://sebastien.warin.fr) who currently lives in Lille (France). The first version of this project has been developed in July 2012 and published in October 2012.
@@ -36,7 +32,7 @@ Find the original article’s of this project posted on October 12, 2012 (in Fre
 This software uses :
 - .NET 10
 - WASAPI (Windows Audio Service API) for the sound capture
-- NAudio for the audio stream manipulation : http://naudio.codeplex.com/
+- NAudio for the audio stream manipulation : https://github.com/naudio/naudio
 - LAME for the MP3 encoding : https://github.com/Corey-M/NAudio.Lame
 - UPnP NuGet package for the UPnP core stack : https://www.nuget.org/packages/UPnP
 - Intel UPnP/DLNA AV components adapted from Developer Tools for UPnP Technologies and maintained locally for SWYH renderer/content-directory support
@@ -59,7 +55,7 @@ This software uses :
 - … and many more
 
 ### Supported Media Players
-- Sonos system (http://www.streamwhatyouhear.com/forums/topic/sonos-is-supported/)
+- Sonos system (https://www.streamwhatyouhear.com/forums/topic/sonos-is-supported/)
 - Freebox V6 Player (with MP3 stream only)
 - Bouygues BBox
 - PlayStation 3 (with PCM/L16 stream only)

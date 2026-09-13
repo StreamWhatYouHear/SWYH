@@ -11,7 +11,7 @@
                   Background="{DynamicResource AccentFillColorDefaultBrush}" Foreground="White"/>
         <TextBlock Text="Simply stream the sound from your PC to an UPnP / DLNA device" TextWrapping="Wrap" TextAlignment="Center"
                    FontStyle="Italic" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,20,0,0" MaxWidth="320"/>
-        <ui:Anchor Margin="0,24,0,0" HorizontalAlignment="Center" Content="www.streamwhatyouhear.com" NavigateUri="http://www.streamwhatyouhear.com"/>
+        <ui:Anchor Margin="0,24,0,0" HorizontalAlignment="Center" Content="www.streamwhatyouhear.com" NavigateUri="https://www.streamwhatyouhear.com"/>
         <ui:Anchor Margin="0,8,0,0" HorizontalAlignment="Center" Content="Sebastien.warin.fr" NavigateUri="https://sebastien.warin.fr"/>
         <TextBlock Text="Copyright (c) 2012 - 2026" Foreground="{DynamicResource TextFillColorTertiaryBrush}" FontSize="12"
                    HorizontalAlignment="Center" Margin="0,8,0,0"/>
