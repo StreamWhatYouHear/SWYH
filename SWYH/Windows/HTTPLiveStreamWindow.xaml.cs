@@ -32,7 +32,7 @@ namespace SWYH
     /// </summary>
     public partial class HTTPLiveStreamWindow : Window
     {
-        public List<string> Uris => App.CurrentInstance.swyhDevice.ContentDirectory.GetWasapiUris(Audio.AudioFormats.Format.Mp3);
+        public List<string> Uris => App.CurrentInstance.SwyhService.GetStreamUrls(Audio.AudioFormats.Format.Mp3);
 
         public HTTPLiveStreamWindow()
         {

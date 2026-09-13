@@ -37,6 +37,7 @@ namespace SWYH.UPnP
     /// </summary>
     internal class SwyhDevice
     {
+        private readonly WasapiProvider wasapiProvider;
         private bool isRunning = true;
         private byte[] bufferMp3 = new byte[2048];
         private byte[] bufferPcm = new byte[2048];
@@ -48,8 +49,9 @@ namespace SWYH.UPnP
         public DvContentDirectory ContentDirectory { get; private set; }
         public DvConnectionManager ConnectionManager { get; private set; }
 
-        public SwyhDevice()
+        public SwyhDevice(WasapiProvider wasapiProvider)
         {
+            this.wasapiProvider = wasapiProvider;
             this.Device = UPnPDevice.CreateRootDevice(1800, 1.0, "\\");
 
             this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):";
@@ -133,7 +135,7 @@ namespace SWYH.UPnP
         {
             while (this.isRunning)
             {
-                int bytesRead = App.CurrentInstance.wasapiProvider.LoopbackMp3Stream.Read(bufferMp3, 0, bufferMp3.Length);
+                int bytesRead = this.wasapiProvider.LoopbackMp3Stream.Read(bufferMp3, 0, bufferMp3.Length);
                 if (bytesRead > 0)
                 {
                     Parallel.ForEach<PipeStream>(sessionMp3Streams.Values, (p, s, l) =>
@@ -152,7 +154,7 @@ namespace SWYH.UPnP
         {
             while (this.isRunning)
             {
-                int bytesRead = App.CurrentInstance.wasapiProvider.LoopbackL16Stream.Read(bufferPcm, 0, bufferPcm.Length);
+                int bytesRead = this.wasapiProvider.LoopbackL16Stream.Read(bufferPcm, 0, bufferPcm.Length);
                 if (bytesRead > 0)
                 {
                     Parallel.ForEach<PipeStream>(sessionPcmStreams.Values, (p, s, l) =>
@@ -183,11 +185,11 @@ namespace SWYH.UPnP
                     {
                         PipeStream value;
                         sessionMp3Streams.TryRemove(s.SessionID, out value);
-                        App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                        this.wasapiProvider.UpdateClientsList(sessionMp3Streams.Count, sessionPcmStreams.Count);
                     }
                 };
                 PipeStream stream = sessionMp3Streams.GetOrAdd(WebSession.SessionID, new PipeStream());
-                App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                this.wasapiProvider.UpdateClientsList(sessionMp3Streams.Count, sessionPcmStreams.Count);
                 WebSession.SendStreamObject(stream, "audio/mpeg");
             }
             else if (VirtualDir.Equals("/stream", StringComparison.InvariantCultureIgnoreCase) && msg.DirectiveObj.Equals("/swyh.wav", StringComparison.InvariantCultureIgnoreCase))
@@ -198,11 +200,11 @@ namespace SWYH.UPnP
                     {
                         PipeStream value;
                         sessionPcmStreams.TryRemove(s.SessionID, out value);
-                        App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                        this.wasapiProvider.UpdateClientsList(sessionMp3Streams.Count, sessionPcmStreams.Count);
                     }
                 };
                 PipeStream stream = sessionPcmStreams.GetOrAdd(WebSession.SessionID, new PipeStream());
-                App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                this.wasapiProvider.UpdateClientsList(sessionMp3Streams.Count, sessionPcmStreams.Count);
                 var audioFormat = AudioSettings.GetAudioFormat();
                 WebSession.SendStreamObject(stream, "audio/L16;rate=" + audioFormat.SampleRate + ";channels=" + audioFormat.Channels);
             }

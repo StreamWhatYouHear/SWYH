@@ -23,10 +23,9 @@
 
 namespace SWYH
 {
-    using OpenSource.UPnP.AV.RENDERER.CP;
     using Semver;
     using SWYH.Audio;
-    using SWYH.UPnP;
+    using SWYH.Services;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -44,11 +43,9 @@ namespace SWYH
         public static App CurrentInstance { get { return Application.Current as App; } }
         public static bool NeedUpdate { get; private set; }
 
-        private string[] autoStreamTo = new string[0];
+        internal ISwyhService SwyhService { get; private set; }
 
-        private AVRendererDiscovery rendererDiscovery = null;
-        internal SwyhDevice swyhDevice = null;
-        internal WasapiProvider wasapiProvider = null;
+        private string[] autoStreamTo = new string[0];
 
         private SettingsWindow settingsWindow = null;
         private AboutWindow aboutWindow = null;
@@ -58,6 +55,7 @@ namespace SWYH
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
         private bool directClose = false;   //Skip the statements in Application_Exit function.
+
 
         internal static string ExecutablePath
         {
@@ -139,11 +137,10 @@ namespace SWYH
                     this.CheckAutomaticDeviceStreamed(e);
                     this.CheckNewVersion();
                     this.InitializeUI();
-                    this.rendererDiscovery = new AVRendererDiscovery((new AVRendererDiscovery.DiscoveryHandler(RendererAddedSink)));
-                    this.rendererDiscovery.OnRendererRemoved += new AVRendererDiscovery.DiscoveryHandler(new AVRendererDiscovery.DiscoveryHandler(RendererRemovedSink));
-                    this.wasapiProvider = new WasapiProvider();
-                    this.swyhDevice = new SwyhDevice();
-                    this.swyhDevice.Start();
+                    this.SwyhService = new SwyhService();
+                    this.SwyhService.SetAutoStreamTargets(this.autoStreamTo);
+                    this.SwyhService.Renderers.CollectionChanged += this.Renderers_CollectionChanged;
+                    this.SwyhService.Start();
                     notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
                 }
             }
@@ -158,11 +155,11 @@ namespace SWYH
             this.recordWindow = new RecordWindow();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
+                ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(),
                 Icon = SWYH.Properties.Resource.swyh,
                 Text = string.Format("Stream What You Hear {0}.{1}{2}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart, (fileVersion.ProductPrivatePart % 2) == 0 ? "" : " (BETA)"),
                 Visible = true
             };
-            this.notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             this.streamToMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to", null);
             this.searchingItem = new System.Windows.Forms.ToolStripMenuItem("Searching ...", null) { Name = "searchingItem", ForeColor = System.Drawing.Color.Gray };
             this.streamToMenu.DropDownItems.Add("My device is not listed", null, (s, e2) => MessageBox.Show("Perhaps your device is not connected or is not recognized as an UPnP Media Renderer !\nIf your device is an UPnP/DLNA player, try to start the stream of SWYH manually on the device.\nFor more information, go to http://www.streamwhatyouhear.com !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Information));
@@ -225,129 +222,57 @@ namespace SWYH
             }
         }
 
-        private void CloseStreamingConnections()
-        {
-            foreach (System.Windows.Forms.ToolStripItem tsi in this.streamToMenu.DropDownItems)
-            {
-                var item = tsi as System.Windows.Forms.ToolStripMenuItem;
-                if (item != null && item.Checked)
-                {
-                    item.Checked = false;
-                    var renderer = item.Tag as AVRenderer;
-                    if (renderer != null && renderer.Connections.Count > 0)
-                    {
-                        var connectionAV = renderer.Connections[0] as AVConnection;
-                        connectionAV.Stop();
-                    }
-                }
-            }
-        }
-
-        private void RendererAddedSink(AVRendererDiscovery sender, AVRenderer renderer)
+        private void Renderers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (e.NewItems != null)
                 {
-                    if (!this.streamToMenu.DropDownItems.ContainsKey(renderer.UniqueDeviceName))
+                    foreach (Services.RendererViewModel renderer in e.NewItems)
                     {
-                        var menuItem = new System.Windows.Forms.ToolStripMenuItem
-                            (renderer.FriendlyName, null, streamMenu_RendererSelected)
-                            {
-                                Name = renderer.UniqueDeviceName,
-                                Tag = renderer
-                            };
-                        this.streamToMenu.DropDownItems.Add(menuItem);
-                        if (renderer != null && renderer.Connections.Count > 0)
+                        var menuItem = new System.Windows.Forms.ToolStripMenuItem(renderer.Name, null, (s, e2) => this.SwyhService.ToggleStreamToRenderer(renderer))
                         {
-                            var connectionAV = renderer.Connections[0] as AVConnection;
-                            connectionAV.OnPlayStateChanged += new AVConnection.PlayStateChangedHandler(connectionAV_OnPlayStateChanged);
-                            if (autoStreamTo.Any(r => r.Equals(renderer.FriendlyName, StringComparison.InvariantCultureIgnoreCase)))
+                            Name = renderer.UniqueDeviceName,
+                            Tag = renderer,
+                            Checked = renderer.IsStreaming
+                        };
+                        renderer.PropertyChanged += (s, e2) =>
+                        {
+                            if (e2.PropertyName == nameof(Services.RendererViewModel.IsStreaming))
                             {
-                                streamMenu_RendererSelected(menuItem, EventArgs.Empty);
+                                this.Dispatcher.BeginInvoke(new Action(() => menuItem.Checked = renderer.IsStreaming));
                             }
+                        };
+                        this.streamToMenu.DropDownItems.Add(menuItem);
+                    }
+                }
+                if (e.OldItems != null)
+                {
+                    foreach (Services.RendererViewModel renderer in e.OldItems)
+                    {
+                        if (this.streamToMenu.DropDownItems.ContainsKey(renderer.UniqueDeviceName))
+                        {
+                            this.streamToMenu.DropDownItems.RemoveByKey(renderer.UniqueDeviceName);
                         }
                     }
-                    if (this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count >= 2)
-                    {
-                        this.streamToMenu.DropDownItems.RemoveByKey(this.searchingItem.Name);
-                    }
-                }));
-        }
-
-        private void RendererRemovedSink(AVRendererDiscovery sender, AVRenderer renderer)
-        {
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (this.streamToMenu.DropDownItems.ContainsKey(renderer.UniqueDeviceName))
-                {
-                    this.streamToMenu.DropDownItems.RemoveByKey(renderer.UniqueDeviceName);
-                    if (renderer != null && renderer.Connections.Count > 0)
-                    {
-                        var connectionAV = renderer.Connections[0] as AVConnection;
-                        connectionAV.OnPlayStateChanged -= new AVConnection.PlayStateChangedHandler(connectionAV_OnPlayStateChanged);
-                    }
                 }
-                if (!this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name) && this.streamToMenu.DropDownItems.Count == 2)
+                bool hasRenderers = this.SwyhService.Renderers.Count > 0;
+                if (hasRenderers && this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name))
                 {
-                    this.streamToMenu.DropDownItems.Add(searchingItem);
+                    this.streamToMenu.DropDownItems.RemoveByKey(this.searchingItem.Name);
+                }
+                else if (!hasRenderers && !this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name))
+                {
+                    this.streamToMenu.DropDownItems.Add(this.searchingItem);
                 }
             }));
-        }
-
-        private void streamMenu_RendererSelected(object sender, EventArgs e)
-        {
-            var rendererItem = (System.Windows.Forms.ToolStripMenuItem)sender;
-            var renderer = rendererItem.Tag as AVRenderer;
-            if (renderer != null && renderer.Connections.Count > 0)
-            {
-                var connectionAV = renderer.Connections[0] as AVConnection;
-                if (rendererItem.Checked)
-                {
-                    rendererItem.Checked = false;
-                    connectionAV.Stop();
-                }
-                else
-                {
-                    rendererItem.Checked = true;
-                    var media = this.swyhDevice.ContentDirectory.GetWasapiMediaItem();
-                    if (media != null)
-                    {
-                        connectionAV.Stop();
-                        renderer.CreateConnection(media, DateTime.Now.Ticks);
-                        connectionAV.Play();
-                    }
-                }
-            }
-        }
-
-        private void connectionAV_OnPlayStateChanged(AVConnection sender, AVConnection.PlayState NewState)
-        {
-            this.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    if (this.streamToMenu.DropDownItems.ContainsKey(sender.Parent.UniqueDeviceName) &&
-                        sender.MediaResource != null && this.swyhDevice.ContentDirectory.GetWasapiUris(AudioSettings.GetStreamFormat()).Contains(sender.MediaResource.ContentUri))
-                    {
-                        var item = this.streamToMenu.DropDownItems[sender.Parent.UniqueDeviceName] as System.Windows.Forms.ToolStripMenuItem;
-                        {
-                            if (NewState == AVConnection.PlayState.STOPPED)
-                            {
-                                item.Checked = false;
-                            }
-                            else if (NewState == AVConnection.PlayState.PLAYING)
-                            {
-                                item.Checked = true;
-                            }
-                        }
-                    }
-                }));
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             if (!directClose)
             {
-                this.CloseStreamingConnections();
-                this.swyhDevice.Stop();
-                this.wasapiProvider.Dispose();
+                this.SwyhService?.Dispose();
                 if (this.notifyIcon != null)
                 {
                     this.notifyIcon.Dispose();

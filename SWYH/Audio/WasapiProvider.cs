@@ -137,10 +137,10 @@ namespace SWYH.Audio
             this.LoopbackL16Stream.Dispose();
         }
 
-        internal void UpdateClientsList()
+internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
         {
-            this.hasMP3Clients = App.CurrentInstance.swyhDevice.sessionMp3Streams.Count > 0;
-            this.hasPCMClients = App.CurrentInstance.swyhDevice.sessionPcmStreams.Count > 0;
+            this.hasMP3Clients = mp3ClientsCount > 0;
+            this.hasPCMClients = pcmClientsCount > 0;
         }
 
         private void waveProcessor()

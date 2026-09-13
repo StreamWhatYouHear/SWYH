@@ -68,8 +68,7 @@ namespace SWYH
             timer.Start();
             this.isRecording = true;
             this.startDate = DateTime.Now;
-            App.CurrentInstance.swyhDevice.sessionMp3Streams.GetOrAdd(Int32.MinValue, new PipeStream());
-            App.CurrentInstance.wasapiProvider.UpdateClientsList();
+            App.CurrentInstance.SwyhService.StartRecording();
             this.UpdateUi();
         }
 
@@ -77,10 +76,8 @@ namespace SWYH
         {
             timer.Stop();
             this.isRecording = false;
-            PipeStream value = null;
-            while (!App.CurrentInstance.swyhDevice.sessionMp3Streams.TryRemove(Int32.MinValue, out value)) ; ;
-            App.CurrentInstance.wasapiProvider.UpdateClientsList();
-            if (value.Length > 0)
+            byte[] content = App.CurrentInstance.SwyhService.StopRecording();
+            if (content.Length > 0)
             {
                 SaveFileDialog sfd = new SaveFileDialog()
                 {
@@ -93,25 +90,21 @@ namespace SWYH
                 bool? result = sfd.ShowDialog();
                 if (result.HasValue && result.Value)
                 {
-                    byte[] content = new byte[value.Length];
-                    if (value.Read(content, 0, content.Length) >= 0)
+                saveFile:
+                    try
                     {
-                    saveFile:
-                        try
+                        if (File.Exists(sfd.FileName))
                         {
-                            if (File.Exists(sfd.FileName))
-                            {
-                                File.Delete(sfd.FileName);
-                            }
-                            File.WriteAllBytes(sfd.FileName, content);
-                            MessageBox.Show("Recording saved as " + sfd.FileName, "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Information);
+                            File.Delete(sfd.FileName);
                         }
-                        catch (Exception ex)
+                        File.WriteAllBytes(sfd.FileName, content);
+                        MessageBox.Show("Recording saved as " + sfd.FileName, "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (MessageBox.Show(string.Format("A file error has occurred : '{0}'\nDo you want to retry ?", ex.Message), "Record What You Hear", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
                         {
-                            if (MessageBox.Show(string.Format("A file error has occurred : '{0}'\nDo you want to retry ?", ex.Message), "Record What You Hear", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
-                            {
-                                goto saveFile;
-                            }
+                            goto saveFile;
                         }
                     }
                 }
@@ -139,9 +132,7 @@ namespace SWYH
                     return;
                 }
                 this.isRecording = false;
-                PipeStream value = null;
-                while (!App.CurrentInstance.swyhDevice.sessionMp3Streams.TryRemove(Int32.MinValue, out value)) ; ;
-                App.CurrentInstance.wasapiProvider.UpdateClientsList();
+                App.CurrentInstance.SwyhService.StopRecording();
                 this.UpdateUi();
             }
             this.Hide();
