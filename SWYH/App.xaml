@@ -1,8 +1,16 @@
 ﻿<Application x:Class="SWYH.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:conv="clr-namespace:SWYH.Converters"
              Startup="Application_Startup" Exit="Application_Exit">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+            <conv:BoolToStringConverter x:Key="BoolToStringConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

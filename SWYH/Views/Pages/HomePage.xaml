@@ -1,0 +1,100 @@
+<Page x:Class="SWYH.Views.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      d:DesignHeight="720" d:DesignWidth="480"
+      Title="Home">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,16,24,24">
+
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                <Image Source="/SWYH;component/Resources/Icons/swyh.png" Width="36" Height="36"/>
+                <TextBlock Text="Stream What You Hear" FontSize="16" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Status -->
+            <TextBlock Text="STATUS" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding StatusText}" FontSize="24" FontWeight="Bold" Margin="0,4,0,0"
+                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
+            <TextBlock Text="{Binding ElapsedText}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
+
+            <!-- Level meter -->
+            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,16,0,0" Height="96">
+                <ItemsControl ItemsSource="{Binding LevelHistory}" VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="4" Margin="1,0" CornerRadius="2" VerticalAlignment="Center"
+                                    Height="{Binding}" Background="{DynamicResource AccentFillColorDefaultBrush}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <!-- Output -->
+            <TextBlock Text="OUTPUT" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <ItemsControl ItemsSource="{Binding OutputUrls}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="8" Padding="10,6" Margin="0,0,0,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                <ui:Button Grid.Column="1" Appearance="Transparent" Icon="{ui:SymbolIcon Copy24}"
+                                           Command="{Binding DataContext.CopyUrlCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                           CommandParameter="{Binding}" ToolTip="Copy URL"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Audio -->
+            <TextBlock Text="AUDIO SOURCE" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12,10">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Speaker224" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding CaptureDeviceName}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Devices -->
+            <ui:CardExpander Margin="0,20,0,0" Header="{Binding DevicesHeaderText}" Icon="{ui:SymbolIcon DesktopSpeaker24}" IsExpanded="True">
+                <ItemsControl ItemsSource="{Binding Renderers}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center"/>
+                                <ui:Button Grid.Column="1" Padding="12,4"
+                                           Content="{Binding IsStreaming, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Stop;Play'}"
+                                           Appearance="{Binding IsStreaming, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Danger;Primary'}"
+                                           Command="{Binding DataContext.ToggleRendererCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                           CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ui:CardExpander>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
+

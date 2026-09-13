@@ -1,0 +1,20 @@
+<Page x:Class="SWYH.Views.Pages.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Title="About">
+    <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Image Source="/SWYH;component/Resources/Icons/swyh.png" Width="110" Height="110"/>
+        <TextBlock Text="Stream What You Hear" FontSize="22" FontWeight="Bold" Margin="0,16,0,0" HorizontalAlignment="Center"/>
+        <ui:Badge x:Name="tbVersion" Content="Version 0.0" Appearance="Primary" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+        <TextBlock Text="Simply stream the sound from your PC to an UPnP / DLNA device" TextWrapping="Wrap" TextAlignment="Center"
+                   FontStyle="Italic" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,20,0,0" MaxWidth="320"/>
+        <ui:Anchor Margin="0,24,0,0" HorizontalAlignment="Center" Content="www.streamwhatyouhear.com" NavigateUri="http://www.streamwhatyouhear.com"/>
+        <ui:Anchor Margin="0,8,0,0" HorizontalAlignment="Center" Content="Sebastien.warin.fr" NavigateUri="https://sebastien.warin.fr"/>
+        <TextBlock Text="Copyright (c) 2012 - 2026" Foreground="{DynamicResource TextFillColorTertiaryBrush}" FontSize="12"
+                   HorizontalAlignment="Center" Margin="0,8,0,0"/>
+        <ui:Button x:Name="btUpdate" Margin="0,20,0,0" Appearance="Primary" Content="A new version is available - Update now"
+                   Click="btUpdate_Click" Visibility="Collapsed"/>
+    </StackPanel>
+</Page>
+

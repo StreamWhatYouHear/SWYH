@@ -1,9 +1,9 @@
-﻿/*
+/*
  *	 Stream What Your Hear
  *	 Assembly: SWYH
- *	 File: RecordWindow.xaml.cs
+ *	 File: RecordPage.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -21,51 +21,44 @@
  *	 along with Stream What Your Hear. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace SWYH
+namespace SWYH.Views.Pages
 {
     using Microsoft.Win32;
-    using SWYH.Audio;
     using System;
     using System.IO;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Threading;
 
     /// <summary>
-    /// Interaction logic for RecordWindow.xaml
+    /// Interaction logic for RecordPage.xaml
     /// </summary>
-    public partial class RecordWindow : Window
+    public partial class RecordPage : Page
     {
-        protected bool isRecording = false;
+        private bool isRecording = false;
         private DateTime startDate = DateTime.MinValue;
-        private DispatcherTimer timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 10) };
+        private readonly DispatcherTimer timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 50) };
 
-        public RecordWindow()
+        public RecordPage()
         {
             InitializeComponent();
-            timer.Tick += new EventHandler(timer_Tick);
+            this.timer.Tick += this.Timer_Tick;
+            this.UpdateUi();
+            this.Unloaded += (s, e) => this.timer.Stop();
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             if (this.isRecording)
             {
                 var recordingTime = DateTime.Now.Subtract(this.startDate);
                 this.tbTime.Text = string.Format(@"{0}:{1}:{2}.{3}", Math.Truncate(recordingTime.TotalHours), recordingTime.Minutes.ToString("00"), recordingTime.Seconds.ToString("00"), recordingTime.Milliseconds.ToString("000"));
             }
-            else if(!this.isRecording && this.tbTime.Text != "0:00:00.000")
-            {
-                this.tbTime.Text = "0:00:00.000";
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.UpdateUi();
         }
 
         private void btRecord_Click(object sender, RoutedEventArgs e)
         {
-            timer.Start();
+            this.timer.Start();
             this.isRecording = true;
             this.startDate = DateTime.Now;
             App.CurrentInstance.SwyhService.StartRecording();
@@ -74,8 +67,9 @@ namespace SWYH
 
         private void btStop_Click(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
+            this.timer.Stop();
             this.isRecording = false;
+            this.tbTime.Text = "0:00:00.000";
             byte[] content = App.CurrentInstance.SwyhService.StopRecording();
             if (content.Length > 0)
             {
@@ -115,36 +109,11 @@ namespace SWYH
             }
             this.UpdateUi();
         }
+
         private void UpdateUi()
         {
             this.btRecord.IsEnabled = !this.isRecording;
             this.btStop.IsEnabled = this.isRecording;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
-            if (this.isRecording)
-            {
-                MessageBoxResult msg = MessageBox.Show("The current recording will be lost !\nAre you sure to exit ?", "Record What You Hear", MessageBoxButton.YesNo, MessageBoxImage.Hand);
-                if (msg == MessageBoxResult.No || msg == MessageBoxResult.None)
-                {
-                    return;
-                }
-                this.isRecording = false;
-                App.CurrentInstance.SwyhService.StopRecording();
-                this.UpdateUi();
-            }
-            this.Hide();
-            timer.Stop();
-        }
-
-        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == System.Windows.Input.Key.Escape)
-            {
-                this.Close();
-            }
         }
     }
 }

@@ -1,0 +1,38 @@
+<ui:FluentWindow x:Class="SWYH.Views.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:pages="clr-namespace:SWYH.Views.Pages"
+                 Title="Stream What You Hear"
+                 Width="480" Height="780" MinWidth="420" MinHeight="620"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 Icon="/SWYH;component/Resources/Icons/swyh.ico"
+                 Closing="FluentWindow_Closing"
+                 StateChanged="FluentWindow_StateChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0" Title="Stream What You Hear"
+                     Icon="pack://application:,,,/Resources/Icons/swyh.ico" />
+
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1"
+                           PaneDisplayMode="Left"
+                           IsPaneOpen="False"
+                           IsBackButtonVisible="Collapsed"
+                           OpenPaneLength="170">
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Content="Home" Icon="{ui:SymbolIcon Home24}" TargetPageType="{x:Type pages:HomePage}"/>
+                <ui:NavigationViewItem Content="Record" Icon="{ui:SymbolIcon RecordStop24}" TargetPageType="{x:Type pages:RecordPage}"/>
+            </ui:NavigationView.MenuItems>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Content="Settings" Icon="{ui:SymbolIcon Settings24}" TargetPageType="{x:Type pages:SettingsPage}"/>
+                <ui:NavigationViewItem Content="About" Icon="{ui:SymbolIcon Info24}" TargetPageType="{x:Type pages:AboutPage}"/>
+            </ui:NavigationView.FooterMenuItems>
+        </ui:NavigationView>
+    </Grid>
+</ui:FluentWindow>

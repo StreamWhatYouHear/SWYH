@@ -1,9 +1,9 @@
-﻿/*
+/*
  *	 Stream What Your Hear
  *	 Assembly: SWYH
  *	 File: App.xaml.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -26,6 +26,8 @@ namespace SWYH
     using Semver;
     using SWYH.Audio;
     using SWYH.Services;
+    using SWYH.Views;
+    using SWYH.Views.Pages;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -34,6 +36,8 @@ namespace SWYH
     using System.Text;
     using System.Threading;
     using System.Windows;
+    using System.Windows.Media;
+    using Wpf.Ui.Appearance;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -47,13 +51,8 @@ namespace SWYH
 
         private string[] autoStreamTo = new string[0];
 
-        private SettingsWindow settingsWindow = null;
-        private AboutWindow aboutWindow = null;
-        private HTTPLiveStreamWindow httpWindow = null;
-        private RecordWindow recordWindow = null;
+        private MainWindow mainWindow = null;
         private System.Windows.Forms.NotifyIcon notifyIcon = null;
-        private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
-        private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
         private bool directClose = false;   //Skip the statements in Application_Exit function.
 
 
@@ -136,12 +135,11 @@ namespace SWYH
                 {
                     this.CheckAutomaticDeviceStreamed(e);
                     this.CheckNewVersion();
-                    this.InitializeUI();
+                    ApplicationAccentColorManager.Apply(Color.FromRgb(0x2F, 0x7C, 0xF6), ApplicationTheme.Dark);
                     this.SwyhService = new SwyhService();
                     this.SwyhService.SetAutoStreamTargets(this.autoStreamTo);
-                    this.SwyhService.Renderers.CollectionChanged += this.Renderers_CollectionChanged;
                     this.SwyhService.Start();
-                    notifyIcon.ShowBalloonTip(2000, "Stream What You Hear is running", "Right-click on this icon to show the menu !", System.Windows.Forms.ToolTipIcon.Info);
+                    this.InitializeUI();
                 }
             }
         }
@@ -149,10 +147,9 @@ namespace SWYH
         private void InitializeUI()
         {
             FileVersionInfo fileVersion = App.FileVersion;
-            this.settingsWindow = new SettingsWindow();
-            this.aboutWindow = new AboutWindow();
-            this.httpWindow = new HTTPLiveStreamWindow();
-            this.recordWindow = new RecordWindow();
+            this.mainWindow = new MainWindow();
+            this.MainWindow = this.mainWindow;
+            this.mainWindow.Show();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
                 ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(),
@@ -160,21 +157,33 @@ namespace SWYH
                 Text = string.Format("Stream What You Hear {0}.{1}{2}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart, (fileVersion.ProductPrivatePart % 2) == 0 ? "" : " (BETA)"),
                 Visible = true
             };
-            this.streamToMenu = new System.Windows.Forms.ToolStripMenuItem("Stream to", null);
-            this.searchingItem = new System.Windows.Forms.ToolStripMenuItem("Searching ...", null) { Name = "searchingItem", ForeColor = System.Drawing.Color.Gray };
-            this.streamToMenu.DropDownItems.Add("My device is not listed", null, (s, e2) => MessageBox.Show("Perhaps your device is not connected or is not recognized as an UPnP Media Renderer !\nIf your device is an UPnP/DLNA player, try to start the stream of SWYH manually on the device.\nFor more information, go to http://www.streamwhatyouhear.com !", "Stream What You Hear", MessageBoxButton.OK, MessageBoxImage.Information));
-            this.streamToMenu.DropDownItems.Add("-");
-            this.streamToMenu.DropDownItems.Add(searchingItem);
-            this.notifyIcon.ContextMenuStrip.Items.Add(streamToMenu);
-            var toolsMenu = new System.Windows.Forms.ToolStripMenuItem("Tools", null);
-            toolsMenu.DropDownItems.Add("HTTP Live Streaming", null, (s, e2) => this.httpWindow.Show());
-            toolsMenu.DropDownItems.Add("Record What You Hear", null, (s, e2) => this.recordWindow.Show());
-            this.notifyIcon.ContextMenuStrip.Items.Add(toolsMenu);
-            this.notifyIcon.ContextMenuStrip.Items.Add("Settings", null, (s, e2) => this.settingsWindow.Show());
+            this.notifyIcon.DoubleClick += (s, e2) => this.ShowMainWindow();
+            this.notifyIcon.ContextMenuStrip.Items.Add("Open", null, (s, e2) => this.ShowMainWindow());
+            this.notifyIcon.ContextMenuStrip.Items.Add("Settings", null, (s, e2) => this.ShowMainWindow(typeof(SettingsPage)));
             this.notifyIcon.ContextMenuStrip.Items.Add("Website", null, (s, e2) => App.OpenUrl(Constants.SWYH_WEBSITE_URL));
-            this.notifyIcon.ContextMenuStrip.Items.Add("About", null, (s, e2) => this.aboutWindow.Show());
+            this.notifyIcon.ContextMenuStrip.Items.Add("About", null, (s, e2) => this.ShowMainWindow(typeof(AboutPage)));
             this.notifyIcon.ContextMenuStrip.Items.Add("-");
-            this.notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e2) => this.Shutdown());
+            this.notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e2) =>
+            {
+                this.mainWindow.AllowClose = true;
+                this.Shutdown();
+            });
+        }
+
+        private void ShowMainWindow(Type navigateTo = null)
+        {
+            if (navigateTo != null)
+            {
+                this.mainWindow.NavigateTo(navigateTo);
+            }
+            this.mainWindow.Show();
+            this.mainWindow.WindowState = WindowState.Normal;
+            this.mainWindow.Activate();
+        }
+
+        internal void NotifyMinimizedToTray()
+        {
+            this.notifyIcon?.ShowBalloonTip(2000, "Stream What You Hear is still running", "It keeps streaming in the background. Click this icon to reopen it.", System.Windows.Forms.ToolTipIcon.Info);
         }
 
         private void CheckAutomaticDeviceStreamed(StartupEventArgs startupEvent)
@@ -220,52 +229,6 @@ namespace SWYH
             {
                 App.NeedUpdate = false;
             }
-        }
-
-        private void Renderers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (Services.RendererViewModel renderer in e.NewItems)
-                    {
-                        var menuItem = new System.Windows.Forms.ToolStripMenuItem(renderer.Name, null, (s, e2) => this.SwyhService.ToggleStreamToRenderer(renderer))
-                        {
-                            Name = renderer.UniqueDeviceName,
-                            Tag = renderer,
-                            Checked = renderer.IsStreaming
-                        };
-                        renderer.PropertyChanged += (s, e2) =>
-                        {
-                            if (e2.PropertyName == nameof(Services.RendererViewModel.IsStreaming))
-                            {
-                                this.Dispatcher.BeginInvoke(new Action(() => menuItem.Checked = renderer.IsStreaming));
-                            }
-                        };
-                        this.streamToMenu.DropDownItems.Add(menuItem);
-                    }
-                }
-                if (e.OldItems != null)
-                {
-                    foreach (Services.RendererViewModel renderer in e.OldItems)
-                    {
-                        if (this.streamToMenu.DropDownItems.ContainsKey(renderer.UniqueDeviceName))
-                        {
-                            this.streamToMenu.DropDownItems.RemoveByKey(renderer.UniqueDeviceName);
-                        }
-                    }
-                }
-                bool hasRenderers = this.SwyhService.Renderers.Count > 0;
-                if (hasRenderers && this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name))
-                {
-                    this.streamToMenu.DropDownItems.RemoveByKey(this.searchingItem.Name);
-                }
-                else if (!hasRenderers && !this.streamToMenu.DropDownItems.ContainsKey(this.searchingItem.Name))
-                {
-                    this.streamToMenu.DropDownItems.Add(this.searchingItem);
-                }
-            }));
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
