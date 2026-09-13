@@ -212,7 +212,7 @@ namespace SWYH.UPnP
                 response.StatusCode = 200;
                 response.StatusData = "OK";
                 response.AddTag("Content-Type", "text/html");
-                response.BodyBuffer = System.Text.Encoding.UTF8.GetBytes(Properties.Resources.About);
+                response.BodyBuffer = Properties.Resource.About;
                 WebSession.Send(response);
             }
             else
@@ -221,7 +221,7 @@ namespace SWYH.UPnP
                 response.StatusCode = 404;
                 response.StatusData = "Not Found";
                 response.AddTag("Content-Type", "text/html");
-                response.BodyBuffer = System.Text.Encoding.UTF8.GetBytes(Properties.Resources.Error404);
+                response.BodyBuffer = Properties.Resource.Error404;
                 WebSession.Send(response);
             }
         }

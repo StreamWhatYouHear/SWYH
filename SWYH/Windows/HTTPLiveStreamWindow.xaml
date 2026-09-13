@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SWYH.HTTPLiveStreamWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Stream What You Hear - Sebastien.warin.fr" SizeToContent="WidthAndHeight" Icon="/SWYH;component/Resources/Icons/swyh48.ico" 
+        Title="Stream What You Hear - Sebastien.warin.fr" SizeToContent="WidthAndHeight" Icon="/SWYH;component/Resources/Icons/swyh.ico" 
         Loaded="Window_Loaded" WindowState="Normal" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True" KeyDown="Window_KeyDown">
     <Grid>
         <Grid Margin="5">
@@ -9,7 +9,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>            
-            <Image Grid.Column="0" Margin="8" Source="../Resources/Icons/swyh128.png" Stretch="Fill" Width="128" Height="128" VerticalAlignment="Top"/>
+            <Image Grid.Column="0" Margin="8" Source="../Resources/Icons/swyh.png" Stretch="Fill" Width="128" Height="128" VerticalAlignment="Top"/>
             <StackPanel Grid.Column="1" MinHeight="200">
                 <TextBlock Margin="10" TextWrapping="Wrap" TextAlignment="Center"><Run FontSize="21.333" FontFamily="Segoe WP Black" Text="Stream What You Hear HTTP Live Streaming"/></TextBlock>
                 <TextBlock Margin="10, 0" TextDecorations="Underline" FontFamily="Segoe WP Semibold" TextWrapping="Wrap"><Run Text="Listening URIs:"/></TextBlock>

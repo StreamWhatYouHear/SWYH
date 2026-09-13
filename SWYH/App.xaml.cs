@@ -158,7 +158,7 @@ namespace SWYH
             this.recordWindow = new RecordWindow();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
-                Icon = SWYH.Properties.Resources.swyh32,
+                Icon = SWYH.Properties.Resource.swyh,
                 Text = string.Format("Stream What You Hear {0}.{1}{2}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart, (fileVersion.ProductPrivatePart % 2) == 0 ? "" : " (BETA)"),
                 Visible = true
             };

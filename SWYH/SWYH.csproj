@@ -7,7 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>SWYH</RootNamespace>
     <AssemblyName>SWYH</AssemblyName>
-    <ApplicationIcon>Resources\Icons\swyh128.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icons\swyh.ico</ApplicationIcon>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <Nullable>disable</Nullable>
@@ -27,14 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Icons\swyh128.ico" />
-    <Resource Include="Resources\Icons\swyh128.png" />
-    <Resource Include="Resources\Icons\swyh16.ico" />
-    <Resource Include="Resources\Icons\swyh16.png" />
-    <Resource Include="Resources\Icons\swyh32.ico" />
-    <Resource Include="Resources\Icons\swyh32.png" />
-    <Resource Include="Resources\Icons\swyh48.ico" />
-    <Resource Include="Resources\Icons\swyh48.png" />
+    <Resource Include="Resources\Icons\swyh.ico" />
+    <Resource Include="Resources\Icons\swyh.svg" />
+    <Resource Include="Resources\Icons\swyh.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +38,15 @@
     <Content Include="..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\THIRD-PARTY-LICENSES\**\*" Link="THIRD-PARTY-LICENSES\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\SWYH.licenseheader" Link="SWYH.licenseheader" />
+    <Compile Update="Properties\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Update="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Update="Properties\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="Settings.Designer.cs" />
   </ItemGroup>
 </Project>

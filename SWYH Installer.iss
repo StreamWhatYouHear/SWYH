@@ -21,7 +21,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputDir=SWYH\bin\Release
 OutputBaseFilename=SWYH_{#FullVersion}
-SetupIconFile=SWYH\Resources\Icons\swyh128.ico
+SetupIconFile=SWYH\Resources\Icons\swyh.ico
 Compression=lzma
 SolidCompression=yes
 
