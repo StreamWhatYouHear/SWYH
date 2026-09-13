@@ -64,6 +64,7 @@ jobs:
             --self-contained true `
             -p:PublishSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true `
             -p:Platform="Any CPU" `
             -p:Version="${{ steps.gitversion.outputs.semVer }}" `
             -p:FileVersion="${{ steps.gitversion.outputs.assemblySemFileVer }}" `
@@ -74,7 +75,8 @@ jobs:
       - name: Create Portable Zip Package
         shell: pwsh
         run: |
-          Compress-Archive -Path ./publish/* -DestinationPath "artifacts/SWYH_${{ steps.gitversion.outputs.semVer }}_portable.zip" -Force
+          # Create portable zip (standalone exe + licenses & notices)
+          Compress-Archive -Path ./publish/SWYH.exe, ./publish/THIRD-PARTY-NOTICES.md, LICENSE -DestinationPath "artifacts/SWYH_${{ steps.gitversion.outputs.semVer }}_portable.zip" -Force
 
       - name: Build Inno Setup Installer
         shell: pwsh

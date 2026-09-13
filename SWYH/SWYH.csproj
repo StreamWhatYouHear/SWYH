@@ -16,6 +16,11 @@
     <Deterministic>false</Deterministic>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,10 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\About.htm" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="Resources\Error404.htm" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Resources\About.htm" />
+    <None Include="Resources\Error404.htm" />
     <Content Include="..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="..\THIRD-PARTY-LICENSES\**\*" Link="THIRD-PARTY-LICENSES\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\SWYH.licenseheader" Link="SWYH.licenseheader" />
     <Compile Update="Properties\Resource.Designer.cs">
       <DesignTime>True</DesignTime>
