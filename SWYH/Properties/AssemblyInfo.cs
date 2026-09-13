@@ -1,9 +1,9 @@
-﻿/*
+/*
  *	 Stream What Your Hear
  *	 Assembly: SWYH
  *	 File: AssemblyInfo.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -33,7 +33,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sebastien.warin.fr")]
 [assembly: AssemblyProduct("Stream What You Hear (SWYH)")]
-[assembly: AssemblyCopyright("Copyright © 2012-2019 Sebastien.warin.fr ans others")]
+[assembly: AssemblyCopyright("Copyright © 2012-2026 Sebastien.warin.fr ans others")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

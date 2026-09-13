@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: DvConnectionManager.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -809,8 +809,8 @@ namespace SWYH.UPnP
         public void GetCurrentConnectionInfo(System.Int32 ConnectionID, out System.Int32 RcsID, out System.Int32 AVTransportID, out System.String ProtocolInfo, out System.String PeerConnectionManager, out System.Int32 PeerConnectionID, out Enum_A_ARG_TYPE_Direction Direction, out Enum_A_ARG_TYPE_ConnectionStatus Status)
         {
             // Action: GetCurrentConnectionInfo
-            // Returns associated information of the connection referred to by the ‘ConnectionID’ 
-            // parameter. The ‘AVTransportID’ and ‘PeerConnectionManager’ parameters may be NULL 
+            // Returns associated information of the connection referred to by the ï¿½ConnectionIDï¿½ 
+            // parameter. The ï¿½AVTransportIDï¿½ and ï¿½PeerConnectionManagerï¿½ parameters may be NULL 
             // (empty string) in cases where the connection has been setup completely out of band,
             // e.g., not involving a PrepareForConnection action.
             //throw (new UPnPCustomException(706, "Invalid Connection Reference"));

@@ -1,9 +1,9 @@
-﻿/*
+/*
  *	 Stream What Your Hear
  *	 Assembly: SWYH
  *	 File: Constants.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -35,9 +35,9 @@ namespace SWYH
         public const string REGISTRY_SWYH_KEY = "StreamWhatYouHear";
         public const int DEFAULT_HTTP_PORT = 5901;
 
-        public const string UPDATE_VERSION_URL = "http://www.streamwhatyouhear.com/update/lastest.txt";
-        public const string DOWNLOAD_SWYH_URL = "http://www.streamwhatyouhear.com/download?source=swyh_update";
-        public const string SWYH_WEBSITE_URL = "http://www.streamwhatyouhear.com/?source=swyh";
-        public const string SWARIN_WEBSITE_URL = "http://sebastien.warin.fr/?source=swyh";
+        public const string UPDATE_VERSION_URL = "https://www.streamwhatyouhear.com/update/latest.txt";
+        public const string DOWNLOAD_SWYH_URL = "https://www.streamwhatyouhear.com/download?source=swyh_update";
+        public const string SWYH_WEBSITE_URL = "https://www.streamwhatyouhear.com/?source=swyh";
+        public const string SWARIN_WEBSITE_URL = "https://sebastien.warin.fr/?source=swyh";
     }
 }

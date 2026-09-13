@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: RendererViewModel.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2026 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 

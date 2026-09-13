@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: DvContentDirectory.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -187,7 +187,7 @@ namespace SWYH.UPnP
         /// <summary>
         /// This variable is used in conjunction with those actions that include a SortCriteria parameter.
         /// A_ARG_TYPE_SortCriteria is CSV list of signed property names, where signed means preceded by 
-        /// ‘+’ or ‘-’ sign. The ‘+’ and ‘-’ indicate the sort is in ascending or descending order, 
+        /// ï¿½+ï¿½ or ï¿½-ï¿½ sign. The ï¿½+ï¿½ and ï¿½-ï¿½ indicate the sort is in ascending or descending order, 
         /// respectively, with regard to the value of its associated property. Properties appear in the 
         /// list in order of descending sort priority. For example, a value of 
         /// "+upnp:artist,-dc:date,+dc:title" would sort first on artist in ascending order, then 
@@ -1064,7 +1064,7 @@ namespace SWYH.UPnP
         {
             // Action: GetSystemUpdateID
             // This action returns the current value of state variable SystemUpdateID. 
-            // It can be used by clients that want to ‘poll’ for any changes in the Content Directory 
+            // It can be used by clients that want to ï¿½pollï¿½ for any changes in the Content Directory 
             // (as opposed to subscribing to events).
             Id = 0;
         }
@@ -1077,7 +1077,7 @@ namespace SWYH.UPnP
         {
             // Action: X_GetFeatureList
             // This action returns the current value of state variable Featurelist. 
-            // It can be used by clients that want to ‘poll’ for any changes in the Content Directory 
+            // It can be used by clients that want to ï¿½pollï¿½ for any changes in the Content Directory 
             // (as opposed to subscribing to events).
             Featurelist = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                             "<Features xmlns=\"urn:schemas-upnp-org:av:avs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:schemas-upnp-org:av:avs http://www.upnp.org/schemas/av/avs.xsd\">" +

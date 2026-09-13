@@ -3,7 +3,7 @@
  *	 Assembly: SWYH
  *	 File: SwyhDevice.cs
  *	 Web site: http://www.streamwhatyouhear.com
- *	 Copyright (C) 2012-2019 - Sebastien Warin <http://sebastien.warin.fr> and others
+ *	 Copyright (C) 2012-2026 - Sebastien Warin <https://sebastien.warin.fr> and others
  *
  *   This file is part of Stream What Your Hear.
  *	 
@@ -56,8 +56,8 @@ namespace SWYH.UPnP
 
             this.Device.FriendlyName = "Stream What You Hear (" + Environment.MachineName + "):";
             this.Device.Manufacturer = "Sebastien.warin.fr";
-            this.Device.ManufacturerURL = "http://sebastien.warin.fr";
-            this.Device.ModelURL = new Uri("http://www.streamwhatyouhear.com");
+            this.Device.ManufacturerURL = "https://sebastien.warin.fr";
+            this.Device.ModelURL = new Uri("https://www.streamwhatyouhear.com");
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
 
