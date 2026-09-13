@@ -2,6 +2,7 @@
 next-version: 2.0.0
 mode: ContinuousDelivery
 assembly-file-versioning-scheme: MajorMinorPatchTag
+assembly-informational-format: "{SemVer}+{ShortSha}"
 branches:
   main:
     regex: ^master$|^main$
@@ -10,6 +11,11 @@ branches:
     regex: ^dev(elop)?(ment)?$
     label: beta
     mode: ContinuousDelivery
+  feature:
+    regex: ^features?[/-](?<BranchName>.+)
+    label: "{BranchName}"
+    mode: ContinuousDelivery
+
 
 
 
