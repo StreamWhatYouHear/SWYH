@@ -23,7 +23,7 @@
 
 namespace SWYH.Views.Pages
 {
-    using System.Windows;
+    using SWYH.ViewModels;
     using System.Windows.Controls;
 
     /// <summary>
@@ -31,17 +31,13 @@ namespace SWYH.Views.Pages
     /// </summary>
     public partial class AboutPage : Page
     {
+        internal AboutViewModel ViewModel { get; }
+
         public AboutPage()
         {
+            this.ViewModel = new AboutViewModel();
+            this.DataContext = this.ViewModel;
             InitializeComponent();
-            this.btUpdate.Visibility = App.NeedUpdate ? Visibility.Visible : Visibility.Collapsed;
-            var version = App.FileVersion;
-            this.tbVersion.Content = string.Format("Version {0}", version.ProductVersion);
-        }
-
-        private void btUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            App.OpenUrl(Constants.DOWNLOAD_SWYH_URL);
         }
     }
 }

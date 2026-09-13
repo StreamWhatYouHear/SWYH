@@ -8,10 +8,12 @@
         <TextBlock Text="Record What You Hear" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
         <TextBlock Text="Captures the streamed audio to a local MP3 file." Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                    HorizontalAlignment="Center" Margin="0,4,0,24"/>
-        <TextBlock x:Name="tbTime" Text="0:00:00.000" FontSize="32" FontWeight="Light" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+        <TextBlock x:Name="tbTime" Text="{Binding ElapsedText}" FontSize="32" FontWeight="Light" HorizontalAlignment="Center" Margin="0,0,0,24"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ui:Button x:Name="btRecord" Content="Record" Appearance="Primary" Width="110" Height="36" Click="btRecord_Click"/>
-            <ui:Button x:Name="btStop" Content="Stop" Appearance="Secondary" Width="110" Height="36" Margin="12,0,0,0" Click="btStop_Click"/>
+            <ui:Button x:Name="btRecord" Content="Record" Appearance="Primary" Width="110" Height="36"
+                       Command="{Binding RecordCommand}" IsEnabled="{Binding IsRecording, Converter={StaticResource InverseBooleanConverter}}"/>
+            <ui:Button x:Name="btStop" Content="Stop" Appearance="Secondary" Width="110" Height="36" Margin="12,0,0,0"
+                       Command="{Binding StopCommand}" IsEnabled="{Binding IsRecording}"/>
         </StackPanel>
     </StackPanel>
 </Page>

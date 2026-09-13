@@ -11,6 +11,8 @@
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
             <conv:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <conv:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

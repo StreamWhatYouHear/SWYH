@@ -7,13 +7,13 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
             <TextBlock Text="Settings" FontSize="22" FontWeight="Bold"/>
-            <ui:Button x:Name="btUpdate" Margin="0,8,0,0" Appearance="Info" Content="A new version is available - Update now"
-                       Click="btUpdate_Click" Visibility="Collapsed"/>
+            <ui:Button Margin="0,8,0,0" Appearance="Info" Content="A new version is available - Update now"
+                       Command="{Binding UpdateCommand}" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
             <TextBlock Text="STREAM TO DLNA DEVICE USING" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
             <StackPanel Orientation="Horizontal">
-                <RadioButton x:Name="radioButton1" Content="MP3" GroupName="StreamFormat" Margin="0,0,20,0"/>
-                <RadioButton x:Name="radioButton2" Content="PCM/L16" GroupName="StreamFormat"/>
+                <RadioButton Content="MP3" GroupName="StreamFormat" Margin="0,0,20,0" IsChecked="{Binding IsMp3}"/>
+                <RadioButton Content="PCM/L16" GroupName="StreamFormat" IsChecked="{Binding IsMp3, Converter={StaticResource InverseBooleanConverter}}"/>
             </StackPanel>
 
             <TextBlock Text="CAPTURE FORMAT" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
@@ -23,12 +23,13 @@
                     <ColumnDefinition Width="12"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox Grid.Column="0" x:Name="comboBox1"/>
-                <ComboBox Grid.Column="2" x:Name="comboBox2" ToolTip="MP3 bitrate (kbps)"/>
+                <ComboBox Grid.Column="0" ItemsSource="{Binding CaptureFormats}" DisplayMemberPath="DisplayName"
+                          SelectedItem="{Binding SelectedCaptureFormat}"/>
+                <ComboBox Grid.Column="2" ItemsSource="{Binding Bitrates}" SelectedItem="{Binding SelectedBitrate}" ToolTip="MP3 bitrate (kbps)"/>
             </Grid>
 
             <TextBlock Text="AUDIO SOURCE" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
-            <ComboBox x:Name="comboBoxDevice" SelectedValuePath="ID">
+            <ComboBox ItemsSource="{Binding AudioDevices}" SelectedItem="{Binding SelectedAudioDevice}">
                 <ComboBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
@@ -46,14 +47,15 @@
             </ComboBox>
 
             <TextBlock Text="GENERAL" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
-            <CheckBox x:Name="cbRunAtWindowsStartup" Content="Automatically run SWYH when I log in" Margin="0,0,0,8"/>
-            <CheckBox x:Name="cbDebug" Content="Log unhandled errors" Margin="0,0,0,8"/>
-            <CheckBox x:Name="cbUseSpecificPort" Content="Use specific HTTP port" Checked="cbUseSpecificPort_Checked" Margin="0,0,0,8"/>
-            <TextBox x:Name="textBox1" Width="90" HorizontalAlignment="Left" IsEnabled="{Binding IsChecked, ElementName=cbUseSpecificPort}"
+            <CheckBox Content="Automatically run SWYH when I log in" Margin="0,0,0,8" IsChecked="{Binding RunAtWindowsStartup}"/>
+            <CheckBox Content="Log unhandled errors" Margin="0,0,0,8" IsChecked="{Binding DebugLogging}"/>
+            <CheckBox x:Name="cbUseSpecificPort" Content="Use specific HTTP port" Margin="0,0,0,8" IsChecked="{Binding UseSpecificPort}"/>
+            <TextBox x:Name="textBox1" Width="90" HorizontalAlignment="Left" IsEnabled="{Binding UseSpecificPort}"
+                     Text="{Binding HttpPortText, UpdateSourceTrigger=PropertyChanged}"
                      PreviewTextInput="textBox1_PreviewTextInput"/>
 
-            <ui:Button x:Name="btValid" Content="Save" Appearance="Primary" Margin="0,24,0,0" HorizontalAlignment="Stretch"
-                       Height="40" Click="btValid_Click"/>
+            <ui:Button Content="Save" Appearance="Primary" Margin="0,24,0,0" HorizontalAlignment="Stretch"
+                       Height="40" Command="{Binding SaveCommand}"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -7,7 +7,7 @@
     <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Image Source="/SWYH;component/Resources/Icons/swyh.png" Width="110" Height="110"/>
         <TextBlock Text="Stream What You Hear" FontSize="22" FontWeight="Bold" Margin="0,16,0,0" HorizontalAlignment="Center"/>
-        <ui:Badge x:Name="tbVersion" Content="Version 0.0" HorizontalAlignment="Center" Margin="0,8,0,0"
+        <ui:Badge Content="{Binding VersionText}" HorizontalAlignment="Center" Margin="0,8,0,0"
                   Background="{DynamicResource AccentFillColorDefaultBrush}" Foreground="White"/>
         <TextBlock Text="Simply stream the sound from your PC to an UPnP / DLNA device" TextWrapping="Wrap" TextAlignment="Center"
                    FontStyle="Italic" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,20,0,0" MaxWidth="320"/>
@@ -15,8 +15,8 @@
         <ui:Anchor Margin="0,8,0,0" HorizontalAlignment="Center" Content="Sebastien.warin.fr" NavigateUri="https://sebastien.warin.fr"/>
         <TextBlock Text="Copyright (c) 2012 - 2026" Foreground="{DynamicResource TextFillColorTertiaryBrush}" FontSize="12"
                    HorizontalAlignment="Center" Margin="0,8,0,0"/>
-        <ui:Button x:Name="btUpdate" Margin="0,20,0,0" Appearance="Primary" Content="A new version is available - Update now"
-                   Click="btUpdate_Click" Visibility="Collapsed"/>
+        <ui:Button Margin="0,20,0,0" Appearance="Primary" Content="A new version is available - Update now"
+                   Command="{Binding UpdateCommand}" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}"/>
     </StackPanel>
 </Page>
 

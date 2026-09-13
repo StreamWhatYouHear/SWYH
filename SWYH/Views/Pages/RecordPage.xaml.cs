@@ -23,97 +23,22 @@
 
 namespace SWYH.Views.Pages
 {
-    using Microsoft.Win32;
-    using System;
-    using System.IO;
-    using System.Windows;
+    using SWYH.ViewModels;
     using System.Windows.Controls;
-    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for RecordPage.xaml
     /// </summary>
     public partial class RecordPage : Page
     {
-        private bool isRecording = false;
-        private DateTime startDate = DateTime.MinValue;
-        private readonly DispatcherTimer timer = new DispatcherTimer() { Interval = new TimeSpan(0, 0, 0, 0, 50) };
+        internal RecordViewModel ViewModel { get; }
 
         public RecordPage()
         {
+            this.ViewModel = new RecordViewModel(App.CurrentInstance.SwyhService);
+            this.DataContext = this.ViewModel;
             InitializeComponent();
-            this.timer.Tick += this.Timer_Tick;
-            this.UpdateUi();
-            this.Unloaded += (s, e) => this.timer.Stop();
-        }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if (this.isRecording)
-            {
-                var recordingTime = DateTime.Now.Subtract(this.startDate);
-                this.tbTime.Text = string.Format(@"{0}:{1}:{2}.{3}", Math.Truncate(recordingTime.TotalHours), recordingTime.Minutes.ToString("00"), recordingTime.Seconds.ToString("00"), recordingTime.Milliseconds.ToString("000"));
-            }
-        }
-
-        private void btRecord_Click(object sender, RoutedEventArgs e)
-        {
-            this.timer.Start();
-            this.isRecording = true;
-            this.startDate = DateTime.Now;
-            App.CurrentInstance.SwyhService.StartRecording();
-            this.UpdateUi();
-        }
-
-        private void btStop_Click(object sender, RoutedEventArgs e)
-        {
-            this.timer.Stop();
-            this.isRecording = false;
-            this.tbTime.Text = "0:00:00.000";
-            byte[] content = App.CurrentInstance.SwyhService.StopRecording();
-            if (content.Length > 0)
-            {
-                SaveFileDialog sfd = new SaveFileDialog()
-                {
-                    Title = "Save the stream",
-                    DefaultExt = "mp3",
-                    AddExtension = true,
-                    Filter = "MP3 File|*.mp3",
-                    OverwritePrompt = true
-                };
-                bool? result = sfd.ShowDialog();
-                if (result.HasValue && result.Value)
-                {
-                saveFile:
-                    try
-                    {
-                        if (File.Exists(sfd.FileName))
-                        {
-                            File.Delete(sfd.FileName);
-                        }
-                        File.WriteAllBytes(sfd.FileName, content);
-                        MessageBox.Show("Recording saved as " + sfd.FileName, "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (MessageBox.Show(string.Format("A file error has occurred : '{0}'\nDo you want to retry ?", ex.Message), "Record What You Hear", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
-                        {
-                            goto saveFile;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("No Recording Data Found", "Record What You Hear", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            }
-            this.UpdateUi();
-        }
-
-        private void UpdateUi()
-        {
-            this.btRecord.IsEnabled = !this.isRecording;
-            this.btStop.IsEnabled = this.isRecording;
+            this.Unloaded += (s, e) => this.ViewModel.Dispose();
         }
     }
 }
