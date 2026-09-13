@@ -24,7 +24,6 @@
 namespace SWYH
 {
     using System.Diagnostics;
-    using System.Reflection;
     using System.Windows;
 
     /// <summary>
@@ -40,24 +39,24 @@ namespace SWYH
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.btUpdate.Visibility = (App.NeedUpdate) ? Visibility.Visible : System.Windows.Visibility.Collapsed;
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            var version = App.FileVersion;
             this.version.Text = string.Format("Version {0}", version.ProductVersion);
         }
 
         private void btUpdate_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(Constants.DOWNLOAD_SWYH_URL);
+            App.OpenUrl(Constants.DOWNLOAD_SWYH_URL);
             this.Close();
         }
 
         private void tbSwarinWebSite_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(Constants.SWARIN_WEBSITE_URL);
+            App.OpenUrl(Constants.SWARIN_WEBSITE_URL);
         }
 
         private void tbSWYHWebSite_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(Constants.SWYH_WEBSITE_URL);
+            App.OpenUrl(Constants.SWYH_WEBSITE_URL);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

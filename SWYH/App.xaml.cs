@@ -31,11 +31,9 @@ namespace SWYH
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Reflection;
+    using System.Net.Http;
     using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
     using System.Windows;
 
     /// <summary>
@@ -60,6 +58,43 @@ namespace SWYH
         private System.Windows.Forms.ToolStripMenuItem streamToMenu = null;
         private System.Windows.Forms.ToolStripMenuItem searchingItem = null;
         private bool directClose = false;   //Skip the statements in Application_Exit function.
+
+        internal static string ExecutablePath
+        {
+            get
+            {
+                var processPath = Environment.ProcessPath;
+                if (!string.IsNullOrEmpty(processPath))
+                {
+                    return processPath;
+                }
+
+                processPath = Process.GetCurrentProcess().MainModule.FileName;
+                if (!string.IsNullOrEmpty(processPath))
+                {
+                    return processPath;
+                }
+
+                return Path.Combine(AppContext.BaseDirectory, Constants.SWYH_PROCESS_NAME + ".exe");
+            }
+        }
+
+        internal static FileVersionInfo FileVersion => FileVersionInfo.GetVersionInfo(ExecutablePath);
+
+        internal static SemVersion Version => new SemVersion(
+            App.FileVersion.ProductMajorPart,
+            Math.Max(App.FileVersion.ProductMinorPart, 0),
+            Math.Max(App.FileVersion.ProductBuildPart, 0));
+
+        internal static void OpenUrl(string url)
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+
+        internal static void Restart()
+        {
+            Process.Start(new ProcessStartInfo(ExecutablePath) { Arguments = Constants.RESTART_ARGUMENT_NAME, UseShellExecute = true });
+        }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -116,7 +151,7 @@ namespace SWYH
 
         private void InitializeUI()
         {
-            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            FileVersionInfo fileVersion = App.FileVersion;
             this.settingsWindow = new SettingsWindow();
             this.aboutWindow = new AboutWindow();
             this.httpWindow = new HTTPLiveStreamWindow();
@@ -139,7 +174,7 @@ namespace SWYH
             toolsMenu.DropDownItems.Add("Record What You Hear", null, (s, e2) => this.recordWindow.Show());
             this.notifyIcon.ContextMenuStrip.Items.Add(toolsMenu);
             this.notifyIcon.ContextMenuStrip.Items.Add("Settings", null, (s, e2) => this.settingsWindow.Show());
-            this.notifyIcon.ContextMenuStrip.Items.Add("Website", null, (s, e2) => Process.Start(Constants.SWYH_WEBSITE_URL));
+            this.notifyIcon.ContextMenuStrip.Items.Add("Website", null, (s, e2) => App.OpenUrl(Constants.SWYH_WEBSITE_URL));
             this.notifyIcon.ContextMenuStrip.Items.Add("About", null, (s, e2) => this.aboutWindow.Show());
             this.notifyIcon.ContextMenuStrip.Items.Add("-");
             this.notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e2) => this.Shutdown());
@@ -153,33 +188,41 @@ namespace SWYH
             }
         }
 
-        private void CheckNewVersion()
+        private async void CheckNewVersion()
         {
-            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-            Task.Factory.StartNew(() =>
+            try
             {
-                // Check update !
-                WebClient wc = new WebClient();
-                try
+                using (var httpClient = new HttpClient())
                 {
-                    string lastVersionStr = wc.DownloadString(Constants.UPDATE_VERSION_URL);
-                    if (!string.IsNullOrEmpty(lastVersionStr))
+                    string lastVersionStr = (await httpClient.GetStringAsync(Constants.UPDATE_VERSION_URL)).Trim();
+                    if (string.IsNullOrEmpty(lastVersionStr))
                     {
-                        SemVersion lastVersion = SemVersion.Parse(lastVersionStr);
-                        SemVersion currentVersion = SemVersion.Parse(fileVersion.FileVersion);
-                        App.NeedUpdate = (lastVersion > currentVersion);
-                        if (App.NeedUpdate)
-                        {
-                            var response = MessageBox.Show("A new version of Stream What You Hear is available !\n\nDo you want to download it now?", "Stream What You Hear", MessageBoxButton.YesNo, MessageBoxImage.Information);
-                            if (response == MessageBoxResult.Yes)
-                            {
-                                Process.Start(Constants.DOWNLOAD_SWYH_URL);
-                            }
-                        }
+                        return;
+                    }
+
+                    SemVersion lastVersion;
+                    if (!SemVersion.TryParse(lastVersionStr, out lastVersion))
+                    {
+                        return;
+                    }
+
+                    SemVersion currentVersion = App.Version;
+                    App.NeedUpdate = (lastVersion > currentVersion);
+                }
+
+                if (App.NeedUpdate)
+                {
+                    var response = MessageBox.Show("A new version of Stream What You Hear is available !\n\nDo you want to download it now?", "Stream What You Hear", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    if (response == MessageBoxResult.Yes)
+                    {
+                        App.OpenUrl(Constants.DOWNLOAD_SWYH_URL);
                     }
                 }
-                catch { }
-            });
+            }
+            catch
+            {
+                App.NeedUpdate = false;
+            }
         }
 
         private void CloseStreamingConnections()
@@ -207,7 +250,7 @@ namespace SWYH
                     if (!this.streamToMenu.DropDownItems.ContainsKey(renderer.UniqueDeviceName))
                     {
                         var menuItem = new System.Windows.Forms.ToolStripMenuItem
-                            (renderer.FriendlyName, (renderer.device.favicon != null) ? renderer.device.favicon.ToBitmap() : null, streamMenu_RendererSelected)
+                            (renderer.FriendlyName, null, streamMenu_RendererSelected)
                             {
                                 Name = renderer.UniqueDeviceName,
                                 Tag = renderer

@@ -96,12 +96,12 @@ namespace OpenSource.UPnP.AV.RENDERER.CP
 		}
 		private void AddSink(AVRenderer r)
 		{
-			OpenSource.Utilities.EventLogger.Log(this,System.Diagnostics.EventLogEntryType.Error,r.FriendlyName+" [ADDED]");
+			OpenSource.Utilities.EventLogger.Log(this,OpenSource.Utilities.EventLogEntryType.Error,r.FriendlyName+" [ADDED]");
 			if(OnRenderer!=null) OnRenderer(this,r);
 		}
 		private void RemovedSink(AVRenderer r)
 		{
-			OpenSource.Utilities.EventLogger.Log(this,System.Diagnostics.EventLogEntryType.Error,r.FriendlyName+" [REMOVED]");
+			OpenSource.Utilities.EventLogger.Log(this,OpenSource.Utilities.EventLogEntryType.Error,r.FriendlyName+" [REMOVED]");
 			if(this.OnRendererRemoved!=null) OnRendererRemoved(this,r);
 		}
         public void ForceDeviceAddition(Uri url)

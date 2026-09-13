@@ -59,15 +59,13 @@ namespace SWYH.UPnP
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
 
-            FileVersionInfo fileVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+            FileVersionInfo fileVersion = App.FileVersion;
             this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
             this.Device.SerialNumber = string.Format("SWYH_UPNP_{0}{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
 
             this.Device.HasPresentation = true;
             this.Device.PresentationURL = "about/swyh.html";
             this.Device.DeviceURN = "urn:schemas-upnp-org:device:MediaServer:1";
-            this.Device.Icon = Properties.Resources.swyh128.ToBitmap();
-            this.Device.Icon2 = Properties.Resources.swyh48.ToBitmap();
             this.Device.AddCustomFieldInDescription("dlna:X_DLNADOC", "DMS-1.50", "urn:schemas-dlna-org:device-1-0");
 
             DvX_MS_MediaReceiverRegistrar X_MS_MediaReceiverRegistrar = new DvX_MS_MediaReceiverRegistrar();

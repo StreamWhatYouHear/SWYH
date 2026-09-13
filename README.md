@@ -11,7 +11,7 @@ Web site : http://www.streamwhatyouhear.com/
 - Record What You Hear into MP3 file
 
 ### Getting Started
-- Before installation make sure your environment complies with minimum requirements  (Windows Vista, 7 or 8/8.1 (x86/x64) with .NET Framework 4.0 installed)
+- Before installation make sure your environment complies with minimum requirements (Windows 10 or later). SWYH is published as a self-contained .NET 10 Windows executable.
 - Download and install the latest release of SWYH on http://www.streamwhatyouhear.com/download/
 - Launch the “Stream What You Hear (SWYH)” application
 - Right-click on the SWYH icon in the systray and go to “Stream to” menu
@@ -34,11 +34,12 @@ Since June 2015, I decided to release the source code of SWYH to enable everyone
 Find the original article’s of this project posted on October 12, 2012 (in French) : http://sebastien.warin.fr/2012/10/12/1186-swyh-stream-what-you-hear-envoyer-le-son-de-votre-pc-windows-sur-un-lecteur-upnp-dlna/
 
 This software uses :
-- .NET Framework 4.0
+- .NET 10
 - WASAPI (Windows Audio Service API) for the sound capture
 - NAudio for the audio stream manipulation : http://naudio.codeplex.com/
 - LAME for the MP3 encoding : https://github.com/Corey-M/NAudio.Lame
-- Developer Tools for UPnP Technologies for the UPnP stack : http://opentools.homeip.net/dev-tools-for-upnp
+- UPnP NuGet package for the UPnP core stack : https://www.nuget.org/packages/UPnP
+- Intel UPnP/DLNA AV components adapted from Developer Tools for UPnP Technologies and maintained locally for SWYH renderer/content-directory support
 
 ### Supported Media Renderers
 - Marantz Amps (tested on SR6008, NR1504, NR1603, NR1604, media m-cr610)
@@ -87,3 +88,5 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for more info on contributing to Stream 
 License
 ----
 Stream What You Hear (SWYH) is released under the GNU GPL license. Please see [LICENSE](LICENSE) for full details.
+
+Third-party component notices are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

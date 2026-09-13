@@ -23,8 +23,10 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows;
 
+[assembly: SupportedOSPlatform("windows10.0")]
 [assembly: Guid("2ecd245f-4268-48ee-b0f1-0706ead1ba42")]
 [assembly: AssemblyTitle("Stream What You Hear")]
 [assembly: AssemblyDescription("Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device")]

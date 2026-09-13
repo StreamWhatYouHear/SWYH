@@ -644,13 +644,26 @@ namespace OpenSource.UPnP.AV.RENDERER.CP
 			
 			if(sender.CurrentURIMetaData!="" && sender.CurrentURIMetaData!="NOT_IMPLEMENTED")
 			{
-				ArrayList a = MediaBuilder.BuildMediaBranches(sender.CurrentURIMetaData);
-				if(a.Count>0)
+				try
 				{
-					// Since new metadata was evented, we need to update the container, and then
-					// update the current item
-					_Container = (IMediaContainer)a[0];
-					UpdateCurrentItem();
+					ArrayList a = MediaBuilder.BuildMediaBranches(sender.CurrentURIMetaData);
+					if(a.Count>0)
+					{
+						IMediaContainer container = a[0] as IMediaContainer;
+						if(container!=null)
+						{
+							// Since new metadata was evented, we need to update the container, and then
+							// update the current item
+							_Container = container;
+							UpdateCurrentItem();
+						}
+					}
+				}
+				catch(Error_BadMetadata)
+				{
+				}
+				catch(ApplicationException)
+				{
 				}
 			}
 			

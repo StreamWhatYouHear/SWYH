@@ -51,16 +51,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "SWYH\bin\Release\SWYH.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\libmp3lame.32.dll"; DestDir: "{app}"; Flags: ignoreversion   
-Source: "SWYH\bin\Release\libmp3lame.64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\NAudio.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\NAudio.Lame.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\SWYH.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\UPnP.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\UPNP_AV.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\UPNPAV_RendererStack.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "SWYH\bin\Release\UPNPAVCDSML.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "SWYH\bin\Any CPU\Release\net10.0-windows10.0.19041.0\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

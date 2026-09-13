@@ -30,6 +30,16 @@ namespace OpenSource.UPnP.AV
        private Hashtable UnspecifiedTable = Hashtable.Synchronized(new Hashtable());
        internal UPnPService _S;
 
+      private static System.UInt32 ToUInt32(object value)
+      {
+          return Convert.ToUInt32(value);
+      }
+
+      private static System.Int32 ToInt32(object value)
+      {
+          return Convert.ToInt32(value);
+      }
+
        public UPnPService GetUPnPService()
        {
             return(_S);
@@ -4057,11 +4067,11 @@ namespace OpenSource.UPnP.AV
             object[] StateInfo = (object[])_Tag;
             if(StateInfo[1]!=null)
             {
-                ((Delegate_OnResult_GetPositionInfo)StateInfo[1])(this, (System.UInt32 )Args[0].DataValue, (System.UInt32 )Args[1].DataValue, (System.String )Args[2].DataValue, (System.String )Args[3].DataValue, (System.String )Args[4].DataValue, (System.String )Args[5].DataValue, (System.String )Args[6].DataValue, (System.Int32 )Args[7].DataValue, (System.Int32 )Args[8].DataValue, null, StateInfo[0]);
+                ((Delegate_OnResult_GetPositionInfo)StateInfo[1])(this, ToUInt32(Args[0].DataValue), ToUInt32(Args[1].DataValue), (System.String )Args[2].DataValue, (System.String )Args[3].DataValue, (System.String )Args[4].DataValue, (System.String )Args[5].DataValue, (System.String )Args[6].DataValue, ToInt32(Args[7].DataValue), ToInt32(Args[8].DataValue), null, StateInfo[0]);
             }
             else
             {
-                OnResult_GetPositionInfo_Event.Fire(this, (System.UInt32 )Args[0].DataValue, (System.UInt32 )Args[1].DataValue, (System.String )Args[2].DataValue, (System.String )Args[3].DataValue, (System.String )Args[4].DataValue, (System.String )Args[5].DataValue, (System.String )Args[6].DataValue, (System.Int32 )Args[7].DataValue, (System.Int32 )Args[8].DataValue, null, StateInfo[0]);
+                OnResult_GetPositionInfo_Event.Fire(this, ToUInt32(Args[0].DataValue), ToUInt32(Args[1].DataValue), (System.String )Args[2].DataValue, (System.String )Args[3].DataValue, (System.String )Args[4].DataValue, (System.String )Args[5].DataValue, (System.String )Args[6].DataValue, ToInt32(Args[7].DataValue), ToInt32(Args[8].DataValue), null, StateInfo[0]);
             }
         }
         private void Error_Sink_GetPositionInfo(UPnPService sender, string MethodName, UPnPArgument[] Args, UPnPInvokeException e, object _Tag)

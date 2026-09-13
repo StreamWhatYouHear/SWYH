@@ -305,6 +305,11 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 				}
 			}
 
+			if (!useValidatingReader)
+			{
+				RemoveInvalidMediaObjects(xmlDoc.DocumentElement);
+			}
+
 			// Recurse the xmldom and build items and containers. All new/immediate branches/children
 			// will be stored in newBranches.
 			// 
@@ -322,7 +327,12 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 				IUPnPMedia newObj = null;
 				args[0] = child;
 
-				if (string.Compare(child.Name, T[_DIDL.Item]) == 0) 
+				if (!useValidatingReader && IsMediaObject(child) && !HasMediaClass(child))
+				{
+					continue;
+				}
+
+				if (IsElement(child, T[_DIDL.Item])) 
 				{
 					try
 					{
@@ -333,7 +343,7 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 						throw new ApplicationException("Error constructing item from XML", ce);
 					}
 				}
-				else if (string.Compare(child.Name, T[_DIDL.Container]) == 0) 
+				else if (IsElement(child, T[_DIDL.Container])) 
 				{
 					try
 					{
@@ -354,6 +364,59 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 			}
 
 			return newBranches;
+		}
+
+		private static void RemoveInvalidMediaObjects(XmlElement parent)
+		{
+			if (parent == null) return;
+
+			ArrayList invalidChildren = new ArrayList();
+			foreach (XmlNode node in parent.ChildNodes)
+			{
+				XmlElement child = node as XmlElement;
+				if (child == null) continue;
+
+				bool isMediaObject = IsMediaObject(child);
+				if (isMediaObject && !HasMediaClass(child))
+				{
+					invalidChildren.Add(child);
+					continue;
+				}
+
+				RemoveInvalidMediaObjects(child);
+			}
+
+			foreach (XmlNode child in invalidChildren)
+			{
+				parent.RemoveChild(child);
+			}
+		}
+
+		private static bool HasMediaClass(XmlElement element)
+		{
+			foreach (XmlNode node in element.ChildNodes)
+			{
+				XmlElement child = node as XmlElement;
+				if (child == null) continue;
+
+				bool isClassElement = (string.Compare(child.Name, T[_UPNP.Class]) == 0) || (child.LocalName == "class");
+				if (isClassElement && child.InnerText.Trim() != "")
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool IsMediaObject(XmlElement element)
+		{
+			return IsElement(element, T[_DIDL.Item]) || IsElement(element, T[_DIDL.Container]);
+		}
+
+		private static bool IsElement(XmlElement element, string name)
+		{
+			return (string.Compare(element.Name, name, true) == 0) || (string.Compare(element.LocalName, name, true) == 0);
 		}
 
 		/// <summary>

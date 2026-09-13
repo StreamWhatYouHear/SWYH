@@ -101,30 +101,25 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 			object retVal;
 
 			if (obj == null) return obj;
-			
-			// attempt to find duplicate instance with same value properties
 
-			this.Lock.AcquireReaderLock(-1);
-			index = this.Sorter.Get(this.Cache, obj);
-			this.Lock.ReleaseReaderLock();
-
-			if (index < 0)
+			try
 			{
-				// duplicate object not found
-				try
+				this.Lock.AcquireWriterLock(-1);
+				index = this.Sorter.Get(this.Cache, obj);
+
+				if (index < 0)
 				{
-					this.Lock.AcquireWriterLock(-1);
 					this.Sorter.Set(this.Cache, obj, false);
+					retVal = obj;
 				}
-				finally
+				else
 				{
-					this.Lock.ReleaseWriterLock();
+					retVal = this.Cache[index];
 				}
-				retVal = obj;
 			}
-			else
+			finally
 			{
-				retVal = this.Cache[index];
+				this.Lock.ReleaseWriterLock();
 			}
 
 			return retVal;

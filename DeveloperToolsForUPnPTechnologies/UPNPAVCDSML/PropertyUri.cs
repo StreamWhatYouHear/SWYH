@@ -236,8 +236,11 @@ namespace OpenSource.UPnP.AV.CdsMetadata
 		/// <param name="element"></param>
 		public PropertyUri(XmlElement element)
 		{
-
-			this.m_value = new Uri (element.InnerText);
+			Uri value;
+			if (Uri.TryCreate(element.InnerText, UriKind.RelativeOrAbsolute, out value))
+			{
+				this.m_value = value;
+			}
 			this.ns_tag = (string) CdsMetadataCaches.Didl.CacheThis(element.Name);
 		}
 

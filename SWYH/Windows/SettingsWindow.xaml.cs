@@ -146,7 +146,7 @@ namespace SWYH
                     SWYH.Properties.Settings.Default.Save();
                     // Restart !
                     this.Close();
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location, Constants.RESTART_ARGUMENT_NAME);
+                    App.Restart();
                     Application.Current.Shutdown();
                 }
                 else if (msg == MessageBoxResult.No)
@@ -203,7 +203,7 @@ namespace SWYH
 
         private void TextBlock_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(Constants.DOWNLOAD_SWYH_URL);
+            App.OpenUrl(Constants.DOWNLOAD_SWYH_URL);
             this.Close();
         }
 
