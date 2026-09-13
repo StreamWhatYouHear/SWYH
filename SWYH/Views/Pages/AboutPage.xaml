@@ -15,7 +15,7 @@
         <ui:Anchor Margin="0,8,0,0" HorizontalAlignment="Center" Content="Sebastien.warin.fr" NavigateUri="https://sebastien.warin.fr"/>
         <TextBlock Text="Copyright (c) 2012 - 2026" Foreground="{DynamicResource TextFillColorTertiaryBrush}" FontSize="12"
                    HorizontalAlignment="Center" Margin="0,8,0,0"/>
-        <ui:Button Margin="0,20,0,0" Appearance="Primary" Content="A new version is available - Update now"
+        <ui:Button Margin="0,20,0,0" HorizontalAlignment="Center" Appearance="Primary" Content="A new version is available - Update now"
                    Command="{Binding UpdateCommand}" Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}}"/>
     </StackPanel>
 </Page>

@@ -39,7 +39,8 @@ namespace SWYH.ViewModels
 
         public AboutViewModel()
         {
-            this.VersionText = string.Format("Version {0}", App.FileVersion.ProductVersion);
+            var versionStr = App.Version?.ToString() ?? App.FileVersion.ProductVersion;
+            this.VersionText = string.Format("Version {0}", versionStr);
             this.IsUpdateAvailable = App.NeedUpdate;
             this.UpdateCommand = new RelayCommand(() => App.OpenUrl(Constants.DOWNLOAD_SWYH_URL));
         }
