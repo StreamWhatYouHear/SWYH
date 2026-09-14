@@ -94,5 +94,41 @@ namespace SWYH.Properties {
                 this["Debug"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HighProcessPriority {
+            get {
+                return ((bool)(this["HighProcessPriority"]));
+            }
+            set {
+                this["HighProcessPriority"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MuteWhileStreaming {
+            get {
+                return ((bool)(this["MuteWhileStreaming"]));
+            }
+            set {
+                this["MuteWhileStreaming"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PreventSleep {
+            get {
+                return ((bool)(this["PreventSleep"]));
+            }
+            set {
+                this["PreventSleep"] = value;
+            }
+        }
     }
 }

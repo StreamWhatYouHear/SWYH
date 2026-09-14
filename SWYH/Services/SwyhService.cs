@@ -168,6 +168,7 @@ namespace SWYH.Services
             }
             this.swyhDevice?.Stop();
             this.wasapiProvider?.Dispose();
+            SystemIntegrationService.SetLocalAudioMuted(false);
         }
 
         public void Dispose()
@@ -216,6 +217,10 @@ namespace SWYH.Services
             this.dispatcher.BeginInvoke(new Action(() =>
             {
                 renderer.IsStreaming = newState == AVConnection.PlayState.PLAYING;
+                if (SWYH.Properties.Settings.Default.MuteWhileStreaming)
+                {
+                    SystemIntegrationService.SetLocalAudioMuted(this.Renderers.Any(r => r.IsStreaming));
+                }
             }));
         }
     }

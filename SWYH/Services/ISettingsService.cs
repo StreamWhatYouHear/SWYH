@@ -64,6 +64,12 @@ namespace SWYH.Services
 
         bool RunAtWindowsStartup { get; set; }
 
+        bool HighProcessPriority { get; set; }
+
+        bool MuteWhileStreaming { get; set; }
+
+        bool PreventSleep { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether any setting was changed since this service was created.
         /// </summary>

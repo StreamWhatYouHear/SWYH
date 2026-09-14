@@ -71,6 +71,15 @@ namespace SWYH.ViewModels
         [ObservableProperty]
         private bool runAtWindowsStartup;
 
+        [ObservableProperty]
+        private bool highProcessPriority;
+
+        [ObservableProperty]
+        private bool muteWhileStreaming;
+
+        [ObservableProperty]
+        private bool preventSleep;
+
         public IRelayCommand SaveCommand { get; }
 
         public IRelayCommand UpdateCommand { get; }
@@ -92,6 +101,9 @@ namespace SWYH.ViewModels
             this.UseSpecificPort = settingsService.UseSpecificHttpPort;
             this.HttpPortText = settingsService.HttpPort.ToString();
             this.RunAtWindowsStartup = settingsService.RunAtWindowsStartup;
+            this.HighProcessPriority = settingsService.HighProcessPriority;
+            this.MuteWhileStreaming = settingsService.MuteWhileStreaming;
+            this.PreventSleep = settingsService.PreventSleep;
 
             this.SaveCommand = new RelayCommand(this.Save);
             this.UpdateCommand = new RelayCommand(() => App.OpenUrl(Constants.DOWNLOAD_SWYH_URL));
@@ -113,6 +125,9 @@ namespace SWYH.ViewModels
             this.settingsService.UseSpecificHttpPort = this.UseSpecificPort;
             this.settingsService.HttpPort = this.UseSpecificPort ? int.Parse(this.HttpPortText) : 0;
             this.settingsService.RunAtWindowsStartup = this.RunAtWindowsStartup;
+            this.settingsService.HighProcessPriority = this.HighProcessPriority;
+            this.settingsService.MuteWhileStreaming = this.MuteWhileStreaming;
+            this.settingsService.PreventSleep = this.PreventSleep;
 
             if (!this.settingsService.HasPendingChanges)
             {

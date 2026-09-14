@@ -152,6 +152,8 @@ namespace SWYH
                     this.SwyhService = new SwyhService();
                     this.SwyhService.SetAutoStreamTargets(this.autoStreamTo);
                     this.SwyhService.Start();
+                    SystemIntegrationService.ApplyProcessPriority(SWYH.Properties.Settings.Default.HighProcessPriority);
+                    SystemIntegrationService.ApplyPreventSleep(SWYH.Properties.Settings.Default.PreventSleep);
                     this.InitializeUI();
                 }
             }
@@ -249,6 +251,7 @@ namespace SWYH
             if (!directClose)
             {
                 this.SwyhService?.Dispose();
+                SystemIntegrationService.ApplyPreventSleep(false);
                 if (this.notifyIcon != null)
                 {
                     this.notifyIcon.Dispose();

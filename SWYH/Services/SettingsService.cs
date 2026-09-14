@@ -71,6 +71,12 @@ namespace SWYH.Services
 
         public bool RunAtWindowsStartup { get; set; }
 
+        public bool HighProcessPriority { get; set; }
+
+        public bool MuteWhileStreaming { get; set; }
+
+        public bool PreventSleep { get; set; }
+
         public SettingsService()
         {
             var devices = new List<AudioDeviceOption> { new AudioDeviceOption("", "Default", "") };
@@ -98,6 +104,9 @@ namespace SWYH.Services
             this.UseSpecificHttpPort = this.originalHttpPort > 0;
             this.HttpPort = this.originalHttpPort > 0 ? this.originalHttpPort : Constants.DEFAULT_HTTP_PORT;
             this.RunAtWindowsStartup = this.GetRegisterInStartup();
+            this.HighProcessPriority = SWYH.Properties.Settings.Default.HighProcessPriority;
+            this.MuteWhileStreaming = SWYH.Properties.Settings.Default.MuteWhileStreaming;
+            this.PreventSleep = SWYH.Properties.Settings.Default.PreventSleep;
         }
 
         public bool HasPendingChanges =>
@@ -120,7 +129,18 @@ namespace SWYH.Services
             SWYH.Properties.Settings.Default.AudioDevice = this.AudioDevice.Id;
             SWYH.Properties.Settings.Default.HTTPPort = this.UseSpecificHttpPort ? this.HttpPort : 0;
             SWYH.Properties.Settings.Default.Debug = this.Debug;
+            SWYH.Properties.Settings.Default.HighProcessPriority = this.HighProcessPriority;
+            SWYH.Properties.Settings.Default.MuteWhileStreaming = this.MuteWhileStreaming;
+            SWYH.Properties.Settings.Default.PreventSleep = this.PreventSleep;
             SWYH.Properties.Settings.Default.Save();
+
+            // These options take effect immediately, no restart needed.
+            SystemIntegrationService.ApplyProcessPriority(this.HighProcessPriority);
+            SystemIntegrationService.ApplyPreventSleep(this.PreventSleep);
+            if (!this.MuteWhileStreaming)
+            {
+                SystemIntegrationService.SetLocalAudioMuted(false);
+            }
 
             return restartRequired;
         }

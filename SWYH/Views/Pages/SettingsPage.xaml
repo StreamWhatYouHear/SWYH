@@ -49,10 +49,25 @@
             <TextBlock Text="GENERAL" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
             <CheckBox Content="Automatically run SWYH when I log in" Margin="0,0,0,8" IsChecked="{Binding RunAtWindowsStartup}"/>
             <CheckBox Content="Log unhandled errors" Margin="0,0,0,8" IsChecked="{Binding DebugLogging}"/>
-            <CheckBox x:Name="cbUseSpecificPort" Content="Use specific HTTP port" Margin="0,0,0,8" IsChecked="{Binding UseSpecificPort}"/>
-            <TextBox x:Name="textBox1" Width="90" HorizontalAlignment="Left" IsEnabled="{Binding UseSpecificPort}"
-                     Text="{Binding HttpPortText, UpdateSourceTrigger=PropertyChanged}"
-                     PreviewTextInput="textBox1_PreviewTextInput"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <CheckBox x:Name="cbUseSpecificPort" Content="Use specific HTTP port" VerticalAlignment="Center"
+                          IsChecked="{Binding UseSpecificPort}"/>
+                <TextBox x:Name="textBox1" Width="90" VerticalAlignment="Center" Margin="12,0,0,0" IsEnabled="{Binding UseSpecificPort}"
+                         Text="{Binding HttpPortText, UpdateSourceTrigger=PropertyChanged}"
+                         PreviewTextInput="textBox1_PreviewTextInput"/>
+            </StackPanel>
+
+            <TextBlock Text="SYSTEM" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <CheckBox Content="Run SWYH with a higher process priority" Margin="0,0,0,2" IsChecked="{Binding HighProcessPriority}"
+                      ToolTip="Prevents stuttering audio when the CPU is busy with other tasks"/>
+            <TextBlock Text="Prevents stuttering when the CPU is busy with other tasks." FontSize="11" Margin="28,0,0,8"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+            <CheckBox Content="Mute this PC while streaming" Margin="0,0,0,2" IsChecked="{Binding MuteWhileStreaming}"/>
+            <TextBlock Text="Mutes the local playback devices when streaming starts and unmutes them when it stops." FontSize="11" Margin="28,0,0,8"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+            <CheckBox Content="Prevent this PC from going to sleep" Margin="0,0,0,2" IsChecked="{Binding PreventSleep}"/>
+            <TextBlock Text="Keeps the system awake while SWYH is running (the screen saver is still allowed)." FontSize="11" Margin="28,0,0,0"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
 
             <ui:Button Content="Save" Appearance="Primary" Margin="0,24,0,0" HorizontalAlignment="Stretch"
                        Height="40" Command="{Binding SaveCommand}"/>
