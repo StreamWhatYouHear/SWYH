@@ -75,6 +75,11 @@ namespace SWYH.Services
             this.rendererDiscovery.OnRendererRemoved += this.OnRendererLost;
         }
 
+        public void RescanRenderers()
+        {
+            this.rendererDiscovery?.ReScan();
+        }
+
         public void ToggleStreamToRenderer(RendererViewModel renderer)
         {
             if (renderer?.Renderer == null || renderer.Renderer.Connections.Count == 0)

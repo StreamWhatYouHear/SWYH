@@ -46,22 +46,13 @@ namespace SWYH.ViewModels
         private readonly AudioLevelService audioLevelService = new();
         private readonly DispatcherTimer refreshTimer;
 
-        private DateTime streamingStartedAt = DateTime.MinValue;
+        private int slowRefreshCounter;
 
         public ObservableCollection<RendererViewModel> Renderers => this.swyhService.Renderers;
 
         public ObservableCollection<double> LevelHistory { get; } = new(Enumerable.Repeat(LevelBarMinHeight, LevelHistorySize));
 
         public ObservableCollection<string> OutputUrls { get; } = new();
-
-        [ObservableProperty]
-        private bool isStreaming;
-
-        [ObservableProperty]
-        private string statusText = "Idle - ready to stream";
-
-        [ObservableProperty]
-        private string elapsedText = "00:00:00";
 
         [ObservableProperty]
         private string captureDeviceName = "Default device";
@@ -73,11 +64,14 @@ namespace SWYH.ViewModels
 
         public IRelayCommand<RendererViewModel> ToggleRendererCommand { get; }
 
+        public IRelayCommand RefreshDevicesCommand { get; }
+
         public HomeViewModel(ISwyhService swyhService)
         {
             this.swyhService = swyhService;
             this.CopyUrlCommand = new RelayCommand<string>(this.CopyUrl);
             this.ToggleRendererCommand = new RelayCommand<RendererViewModel>(this.swyhService.ToggleStreamToRenderer);
+            this.RefreshDevicesCommand = new RelayCommand(this.swyhService.RescanRenderers);
 
             this.RefreshOutputUrls();
             this.captureDeviceName = this.audioLevelService.GetConfiguredDeviceName();
@@ -93,23 +87,27 @@ namespace SWYH.ViewModels
             double peak = this.audioLevelService.GetCurrentPeak();
             this.LevelHistory.Add(Math.Clamp(peak * LevelBarMaxHeight, LevelBarMinHeight, LevelBarMaxHeight));
 
-            bool anyStreaming = this.Renderers.Any(r => r.IsStreaming);
-            if (anyStreaming && !this.IsStreaming)
-            {
-                this.streamingStartedAt = DateTime.Now;
-            }
-            this.IsStreaming = anyStreaming;
-            this.StatusText = anyStreaming
-                ? $"Streaming to {this.Renderers.Count(r => r.IsStreaming)} device(s)"
-                : "Idle - ready to stream";
-            this.ElapsedText = anyStreaming ? (DateTime.Now - this.streamingStartedAt).ToString(@"hh\:mm\:ss") : "00:00:00";
             this.DevicesHeaderText = this.Renderers.Count == 1 ? "1 device found" : $"{this.Renderers.Count} devices found";
+
+            // Device enumeration is expensive: only refresh the capture device name ~once per second.
+            if (++this.slowRefreshCounter >= 8)
+            {
+                this.slowRefreshCounter = 0;
+                this.CaptureDeviceName = this.audioLevelService.GetConfiguredDeviceName();
+                this.RefreshOutputUrls();
+            }
         }
 
         private void RefreshOutputUrls()
         {
+            var urls = this.swyhService.GetStreamUrls(AudioFormats.Format.Mp3);
+            if (this.OutputUrls.SequenceEqual(urls))
+            {
+                return;
+            }
+
             this.OutputUrls.Clear();
-            foreach (var url in this.swyhService.GetStreamUrls(AudioFormats.Format.Mp3))
+            foreach (var url in urls)
             {
                 this.OutputUrls.Add(url);
             }

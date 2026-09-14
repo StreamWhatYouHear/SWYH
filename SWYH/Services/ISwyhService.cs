@@ -64,6 +64,11 @@ namespace SWYH.Services
         void ToggleStreamToRenderer(RendererViewModel renderer);
 
         /// <summary>
+        /// Re-issues an UPnP discovery to refresh the renderers list.
+        /// </summary>
+        void RescanRenderers();
+
+        /// <summary>
         /// Gets the HTTP URLs exposing the live audio stream for the given format.
         /// </summary>
         System.Collections.Generic.List<string> GetStreamUrls(AudioFormats.Format format);

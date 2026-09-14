@@ -18,15 +18,9 @@
                            VerticalAlignment="Center" Margin="10,0,0,0"/>
             </StackPanel>
 
-            <!-- Status -->
-            <TextBlock Text="STATUS" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
-            <TextBlock Text="{Binding StatusText}" FontSize="24" FontWeight="Bold" Margin="0,4,0,0"
-                       Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"/>
-            <TextBlock Text="{Binding ElapsedText}" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Margin="0,2,0,0"/>
-
             <!-- Level meter -->
             <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,16,0,0" Height="96">
+                    BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,4,0,0" Height="96">
                 <ItemsControl ItemsSource="{Binding LevelHistory}" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -42,8 +36,25 @@
                 </ItemsControl>
             </Border>
 
-            <!-- Output -->
-            <TextBlock Text="OUTPUT" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <!-- Audio -->
+            <TextBlock Text="AUDIO SOURCE" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Speaker224" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding CaptureDeviceName}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <ui:Button Grid.Column="1" Appearance="Transparent" Content="Change" Click="ChangeAudioSource_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Stream URL -->
+            <TextBlock Text="STREAM URLS" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
             <ItemsControl ItemsSource="{Binding OutputUrls}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -64,25 +75,20 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- Audio -->
-            <TextBlock Text="AUDIO SOURCE" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
-            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="12,10">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Speaker224" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding CaptureDeviceName}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <ui:Button Grid.Column="1" Appearance="Transparent" Content="Change" Click="ChangeAudioSource_Click"/>
-                </Grid>
-            </Border>
-
             <!-- Devices -->
-            <ui:CardExpander Margin="0,20,0,0" Header="{Binding DevicesHeaderText}" Icon="{ui:SymbolIcon DesktopSpeaker24}" IsExpanded="True">
+            <TextBlock Text="DLNA DEVICES" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <ui:CardExpander Icon="{ui:SymbolIcon DesktopSpeaker24}" IsExpanded="True">
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding DevicesHeaderText}" VerticalAlignment="Center"/>
+                        <ui:Button Grid.Column="1" Appearance="Transparent" Icon="{ui:SymbolIcon ArrowSync24}" ToolTip="Refresh devices"
+                                   Margin="0,0,8,0" Command="{Binding RefreshDevicesCommand}"/>
+                    </Grid>
+                </ui:CardExpander.Header>
                 <ItemsControl ItemsSource="{Binding Renderers}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
