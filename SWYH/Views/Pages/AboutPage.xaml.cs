@@ -24,7 +24,11 @@
 namespace SWYH.Views.Pages
 {
     using SWYH.ViewModels;
+    using System.Threading.Tasks;
+    using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Input;
+    using Wpf.Ui.Controls;
 
     /// <summary>
     /// Interaction logic for AboutPage.xaml
@@ -38,6 +42,14 @@ namespace SWYH.Views.Pages
             this.ViewModel = new AboutViewModel();
             this.DataContext = this.ViewModel;
             InitializeComponent();
+        }
+
+        private async void VersionBadge_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Clipboard.SetText(this.ViewModel.VersionText);
+            this.VersionBadge.Content = new SymbolIcon { Symbol = SymbolRegular.Checkmark24, Foreground = System.Windows.Media.Brushes.White };
+            await Task.Delay(1200);
+            this.VersionBadge.Content = this.ViewModel.VersionText;
         }
     }
 }
