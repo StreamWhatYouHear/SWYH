@@ -38,6 +38,8 @@ namespace SWYH.Services
     {
         private const int RecordingSessionKey = int.MinValue;
 
+        private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromSeconds(15);
+
         private readonly Dispatcher dispatcher;
         private readonly Dictionary<string, RendererViewModel> renderersByUdn = new();
 
@@ -100,9 +102,22 @@ namespace SWYH.Services
                     return;
                 }
                 connection.Stop();
+                renderer.IsConnecting = true;
+                this.StartConnectionTimeout(renderer);
                 renderer.Renderer.CreateConnection(media, DateTime.Now.Ticks);
                 connection.Play();
             }
+        }
+
+        private void StartConnectionTimeout(RendererViewModel renderer)
+        {
+            var timeout = new DispatcherTimer(DispatcherPriority.Normal, this.dispatcher) { Interval = ConnectionTimeout };
+            timeout.Tick += (s, e) =>
+            {
+                timeout.Stop();
+                renderer.IsConnecting = false;
+            };
+            timeout.Start();
         }
 
         public List<string> GetStreamUrls(AudioFormats.Format format)
@@ -217,6 +232,7 @@ namespace SWYH.Services
             this.dispatcher.BeginInvoke(new Action(() =>
             {
                 renderer.IsStreaming = newState == AVConnection.PlayState.PLAYING;
+                renderer.IsConnecting = false;
                 if (SWYH.Properties.Settings.Default.MuteWhileStreaming)
                 {
                     SystemIntegrationService.SetLocalAudioMuted(this.Renderers.Any(r => r.IsStreaming));

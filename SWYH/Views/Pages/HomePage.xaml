@@ -98,11 +98,19 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center"/>
-                                <ui:Button Grid.Column="1" Padding="12,4"
-                                           Content="{Binding IsStreaming, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Stop;Play'}"
+                                <ui:Button Grid.Column="1" Padding="12,4" MinWidth="72"
+                                           IsEnabled="{Binding IsConnecting, Converter={StaticResource InverseBooleanConverter}}"
                                            Appearance="{Binding IsStreaming, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Danger;Primary'}"
                                            Command="{Binding DataContext.ToggleRendererCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                           CommandParameter="{Binding}"/>
+                                           CommandParameter="{Binding}">
+                                    <Grid>
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   Text="{Binding IsStreaming, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Stop;Play'}"
+                                                   Visibility="{Binding IsConnecting, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                        <ui:ProgressRing Width="16" Height="16" IsIndeterminate="True" HorizontalAlignment="Center"
+                                                         Visibility="{Binding IsConnecting, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    </Grid>
+                                </ui:Button>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

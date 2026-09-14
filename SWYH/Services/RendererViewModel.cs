@@ -34,6 +34,9 @@ namespace SWYH.Services
         [ObservableProperty]
         private bool isStreaming;
 
+        [ObservableProperty]
+        private bool isConnecting;
+
         public string Name { get; }
 
         public string UniqueDeviceName { get; }
