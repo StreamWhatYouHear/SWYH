@@ -37,6 +37,8 @@ namespace SWYH.Audio
         private bool hasMP3Clients = false;
         private bool hasPCMClients = false;
 
+        private DateTime lastCaptureTime = DateTime.UtcNow;
+
         private WasapiCapture loopbackWaveIn = null;
         private PipeStream recordingStream = null;
         private WaveStream rawConvertedStream = null;
@@ -55,6 +57,9 @@ namespace SWYH.Audio
 
             // Init Wave Processor thread
             Thread waveProcessorThread = new Thread(new ThreadStart(this.waveProcessor)) { Priority = ThreadPriority.Highest };
+
+            // Feeds silence to the clients when Windows delivers no loopback data (nothing is playing)
+            Thread silenceGeneratorThread = new Thread(new ThreadStart(this.silenceGenerator)) { IsBackground = true };
 
             // Init capture audio device
             MMDevice captureDevice = null;
@@ -114,6 +119,7 @@ namespace SWYH.Audio
 
             // Start Wave Processor thread
             waveProcessorThread.Start();
+            silenceGeneratorThread.Start();
         }
 
 
@@ -188,8 +194,36 @@ internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
             }
         }
 
+        private void silenceGenerator()
+        {
+            const int SilenceChunkMs = 100;
+            byte[] silence = new byte[this.loopbackWaveIn.WaveFormat.AverageBytesPerSecond / (1000 / SilenceChunkMs)];
+            while (this.isRunning)
+            {
+                if ((this.hasMP3Clients || this.hasPCMClients) && (DateTime.UtcNow - this.lastCaptureTime).TotalMilliseconds > SilenceChunkMs * 1.5)
+                {
+                    try
+                    {
+                        this.recordingStream.Write(silence, 0, silence.Length);
+                    }
+                    catch
+                    {
+                        if (this.isRunning)
+                        {
+                            throw;
+                        }
+                    }
+                }
+                Thread.Sleep(SilenceChunkMs);
+            }
+        }
+
         private void loopbackWaveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
+            if (e.BytesRecorded > 0)
+            {
+                this.lastCaptureTime = DateTime.UtcNow;
+            }
             if (this.hasMP3Clients || this.hasPCMClients)
             {
                 this.recordingStream.Write(e.Buffer, 0, e.BytesRecorded);
