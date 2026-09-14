@@ -163,6 +163,7 @@ namespace SWYH
             this.mainWindow = new MainWindow();
             this.MainWindow = this.mainWindow;
             this.mainWindow.Show();
+            this.mainWindow.Activate();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon()
             {
                 ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(),
@@ -178,7 +179,6 @@ namespace SWYH
             this.notifyIcon.ContextMenuStrip.Items.Add("-");
             this.notifyIcon.ContextMenuStrip.Items.Add("Exit", null, (s, e2) =>
             {
-                this.mainWindow.AllowClose = true;
                 this.Shutdown();
             });
         }

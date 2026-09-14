@@ -9,7 +9,6 @@
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica"
                  Icon="/SWYH;component/Resources/Icons/swyh.ico"
-                 Closing="FluentWindow_Closing"
                  StateChanged="FluentWindow_StateChanged">
     <Grid>
         <Grid.RowDefinitions>

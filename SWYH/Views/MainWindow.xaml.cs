@@ -24,7 +24,6 @@
 namespace SWYH.Views
 {
     using SWYH.Views.Pages;
-    using System.ComponentModel;
     using Wpf.Ui.Controls;
 
     /// <summary>
@@ -32,10 +31,7 @@ namespace SWYH.Views
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
-        /// <summary>
-        /// Set to true only when the application is really shutting down (tray "Exit"), to allow the window to close.
-        /// </summary>
-        public bool AllowClose { get; set; }
+        private static bool trayNotificationShown;
 
         public MainWindow()
         {
@@ -48,21 +44,16 @@ namespace SWYH.Views
             this.RootNavigation.Navigate(pageType);
         }
 
-        private void FluentWindow_Closing(object sender, CancelEventArgs e)
-        {
-            if (!this.AllowClose)
-            {
-                e.Cancel = true;
-                this.Hide();
-                App.CurrentInstance.NotifyMinimizedToTray();
-            }
-        }
-
         private void FluentWindow_StateChanged(object sender, System.EventArgs e)
         {
             if (this.WindowState == System.Windows.WindowState.Minimized)
             {
                 this.Hide();
+                if (!trayNotificationShown)
+                {
+                    trayNotificationShown = true;
+                    App.CurrentInstance.NotifyMinimizedToTray();
+                }
             }
         }
     }
