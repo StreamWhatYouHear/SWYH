@@ -28,7 +28,9 @@ namespace SWYH.ViewModels
     using Microsoft.Win32;
     using SWYH.Services;
     using System;
+    using System.Collections.ObjectModel;
     using System.IO;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Threading;
 
@@ -37,10 +39,17 @@ namespace SWYH.ViewModels
     /// </summary>
     internal sealed partial class RecordViewModel : ObservableObject, IDisposable
     {
+        private const int LevelHistorySize = 48;
+        private const double LevelBarMaxHeight = 64;
+        private const double LevelBarMinHeight = 3;
+
         private readonly ISwyhService swyhService;
-        private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromMilliseconds(50) };
+        private readonly AudioLevelService audioLevelService = new();
+        private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromMilliseconds(100) };
 
         private DateTime startDate = DateTime.MinValue;
+
+        public ObservableCollection<double> LevelHistory { get; } = new(Enumerable.Repeat(LevelBarMinHeight, LevelHistorySize));
 
         [ObservableProperty]
         private bool isRecording;
@@ -56,19 +65,28 @@ namespace SWYH.ViewModels
         {
             this.swyhService = swyhService;
             this.timer.Tick += this.Timer_Tick;
+            this.timer.Start();
             this.RecordCommand = new RelayCommand(this.Record);
             this.StopCommand = new RelayCommand(this.Stop);
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
+            this.LevelHistory.RemoveAt(0);
+            double peak = this.audioLevelService.GetCurrentPeak();
+            this.LevelHistory.Add(Math.Clamp(peak * LevelBarMaxHeight, LevelBarMinHeight, LevelBarMaxHeight));
+
+            if (!this.IsRecording)
+            {
+                return;
+            }
+
             var recordingTime = DateTime.Now.Subtract(this.startDate);
             this.ElapsedText = string.Format(@"{0}:{1}:{2}.{3}", Math.Truncate(recordingTime.TotalHours), recordingTime.Minutes.ToString("00"), recordingTime.Seconds.ToString("00"), recordingTime.Milliseconds.ToString("000"));
         }
 
         private void Record()
         {
-            this.timer.Start();
             this.IsRecording = true;
             this.startDate = DateTime.Now;
             this.swyhService.StartRecording();
@@ -76,7 +94,6 @@ namespace SWYH.ViewModels
 
         private void Stop()
         {
-            this.timer.Stop();
             this.IsRecording = false;
             this.ElapsedText = "0:00:00.000";
             byte[] content = this.swyhService.StopRecording();
@@ -122,6 +139,7 @@ namespace SWYH.ViewModels
         {
             this.timer.Stop();
             this.timer.Tick -= this.Timer_Tick;
+            this.audioLevelService.Dispose();
         }
     }
 }

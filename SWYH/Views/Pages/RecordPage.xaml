@@ -4,16 +4,63 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="Record">
-    <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBlock Text="Record What You Hear" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-        <TextBlock Text="Captures the streamed audio to a local MP3 file." Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                   HorizontalAlignment="Center" Margin="0,4,0,24"/>
-        <TextBlock x:Name="tbTime" Text="{Binding ElapsedText}" FontSize="32" FontWeight="Light" HorizontalAlignment="Center" Margin="0,0,0,24"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ui:Button x:Name="btRecord" Content="Record" Appearance="Primary" Width="110" Height="36"
-                       Command="{Binding RecordCommand}" IsEnabled="{Binding IsRecording, Converter={StaticResource InverseBooleanConverter}}"/>
-            <ui:Button x:Name="btStop" Content="Stop" Appearance="Secondary" Width="110" Height="36" Margin="12,0,0,0"
-                       Command="{Binding StopCommand}" IsEnabled="{Binding IsRecording}"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,16,24,24">
+
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                <ui:SymbolIcon Symbol="Record24" FontSize="28" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                <TextBlock Text="Record What You Hear" FontSize="16" FontWeight="SemiBold"
+                           VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Level meter -->
+            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12" Height="96">
+                <ItemsControl ItemsSource="{Binding LevelHistory}" VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="4" Margin="1,0" CornerRadius="2" VerticalAlignment="Center"
+                                    Height="{Binding}" Background="{DynamicResource AccentFillColorDefaultBrush}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <!-- Elapsed -->
+            <TextBlock Text="RECORDING TIME" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       FontWeight="SemiBold" Margin="0,20,0,6"/>
+            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="12,10">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="10" Height="10" VerticalAlignment="Center" Fill="#E81123"
+                             Visibility="{Binding IsRecording, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <TextBlock Text="{Binding ElapsedText}" FontSize="28" FontWeight="Light" Margin="10,0,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Actions -->
+            <Grid Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ui:Button Grid.Column="0" Content="Start Recording" Appearance="Primary" Height="36" Margin="0,0,6,0"
+                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                           Command="{Binding RecordCommand}" IsEnabled="{Binding IsRecording, Converter={StaticResource InverseBooleanConverter}}"/>
+                <ui:Button Grid.Column="1" Content="Stop &amp; Save" Appearance="Danger" Height="36" Margin="6,0,0,0"
+                           HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                           Command="{Binding StopCommand}" IsEnabled="{Binding IsRecording}"/>
+            </Grid>
+
+            <TextBlock Text="The recording is saved as an MP3 file when you stop it."
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12"
+                       TextWrapping="Wrap" Margin="0,12,0,0"/>
         </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </Page>
