@@ -70,8 +70,14 @@ namespace SWYH.Services
 
         public void Start()
         {
+            if (string.IsNullOrEmpty(SWYH.Properties.Settings.Default.UniqueDeviceName))
+            {
+                SWYH.Properties.Settings.Default.UniqueDeviceName = Guid.NewGuid().ToString();
+                SWYH.Properties.Settings.Default.Save();
+            }
+
             this.wasapiProvider = new WasapiProvider();
-            this.swyhDevice = new SwyhDevice(this.wasapiProvider);
+            this.swyhDevice = new SwyhDevice(this.wasapiProvider, SWYH.Properties.Settings.Default.UniqueDeviceName);
             this.swyhDevice.Start();
             this.rendererDiscovery = new AVRendererDiscovery(this.OnRendererFound);
             this.rendererDiscovery.OnRendererRemoved += this.OnRendererLost;

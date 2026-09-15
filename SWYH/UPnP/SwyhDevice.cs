@@ -49,7 +49,7 @@ namespace SWYH.UPnP
         public DvContentDirectory ContentDirectory { get; private set; }
         public DvConnectionManager ConnectionManager { get; private set; }
 
-        public SwyhDevice(WasapiProvider wasapiProvider)
+        public SwyhDevice(WasapiProvider wasapiProvider, string uniqueDeviceName = null)
         {
             this.wasapiProvider = wasapiProvider;
             this.Device = UPnPDevice.CreateRootDevice(1800, 1.0, "\\");
@@ -60,6 +60,10 @@ namespace SWYH.UPnP
             this.Device.ModelURL = new Uri("https://www.streamwhatyouhear.com");
             this.Device.ModelName = "Windows Media Connect SWYH"; //"Stream What You Hear";
             this.Device.ModelDescription = "Stream What You Hear (SWYH) is a Windows application to stream the sound from your PC to an UPnP / DLNA device";
+            if (!string.IsNullOrEmpty(uniqueDeviceName))
+            {
+                this.Device.UniqueDeviceName = uniqueDeviceName;
+            }
 
             FileVersionInfo fileVersion = App.FileVersion;
             this.Device.ModelNumber = string.Format("{0}.{1}", fileVersion.ProductMajorPart, fileVersion.ProductMinorPart);
