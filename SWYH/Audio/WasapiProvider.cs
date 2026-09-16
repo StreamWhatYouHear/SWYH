@@ -122,7 +122,6 @@ namespace SWYH.Audio
             silenceGeneratorThread.Start();
         }
 
-
         public void Dispose()
         {
             this.isRunning = false;
@@ -143,7 +142,7 @@ namespace SWYH.Audio
             this.LoopbackL16Stream.Dispose();
         }
 
-internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
+        internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
         {
             this.hasMP3Clients = mp3ClientsCount > 0;
             this.hasPCMClients = pcmClientsCount > 0;
@@ -175,7 +174,7 @@ internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
                                         Array.Reverse(buffer, i, 2);
                                     }
                                 }
-                                this.LoopbackL16Stream.Write(buffer, 0, buffer.Length);
+                                this.LoopbackL16Stream.Write(buffer, 0, readBytes);
                             }
                         }
                     }
