@@ -1,77 +1,128 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#0b0b0f">
     <title>About - Stream What You Hear</title>
-    <style type="text/css">
-        /* CSS (c) thenoodleincident.com */
-        A:link {
-            color: #EAEAEA;
-            text-decoration: none;
-        }
-
-        A:visited {
-            color: #EAEAEA;
-            text-decoration: none;
-        }
-
-        A:active {
-            color: #ccc;
-            text-decoration: none;
-        }
-
-        A:hover {
-            color: #ccc;
-            text-decoration: underline;
-        }
-
+    <style>
+        * { box-sizing: border-box; }
+        html { color-scheme: dark; }
         body {
-            margin: 0px 0px 0px 0px;
-            padding: 0px 0px 0px 0px;
-            font-family: verdana, arial, helvetica, sans-serif;
-            color: #ccc;
-            background-color: #333;
+            margin: 0;
+            padding: 48px 24px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b0b0f;
+            color: #f2f2f5;
+            font: 16px/1.65 "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .page { width: 100%; max-width: 560px; }
+        a { color: #adcaff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        a:focus-visible { outline: 2px solid #adcaff; outline-offset: 5px; border-radius: 4px; }
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            color: #f2f2f5;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -.025em;
+        }
+        .brand svg { flex-shrink: 0; }
+        .card {
+            position: relative;
+            padding: 40px;
+            background: #141419;
+            border: 1px solid #292930;
+            border-radius: 14px;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: linear-gradient(110deg, #ef16ae, #843bff 48%, #168dff 80%, #20d9ed);
+        }
+        .eyebrow {
+            margin: 0 0 18px;
+            color: #a6a6b5;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+        h1 { margin: 0 0 20px; font-size: 38px; line-height: 1.15; font-weight: 600; letter-spacing: -.045em; }
+        p { margin: 0; color: #a6a6b5; }
+        .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 28px; }
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 50px;
+            padding: 13px 22px;
+            border-radius: 8px;
+            background: #adcaff;
+            color: #101722;
+            font-size: 14px;
+            font-weight: 600;
             text-align: center;
         }
-
-        #content {
-            width: 600px;
-            padding: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            margin-right: auto;
-            margin-left: auto;
-            background: #666;
-            border: 5px solid #ccc;
-            text-align: left;
-            width: 600px;
-            voice-family: "\"}\"";
-            voice-family: inherit;
-            width: 470px;
-        }
-
-        html > body #content {
-            width: 470px;
+        .button:hover { background: #c4d9ff; text-decoration: none; }
+        .text-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
+        .meta { margin-top: 24px; font-size: 12px; }
+        footer { margin-top: 24px; font-size: 12px; }
+        footer p + p { margin-top: 4px; }
+        footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+        @media (max-width: 480px) {
+            body { padding: 32px 20px; }
+            .card { padding: 28px 24px; }
+            .card::before { left: 24px; right: 24px; }
+            h1 { font-size: 32px; }
         }
     </style>
 </head>
 <body>
-    <div id="content">
-        <h1>
-            <b>Stream What You Hear</b>
-        </h1>
-        <p>
-            Stream What You Hear (SWYH) is a Windows application to stream the sound from your
-            PC to an UPnP / DLNA device.
-        </p>
-        <p>
-            <a href="/stream/swyh.mp3">Start the Live Streaming (MP3)</a>
-        </p>
-        <p>
-            For more information, visit the website : <a href="https://www.streamwhatyouhear.com">https://www.streamwhatyouhear.com</a>
-        </p>
-        <h5>
-            Copyright 2012-2026 - Stream What You Hear - <a href="https://sebastien.warin.fr">Sebastien.warin.fr</a> and others
-        </h5>
+    <div class="page">
+        <a class="brand" href="/about/swyh.html">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <defs>
+                    <linearGradient id="wave" x1="2" y1="16" x2="30" y2="16" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#ef16ae" />
+                        <stop offset=".48" stop-color="#843bff" />
+                        <stop offset=".8" stop-color="#168dff" />
+                        <stop offset="1" stop-color="#20d9ed" />
+                    </linearGradient>
+                </defs>
+                <path d="M3 13v6m6-11v16m7-21v26m7-21v16m6-11v6" stroke="url(#wave)" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+            <span>Stream What You Hear</span>
+        </a>
+        <main class="card">
+            <p class="eyebrow">Windows audio. Anywhere.</p>
+            <h1>Your PC audio.<br>Beyond your PC.</h1>
+            <p>Stream What You Hear (SWYH) streams the sound playing on your Windows PC to compatible UPnP/DLNA devices.</p>
+            <div class="actions">
+                <a class="button" href="/stream/swyh.mp3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l14-8z" /></svg>
+                    Listen live (MP3)
+                </a>
+                <a class="text-link" href="https://www.streamwhatyouhear.com/">Visit the website <span aria-hidden="true">&nbsp;&#8599;</span></a>
+            </div>
+            <p class="meta">Free &amp; open source &middot; Windows &middot; UPnP / DLNA</p>
+        </main>
+        <footer>
+            <p>&copy; 2012&ndash;2026 Stream What You Hear</p>
+            <p>Created by <a href="https://sebastien.warin.fr">S&eacute;bastien Warin</a> and contributors.</p>
+        </footer>
     </div>
 </body>
 </html>
