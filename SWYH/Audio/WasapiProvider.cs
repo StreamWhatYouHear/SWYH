@@ -29,17 +29,24 @@ namespace SWYH.Audio
     using System;
     using System.Threading;
 
-    internal class WasapiProvider
+    internal class WasapiProvider : IDisposable
     {
         private byte[] buffer = new byte[1024];
 
-        private bool isRunning = true;
-        private bool hasMP3Clients = false;
-        private bool hasPCMClients = false;
+        private volatile bool isRunning = true;
+        private volatile bool hasMP3Clients = false;
+        private volatile bool hasPCMClients = false;
 
-        private DateTime lastCaptureTime = DateTime.UtcNow;
+        private long lastCaptureTime = Environment.TickCount64;
+        private readonly object captureLock = new object();
+        private readonly ManualResetEventSlim stopping = new ManualResetEventSlim();
+        private Thread waveProcessorThread;
+        private Thread silenceGeneratorThread;
+        private MMDevice captureDevice;
+        private WaveStream rawWave16b;
+        private int disposed;
 
-        private WasapiCapture loopbackWaveIn = null;
+        private WasapiRecorder loopbackWaveIn = null;
         private PipeStream recordingStream = null;
         private WaveStream rawConvertedStream = null;
         private WaveStream pcmStream = null;
@@ -56,90 +63,102 @@ namespace SWYH.Audio
             this.LoopbackL16Stream = new PipeStream();
 
             // Init Wave Processor thread
-            Thread waveProcessorThread = new Thread(new ThreadStart(this.waveProcessor)) { Priority = ThreadPriority.Highest };
+            this.waveProcessorThread = new Thread(new ThreadStart(this.waveProcessor)) { Priority = ThreadPriority.Highest };
 
             // Feeds silence to the clients when Windows delivers no loopback data (nothing is playing)
-            Thread silenceGeneratorThread = new Thread(new ThreadStart(this.silenceGenerator)) { IsBackground = true };
+            this.silenceGeneratorThread = new Thread(new ThreadStart(this.silenceGenerator)) { IsBackground = true };
 
             // Init capture audio device
-            MMDevice captureDevice = null;
-            var enumerator = new MMDeviceEnumerator();
-            string captureDeviceID = SWYH.Properties.Settings.Default.AudioDevice;
-            if (captureDeviceID != "")
+            try
             {
-                foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
+                using var enumerator = new MMDeviceEnumerator();
+                string captureDeviceID = SWYH.Properties.Settings.Default.AudioDevice;
+                if (captureDeviceID != "")
                 {
-                    if (wasapi.ID == captureDeviceID)
+                    foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
                     {
-                        captureDevice = wasapi;
+                        if (wasapi.ID == captureDeviceID)
+                        {
+                            captureDevice = wasapi;
+                        }
+                        else
+                        {
+                            wasapi.Dispose();
+                        }
                     }
                 }
-            }
-            if (captureDevice == null)
-            {
-                captureDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            }
+                if (captureDevice == null)
+                {
+                    captureDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                }
 
-            // Init Wasapi Capture
-            if (captureDevice.DataFlow == DataFlow.Render)
-            {
-                this.loopbackWaveIn = new WasapiLoopbackCapture(captureDevice);
-            }
-            else
-            {
-                this.loopbackWaveIn = new WasapiCapture(captureDevice);
-            }
-            this.loopbackWaveIn.DataAvailable += new EventHandler<WaveInEventArgs>(this.loopbackWaveIn_DataAvailable);
-            
-            // Init Raw Wav (16bit)
-            WaveStream rawWave16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, NAudio.Wave.WaveFormat.CreateIeeeFloatWaveFormat(this.loopbackWaveIn.WaveFormat.SampleRate, this.loopbackWaveIn.WaveFormat.Channels)));
+                // Keep the converter and silence generator on the same explicit float format.
+                using var audioClient = captureDevice.CreateAudioClient();
+                var mixFormat = audioClient.MixFormat;
+                var captureFormat = WaveFormat.CreateIeeeFloatWaveFormat(mixFormat.SampleRate, mixFormat.Channels);
+                var builder = new WasapiRecorderBuilder().WithDevice(captureDevice).WithFormat(captureFormat);
+                if (captureDevice.DataFlow == DataFlow.Render)
+                {
+                    builder.WithLoopbackCapture();
+                }
+                this.loopbackWaveIn = builder.Build();
+                this.loopbackWaveIn.DataAvailable += this.loopbackWaveIn_DataAvailable;
+                this.rawWave16b = new Wave32To16Stream(new RawSourceWaveStream(this.recordingStream, this.loopbackWaveIn.WaveFormat));
 
-            // Convert Raw Wav to PCM with audio format in settings
-            var audioFormat = AudioSettings.GetAudioFormat();
-            if (rawWave16b.WaveFormat.SampleRate == audioFormat.SampleRate
-                && rawWave16b.WaveFormat.BitsPerSample == audioFormat.BitsPerSample
-                && rawWave16b.WaveFormat.Channels == audioFormat.Channels)
-            {
-                // No conversion !
-                this.rawConvertedStream = null;
-                this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawWave16b);
+                // Convert Raw Wav to PCM with audio format in settings
+                var audioFormat = AudioSettings.GetAudioFormat();
+                if (rawWave16b.WaveFormat.SampleRate == audioFormat.SampleRate
+                    && rawWave16b.WaveFormat.BitsPerSample == audioFormat.BitsPerSample
+                    && rawWave16b.WaveFormat.Channels == audioFormat.Channels)
+                {
+                    // No conversion !
+                    this.rawConvertedStream = null;
+                    this.pcmStream = rawWave16b;
+                }
+                else
+                {
+                    // Resampler
+                    this.rawConvertedStream = new WaveProviderToWaveStream(new MediaFoundationResampler(rawWave16b, audioFormat));
+                    this.pcmStream = rawConvertedStream;
+                }
+
+                // Init MP3 Encoder
+                this.mp3Writer = new LameMP3FileWriter(this.LoopbackMp3Stream, pcmStream.WaveFormat, AudioSettings.GetMP3Bitrate());
+
+                // Start Recording
+                this.loopbackWaveIn.StartRecording();
+
+                // Start Wave Processor thread
+                waveProcessorThread.Start();
+                silenceGeneratorThread.Start();
             }
-            else
+            catch
             {
-                // Resampler
-                this.rawConvertedStream = new WaveProviderToWaveStream(new MediaFoundationResampler(rawWave16b, audioFormat));
-                this.pcmStream = WaveFormatConversionStream.CreatePcmStream(rawConvertedStream);
+                Dispose();
+                throw;
             }
-
-            // Init MP3 Encoder
-            this.mp3Writer = new LameMP3FileWriter(this.LoopbackMp3Stream, pcmStream.WaveFormat, AudioSettings.GetMP3Bitrate());
-
-            // Start Recording
-            this.loopbackWaveIn.StartRecording();
-
-            // Start Wave Processor thread
-            waveProcessorThread.Start();
-            silenceGeneratorThread.Start();
         }
 
         public void Dispose()
         {
+            if (Interlocked.Exchange(ref this.disposed, 1) != 0) return;
             this.isRunning = false;
-            Thread.Sleep(200);
-            this.loopbackWaveIn.StopRecording();
-            this.recordingStream.Flush();
-            this.recordingStream.Dispose();
-            if (this.rawConvertedStream != null)
-            {
-                this.rawConvertedStream.Flush();
-                this.rawConvertedStream.Dispose();
-            }
-            this.pcmStream.Flush();
-            this.pcmStream.Dispose();
-            this.LoopbackMp3Stream.Flush();
-            this.LoopbackMp3Stream.Dispose();
-            this.LoopbackL16Stream.Flush();
-            this.LoopbackL16Stream.Dispose();
+            this.stopping.Set();
+            // Release every possible blocked pipe operation before joining capture/workers.
+            this.recordingStream?.CompleteWriting();
+            this.LoopbackMp3Stream?.CompleteWriting();
+            this.LoopbackL16Stream?.CompleteWriting();
+            this.loopbackWaveIn?.Dispose();
+            if (this.waveProcessorThread?.IsAlive == true) this.waveProcessorThread.Join();
+            if (this.silenceGeneratorThread?.IsAlive == true) this.silenceGeneratorThread.Join();
+            this.mp3Writer?.Dispose();
+            this.rawConvertedStream?.Dispose();
+            this.rawWave16b?.Dispose();
+            this.recordingStream?.Dispose();
+            this.LoopbackMp3Stream?.Dispose();
+            this.LoopbackL16Stream?.Dispose();
+            this.captureDevice?.Dispose();
+            this.stopping.Dispose();
         }
 
         internal void UpdateClientsList(int mp3ClientsCount, int pcmClientsCount)
@@ -188,7 +207,7 @@ namespace SWYH.Audio
                 }
                 else
                 {
-                    Thread.Sleep(1);
+                    this.stopping.Wait(1);
                 }
             }
         }
@@ -196,36 +215,33 @@ namespace SWYH.Audio
         private void silenceGenerator()
         {
             const int SilenceChunkMs = 100;
-            byte[] silence = new byte[this.loopbackWaveIn.WaveFormat.AverageBytesPerSecond / (1000 / SilenceChunkMs)];
-            while (this.isRunning)
+            var format = this.loopbackWaveIn.WaveFormat;
+            byte[] silence = new byte[(format.SampleRate * SilenceChunkMs / 1000) * format.BlockAlign];
+            while (!this.stopping.Wait(SilenceChunkMs))
             {
-                if ((this.hasMP3Clients || this.hasPCMClients) && (DateTime.UtcNow - this.lastCaptureTime).TotalMilliseconds > SilenceChunkMs * 1.5)
+                lock (this.captureLock)
                 {
-                    try
+                    if (this.isRunning && (this.hasMP3Clients || this.hasPCMClients)
+                        && Environment.TickCount64 - this.lastCaptureTime > SilenceChunkMs * 1.5)
                     {
-                        this.recordingStream.Write(silence, 0, silence.Length);
-                    }
-                    catch
-                    {
-                        if (this.isRunning)
-                        {
-                            throw;
-                        }
+                        this.recordingStream.Write(silence);
                     }
                 }
-                Thread.Sleep(SilenceChunkMs);
             }
         }
 
-        private void loopbackWaveIn_DataAvailable(object sender, WaveInEventArgs e)
+        private void loopbackWaveIn_DataAvailable(ReadOnlySpan<byte> buffer, AudioClientBufferFlags flags,
+            long devicePosition, long qpcPosition)
         {
-            if (e.BytesRecorded > 0)
+            lock (this.captureLock)
             {
-                this.lastCaptureTime = DateTime.UtcNow;
-            }
-            if (this.hasMP3Clients || this.hasPCMClients)
-            {
-                this.recordingStream.Write(e.Buffer, 0, e.BytesRecorded);
+                if (!this.isRunning) return;
+                if (!buffer.IsEmpty) this.lastCaptureTime = Environment.TickCount64;
+                if (this.hasMP3Clients || this.hasPCMClients)
+                {
+                    // Copy during the callback: NAudio owns the span's native memory.
+                    this.recordingStream.Write(buffer);
+                }
             }
         }
     }

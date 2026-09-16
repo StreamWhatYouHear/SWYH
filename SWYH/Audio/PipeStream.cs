@@ -69,6 +69,7 @@ namespace SWYH.Audio
 		/// all remaining data should be written to the output stream.
 		/// </summary>
 		private bool mFlushed;
+		private bool mCompleted;
 
 		/// <summary>
 		/// Maximum number of bytes to store in the buffer.
@@ -142,11 +143,30 @@ namespace SWYH.Audio
 		///Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		///</summary>
 		///<filterpriority>2</filterpriority>
-		public new void Dispose()
-		{
-			// clear the internal buffer
-			mBuffer.Clear();
-		}
+        // Terminal completion releases blocked readers and writers during pipeline shutdown.
+        // Writes racing with shutdown are discarded; queued data remains readable.
+        internal void CompleteWriting()
+        {
+            lock (mBuffer)
+            {
+                mCompleted = true;
+                Monitor.PulseAll(mBuffer);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                lock (mBuffer)
+                {
+                    mCompleted = true;
+                    mBuffer.Clear();
+                    Monitor.PulseAll(mBuffer);
+                }
+            }
+            base.Dispose(disposing);
+        }
 
 		///<summary>
 		///When overridden in a derived class, clears all buffers for this stream and causes any buffered data to be written to the underlying device.
@@ -155,9 +175,11 @@ namespace SWYH.Audio
 		///<exception cref="T:System.IO.IOException">An I/O error occurs. </exception><filterpriority>2</filterpriority>
 		public override void Flush()
 		{
-			mFlushed = true;
 			lock(mBuffer)
-				Monitor.Pulse(mBuffer);
+            {
+                mFlushed = true;
+                Monitor.PulseAll(mBuffer);
+            }
 		}
 
 		///<summary>
@@ -204,39 +226,26 @@ namespace SWYH.Audio
 		///<exception cref="T:System.ArgumentNullException">buffer is null. </exception>
 		///<exception cref="T:System.IO.IOException">An I/O error occurs. </exception>
 		///<exception cref="T:System.ArgumentOutOfRangeException">offset or count is negative. </exception><filterpriority>1</filterpriority>
-		public override int Read(byte[] buffer, int offset, int count)
-		{
-			if (offset != 0)
-				throw new NotImplementedException("Offsets with value of non-zero are not supported");
-			if (buffer == null)
-				throw new ArgumentException("Buffer is null");
-			if (offset + count > buffer.Length)
-				throw new ArgumentException("The sum of offset and count is greater than the buffer length. ");
-			if (offset < 0 || count < 0)
-				throw new ArgumentOutOfRangeException("offset", "offset or count is negative.");
-			if (BlockLastReadBuffer && count >= mMaxBufferLength)
-				throw new ArgumentException(String.Format("count({0}) > mMaxBufferLength({1})", count, mMaxBufferLength));
+        public override int Read(byte[] buffer, int offset, int count)
+            => Read(buffer.AsSpan(offset, count));
 
-			if (count == 0)
-				return 0;
-
-			int readLength = 0;
-
-			lock (mBuffer)
-			{
-				while (!ReadAvailable(count))
-					Monitor.Wait(mBuffer);
-
-				// fill the read buffer
-				for (; readLength < count && Length > 0; readLength++)
-				{
-					buffer[readLength] = mBuffer.Dequeue();
-				}
-
-				Monitor.Pulse(mBuffer);
-			}
-			return readLength;
-		}
+        public override int Read(Span<byte> buffer)
+        {
+            int count = buffer.Length;
+            if (BlockLastReadBuffer && count >= mMaxBufferLength)
+                throw new ArgumentException("Read exceeds the pipe capacity.", nameof(buffer));
+            if (count == 0) return 0;
+            lock (mBuffer)
+            {
+                while (!mCompleted && !ReadAvailable(count))
+                    Monitor.Wait(mBuffer);
+                int readLength = Math.Min(count, mBuffer.Count);
+                for (int i = 0; i < readLength; i++)
+                    buffer[i] = mBuffer.Dequeue();
+                Monitor.PulseAll(mBuffer);
+                return readLength;
+            }
+        }
 
 		/// <summary>
 		/// Returns true if there are 
@@ -261,34 +270,23 @@ namespace SWYH.Audio
 		///<exception cref="T:System.ArgumentNullException">buffer is null. </exception>
 		///<exception cref="T:System.ArgumentException">The sum of offset and count is greater than the buffer length. </exception>
 		///<exception cref="T:System.ArgumentOutOfRangeException">offset or count is negative. </exception><filterpriority>1</filterpriority>
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			if (buffer == null)
-				throw new ArgumentException("Buffer is null");
-			if (offset + count > buffer.Length)
-				throw new ArgumentException("The sum of offset and count is greater than the buffer length. ");
-			if (offset < 0 || count < 0)
-				throw new ArgumentOutOfRangeException("offset", "offset or count is negative.");
-			if (count == 0)
-				return;
+        public override void Write(byte[] buffer, int offset, int count)
+            => Write(buffer.AsSpan(offset, count));
 
-			lock (mBuffer)
-			{
-				// wait until the buffer isn't full
-				while (Length >= mMaxBufferLength)
-					Monitor.Wait(mBuffer);
-
-				mFlushed = false; // if it were flushed before, it soon will not be.
-
-				// queue up the buffer data
-				for (int i = offset; i < offset + count; i++)
-				{
-					mBuffer.Enqueue(buffer[i]);
-				}
-
-				Monitor.Pulse(mBuffer); // signal that write has occured
-			}
-		}
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            if (buffer.IsEmpty) return;
+            lock (mBuffer)
+            {
+                while (!mCompleted && mBuffer.Count >= mMaxBufferLength)
+                    Monitor.Wait(mBuffer);
+                if (mCompleted) return;
+                mFlushed = false;
+                foreach (byte value in buffer)
+                    mBuffer.Enqueue(value);
+                Monitor.PulseAll(mBuffer);
+            }
+        }
 
 		///<summary>
 		///When overridden in a derived class, gets a value indicating whether the current stream supports reading.
@@ -337,7 +335,7 @@ namespace SWYH.Audio
 		///<exception cref="T:System.ObjectDisposedException">Methods were called after the stream was closed. </exception><filterpriority>1</filterpriority>
 		public override long Length
 		{
-			get { return mBuffer.Count; }
+			get { lock (mBuffer) return mBuffer.Count; }
 		}
 
 		///<summary>

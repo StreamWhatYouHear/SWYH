@@ -14,7 +14,7 @@ The `UPnP` package is an UPnP/DLNA library for .NET based on the Intel UPnP fram
 
 ## NAudio
 
-- Package: `NAudio` 2.2.1
+- Package: `NAudio` 3.1.0
 - Project: https://github.com/naudio/NAudio
 - License: Microsoft Public License (Ms-PL)
 
