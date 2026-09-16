@@ -4,7 +4,7 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:pages="clr-namespace:SWYH.Views.Pages"
                  Title="Stream What You Hear"
-                 Width="480" Height="780" MinWidth="420" MinHeight="620"
+                 Width="480" Height="800" MinWidth="420" MinHeight="620"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
                  WindowBackdropType="Mica"
